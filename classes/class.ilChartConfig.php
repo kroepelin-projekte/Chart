@@ -23,22 +23,6 @@ class ilChartConfig {
      * @param $check
      * @return string
      */
-    public function getCheck($check) {
-        return $this->settings->get($check, 0);
-    }
-
-    /**
-     * @param $check
-     * @param $checked
-     */
-    public function setCheck($check, $checked) {
-        $this->settings->set($check, $checked);
-    }
-
-    /**
-     * @param $check
-     * @return string
-     */
     public function getOption($check) {
         return $this->settings->get($check, 0);
     }
