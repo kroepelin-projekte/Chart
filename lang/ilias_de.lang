@@ -1,0 +1,21 @@
+insert_chart#:#Diagramm einfügen
+cmd_insert#:#Diagramm einfügen
+chart#:#Diagramm
+chart_style#:#Style
+categories#:#Kategorien
+description#:#Geben Sie den Diagrammtitel, den Diagrammtyp und das Datenformat ein. Nach dem Einfügen haben Sie die Möglichkeit, Farben auszuwählen und das Währungsymbol auszufüllen.
+description_style#:#Sie können die Farben der Balken in HEX Farben definieren zB CA3E3E
+edit_chart#:#Diagramm Bearbeiten
+edit_style#:#Style Bearbeiten
+horizontal_bar_chart#:#Balkendiagramm
+vertical_bar_chart#:#Säulendiagramm
+pie_chart#:#Tortendiagramm
+chart_title#:#Diagrammtitel
+chart_type#:#Diagrammtyp
+key#:#Kategorie
+value#:#Value
+numbers#:#Zähler
+percent#:#Prozent
+data_format#:#Datenformat
+currency_symbol#:#Währungssymbol
+categories_info#:#Sollten Sie als Datenformat "Prozent" ausgewählt haben, wird die Berechnung der Werte in Prozent ausgegeben.

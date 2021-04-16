@@ -1,0 +1,41 @@
+.chart-container{
+    position: relative; 
+    margin: auto; 
+    padding: 10px;
+    width: 700px;
+}
+
+@media screen and (max-width: 1200px){
+    .chart-container{
+        padding: 5px;
+        width: 600px;
+        height: 80%;
+    }
+}
+
+@media screen and (max-width: 768px){
+    .chart-container{
+        width: 500px;
+    }
+}
+
+@media screen and (max-width: 648px) {
+    .chart-container{
+        width: 400px;
+    }
+}
+
+@media screen and (max-width: 450px) {
+    .chart-container{
+        width: 300px;
+        height: 90%;
+    }
+}
+
+@media screen and (max-width: 300px) {
+    .chart-container{
+        padding: 3px;
+        width: 275px;
+        height: 150px;
+    }
+}
