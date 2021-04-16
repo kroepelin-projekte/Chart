@@ -1,9 +1,9 @@
-//All DIV Container from Template
+//All DIV Containers from Template
 var divClass = document.getElementsByClassName('chdiv');
 var div = [];
 var j = 1;
 
-//Seperate DIV Container 
+//Separate DIV Container 
 for (let i = 0; i< divClass.length; i++) {
     
     //Variables let
@@ -31,14 +31,14 @@ for (let i = 0; i< divClass.length; i++) {
 
     //If DataFormat === percent
     if (chDataFormat === "2") {
-        for (let k = 0;k<keyDiv.length; k++) {
+        for (let k = 0; k<keyDiv.length; k++) {
             chartDataSet.data[k] = percDiv[k].value;
         }
         symbol = function(value) {
                     return value + ' %';
                 };
     } else {
-        for (let k = 0;k<keyDiv.length; k++) {
+        for (let k = 0; k<keyDiv.length; k++) {
             chartDataSet.data[k] = valueDiv[k].value;
         }
         symbol = function(value) {
@@ -47,7 +47,7 @@ for (let i = 0; i< divClass.length; i++) {
     }
 
     //Insert chartLabels
-    for (let k = 0;k<keyDiv.length; k++) {
+    for (let k = 0; k<keyDiv.length; k++) {
         chartLabels.labels[k] = keyDiv[k].value;
     }
 
@@ -141,8 +141,7 @@ for (let i = 0; i< divClass.length; i++) {
 
     //Check Datatype === pi || (bar/horizontalBar)
     if (type === 'pie') {
-    chDataTable = 
-        {
+    chDataTable = {
             type: type,
             data: {
                 labels: chartLabels.labels,
@@ -159,10 +158,8 @@ for (let i = 0; i< divClass.length; i++) {
 
         //Pie Chart
         thisChart = new Chart(canVas, chDataTable);
-
     } else {
-        chDataTable = 
-        {
+        chDataTable = {
             type: type,
             data: {
                 labels: chartLabels.labels,

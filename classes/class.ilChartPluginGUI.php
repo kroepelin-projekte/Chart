@@ -5,8 +5,8 @@
  *
  * @author KPG <dev@kroepelin-projekte.de>
  */
-class ilChartPluginGUI extends ilPageComponentPluginGUI
-{
+class ilChartPluginGUI extends ilPageComponentPluginGUI {
+    
     const PLUGIN_CLASS_NAME = self::class;
     const CMD_CANCEL = "cancel";
     const CMD_CREATE = "create";
@@ -62,6 +62,7 @@ class ilChartPluginGUI extends ilPageComponentPluginGUI
         global $DIC;
 
         $next_class = $DIC->ctrl()->getNextClass();
+        
         switch($next_class) {
             default:
                 // Perform valid commands

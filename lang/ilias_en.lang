@@ -3,7 +3,7 @@ cmd_insert#:#Insert Chart
 chart#:#Chart
 chart_style#:#Style
 categories#:#Categories
-description#:#Enter the title, type and data format of the chart. After inserting, you have the option of selecting colors and filling the currency symbol.
+description#:#Enter the title, type and data format of the chart. After inserting, you have the option of selecting colors and adding the currency symbol.
 description_style#:#You can define the colors of the bars in HEX colors. Example: CA3E3E
 edit_chart#:#Edit Chart
 edit_style#:#Edit Style
@@ -18,4 +18,4 @@ numbers#:#Numbers
 percent#:#Percent
 data_format#:#Data Format
 currency_symbol#:#Currency Symbol
-categories_info#:#If you have selected "Percent" as the data format, the calculation of the values will be printed in percent.
+categories_info#:#If you have selected "Percent" as the data format, the calculation of the values will be displayed in percent.

@@ -10,6 +10,7 @@ include_once("./Services/COPage/classes/class.ilPageComponentPlugin.php");
  * @ilCtrl_isCalledBy ilChartPluginGUI: ilPCPluggedGUI
  */
 class ilChartPlugin extends ilPageComponentPlugin {
+    
     const PLUGIN_ID = "chrt";
     const PLUGIN_NAME = "Chart";
     const PLUGIN_CLASS_NAME = self::class;
@@ -85,7 +86,6 @@ class ilChartPlugin extends ilPageComponentPlugin {
     public function onClone(&$properties, $plugin_version) {
         
     }
-
 
     /**
      * @param $a_mode
