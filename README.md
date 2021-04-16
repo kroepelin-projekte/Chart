@@ -16,7 +16,7 @@ Run the following commands:
 ```bash
 mkdir -p Customizing/global/plugins/Services/COPage/PageComponent
 cd Customizing/global/plugins/Services/COPage/PageComponent
-git clone https://gitlab.com/iomidev/chartplugin.git Chart
+git clone https://github.com/kroepelin-projekte/Chart.git Chart
 ```
 
 Activate the plugin in the ILIAS Plugin Administration.
