@@ -1,5 +1,5 @@
 ## Chart Plugin
-This Plugin was developed from Kröpelin Projekt GmbH (https://www.kroepelin-projekte.de)
+This Plugin was developed by Kröpelin Projekt GmbH (https://www.kroepelin-projekte.de)
 
 ## Documentation
 See in [doc/DOCUMENTATION.pdf](./doc/DOCUMENTATION.pdf)

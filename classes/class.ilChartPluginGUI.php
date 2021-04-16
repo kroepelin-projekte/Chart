@@ -47,8 +47,7 @@ class ilChartPluginGUI extends ilPageComponentPluginGUI
     /**
      * ilChartPluginGUI constructor.
      */
-    public function __construct()
-    {
+    public function __construct() {
         parent::__construct();
         $this->pl = new ilChartPlugin();
     }
@@ -59,18 +58,15 @@ class ilChartPluginGUI extends ilPageComponentPluginGUI
      * @param
      * @return
      */
-    public function executeCommand()
-    {
+    public function executeCommand() {
         global $DIC;
 
         $next_class = $DIC->ctrl()->getNextClass();
-        switch($next_class)
-        {
+        switch($next_class) {
             default:
                 // Perform valid commands
                 $cmd = $DIC->ctrl()->getCmd();
-                if (in_array($cmd, array(self::CMD_CREATE, self::CMD_SAVE, self::CMD_EDIT, self::CMD_EDIT_STYLE, self::CMD_UPDATE, self::CMD_UPDATE_STYLE, self::CMD_CANCEL)))
-                {
+                if (in_array($cmd, array(self::CMD_CREATE, self::CMD_SAVE, self::CMD_EDIT, self::CMD_EDIT_STYLE, self::CMD_UPDATE, self::CMD_UPDATE_STYLE, self::CMD_CANCEL))) {
                     $this->$cmd();
                 }
                 break;
@@ -81,8 +77,7 @@ class ilChartPluginGUI extends ilPageComponentPluginGUI
     /**
      * Form for new elements
      */
-    public function insert()
-    {
+    public function insert() {
         global $tpl;
 
         $this->setTabs(self::TAB_CHART, false);
@@ -93,16 +88,15 @@ class ilChartPluginGUI extends ilPageComponentPluginGUI
     /**
      * Save element
      */
-    public function create()
-    {
+    public function create() {
         global $DIC, $tpl;
 
         $form = $this->initFormChart(self::ACTION_INSERT);
-        if(!$form->checkInput() || !$this->validate($form)){
+        if (!$form->checkInput() || !$this->validate($form)) {
             ilUtil::sendFailure($DIC->language()->txt("form_input_not_valid"), true);
             $form->setValuesByPost();
             $tpl->setContent($form->getHtml());
-        }else{
+        } else {
             $properties = [
                 "chart_title" => $form->getInput("chart_title"),
                 "chart_type" => $form->getInput("chart_type"),
@@ -120,7 +114,7 @@ class ilChartPluginGUI extends ilPageComponentPluginGUI
             $extendedColors = $this->getExtendendColors();
             // Set default colors for chart
             $j = 0; // Key in $extendedColors array
-            for($i = 0; $i < count($form->getInput("categories")["answer"]); $i ++){
+            for ($i = 0; $i < count($form->getInput("categories")["answer"]); $i ++) {
                 $color = $extendedColors[$j];
 
                 if($j === count($extendedColors) - 1){
@@ -145,8 +139,7 @@ class ilChartPluginGUI extends ilPageComponentPluginGUI
      * @param
      * @return
      */
-    public function edit()
-    {
+    public function edit() {
         global $tpl;
 
         $this->setTabs(self::TAB_CHART, true);
@@ -157,8 +150,7 @@ class ilChartPluginGUI extends ilPageComponentPluginGUI
     /**
      * Edit Style
      */
-    public function editStyle()
-    {
+    public function editStyle() {
         global $tpl;
 
         $this->setTabs(self::TAB_STYLE, true);
@@ -172,20 +164,20 @@ class ilChartPluginGUI extends ilPageComponentPluginGUI
      * @param
      * @return
      */
-    private function update()
-    {
+    private function update() {
         global $DIC;
 
         $form = $this->initFormChart(self::ACTION_EDIT);
-        if(!$form->checkInput() || !$this->validate($form)){
+
+        if (!$form->checkInput() || !$this->validate($form)) {
             ilUtil::sendFailure($DIC->language()->txt("form_input_not_valid"), true);
             $DIC->ctrl()->redirectByClass(self::PLUGIN_CLASS_NAME, self::CMD_EDIT);
-        }else{
+        } else {
             $properties = $this->getProperties();
             $countColors = count($form->getInput("categories")["answer"]);
             $propertiesTmp = [];
             
-            for($i = 1; $i <= $countColors; $i++){
+            for($i = 1; $i <= $countColors; $i++) {
                 $propertiesTmp["color".$i] = $properties["color".$i];
             }
             $properties = [];
@@ -195,24 +187,24 @@ class ilChartPluginGUI extends ilPageComponentPluginGUI
             $properties["currency_symbol"] = $form->getInput("currency_symbol");
             $properties = array_merge($properties, $propertiesTmp);
 
-            foreach($form->getInput("categories")["answer"] as $key => $value){
+            foreach($form->getInput("categories")["answer"] as $key => $value) {
                 $properties["key".($key+1)] = $value;
             }
 
-            foreach($form->getInput("categories")["label"] as $key => $value){
+            foreach($form->getInput("categories")["label"] as $key => $value) {
                 $properties["value".($key+1)] = $value;
             }
             
             // Set colors for new datas entry in chart
-            foreach($properties as $key => $value){
-                if(strpos($key, "color") > -1 && $value === null){
+            foreach($properties as $key => $value) {
+                if(strpos($key, "color") > -1 && $value === null) {
                     $prevColorKey = substr($key, 5, strlen($key)) - 1;
                     $extendedColors = $this->getExtendendColors();
-                    foreach($extendedColors as $k => $color){
-                        if($color === $properties["color".$prevColorKey]){
-                            if($k === count($extendedColors) - 1){
+                    foreach($extendedColors as $k => $color) {
+                        if($color === $properties["color".$prevColorKey]) {
+                            if($k === count($extendedColors) - 1) {
                                 $properties[$key] = $extendedColors[0];
-                            }else{
+                            } else {
                                 $properties[$key] = $extendedColors[$k + 1];
                             }
                         }
@@ -231,8 +223,7 @@ class ilChartPluginGUI extends ilPageComponentPluginGUI
     /**
      * Update Style Form
      */
-    private function updateStyle()
-    {
+    private function updateStyle() {
         global $DIC;
 
         $form = $this->initFormStyleEdit();
@@ -257,32 +248,31 @@ class ilChartPluginGUI extends ilPageComponentPluginGUI
      * @param $form
      * @return bool
      */
-    private function validate($form): bool
-    {
+    private function validate($form): bool {
         $labels = $form->getInput("categories")["label"];
         $validate = true;
-        foreach($labels as $k => $label){
+        foreach($labels as $k => $label) {
 
-            if($label === ""){
+            if($label === "") {
                 $validate = false;
                 break;
             }
 
-            if(preg_match('#[^0-9.,]#', $label)){
+            if(preg_match('#[^0-9.,]#', $label)) {
                 $validate = false;
                 break;
             }
 
             $explodeDot = explode(".", $label);
             $explodeComma = explode(",", $label);
-            if((count($explodeDot) > 2 || count($explodeComma) > 2) || (count($explodeDot) > 1 && count($explodeComma) > 1) ||
+            if ((count($explodeDot) > 2 || count($explodeComma) > 2) || (count($explodeDot) > 1 && count($explodeComma) > 1) ||
                 (strpos($label, '.') === strlen($label) - 1 || strpos($label, ',') === strlen($label) -1) ||
-                (strpos($label, '.') === 0 || strpos($label, ',') === 0)){
+                (strpos($label, '.') === 0 || strpos($label, ',') === 0)) {
 
                 $validate = false;
             }
 
-            if(!strpos($label, ".") && substr($label, 0, 1) == "0" && strlen($label) > 1){
+            if (!strpos($label, ".") && substr($label, 0, 1) == "0" && strlen($label) > 1) {
                 $validate = false;
             }
         }
@@ -295,24 +285,23 @@ class ilChartPluginGUI extends ilPageComponentPluginGUI
      *
      * @return array
      */
-    private function getExtendendColors(): array
-    {
+    private function getExtendendColors(): array {
         $parentType = $this->getPlugin()->getParentType();
         $parentId = $this->getPlugin()->getParentId();
 
-        if($parentType === "copa"){  // Case: parent is content page
+        if($parentType === "copa") {  // Case: parent is content page
             $parentRefId = $_GET["ref_id"];
             $objStylesheet = new ilObjContentPage($parentRefId);
             $styleId = $objStylesheet->getStyleSheetId();
-        }else{
+        } else {
             $objStylesheet = new ilObjStyleSheet();
             $styleId = $objStylesheet->lookupObjectStyle($parentId);
         }
 
         $extendedColorsCode = [];
-        if($styleId === 0){
+        if ($styleId === 0) {
             $extendedColorsCode = $this->getExtendedColorsDefaultILIAS();
-        }else {
+        } else {
             $objStyle = new ilObjStyleSheet($styleId);
             $colors = $objStyle->getColors();
 
@@ -330,8 +319,7 @@ class ilChartPluginGUI extends ilPageComponentPluginGUI
      *
      * @return array
      */
-    private function getExtendedColorsDefaultILIAS(): array
-    {
+    private function getExtendedColorsDefaultILIAS(): array {
         return [
             'f3de2c',
             'cddc39',
@@ -351,8 +339,7 @@ class ilChartPluginGUI extends ilPageComponentPluginGUI
      * @param $action
      * @return ilPropertyFormGUI
      */
-    public function initFormChart($action)
-    {
+    public function initFormChart($action) {
         global $DIC;
 
         include_once("Services/Form/classes/class.ilPropertyFormGUI.php");
@@ -394,8 +381,7 @@ class ilChartPluginGUI extends ilPageComponentPluginGUI
         $selectDataFormat->setValue($prop["data_format"]);
         $form->addItem($selectDataFormat);
 
-        if($action === self::ACTION_EDIT){
-
+        if ($action === self::ACTION_EDIT) {
             $symbolField = new ilTextInputGUI($this->getPlugin()->txt("currency_symbol"), "currency_symbol");
             $symbolField->setRequired(false);
             $symbolField->setValue($prop["currency_symbol"]);
@@ -417,29 +403,29 @@ class ilChartPluginGUI extends ilPageComponentPluginGUI
         $matrixQuestion = new SurveyMatrixQuestion();
         $matrixQuestion->flushRows();
 
-        if($action === self::ACTION_INSERT){
+        if ($action === self::ACTION_INSERT) {
             $matrixQuestion->getRows()->addCategory("");
-        }else{
+        } else {
             $tmp = [];
-            foreach($prop as $k => $val){
-                if(strpos($k, "key") > -1){
+            foreach ($prop as $k => $val) {
+                if (strpos($k, "key") > -1) {
                     $index = substr($k, strpos($k, "key")+3, strlen($k));
                     $tmp[$index]["key"] = $val;
-                }elseif(strpos($k, "value") > -1){
+                } elseif (strpos($k, "value") > -1) {
                     $indexValue = substr($k, strpos($k, "value")+5, strlen($k));
                     $tmp[$indexValue]["value"] = $val;
                 }
             }
 
-            foreach($tmp as $key => $value){
+            foreach ($tmp as $key => $value) {
                 $matrixQuestion->getRows()->addCategory($tmp[$key]["key"], "", 0, $tmp[$key]["value"]);
             }
         }
         $rows->setValues($matrixQuestion->getRows());
 
-        if($action === self::ACTION_INSERT){
+        if ($action === self::ACTION_INSERT) {
             $form->addCommandButton(self::CMD_CREATE, $DIC->language()->txt(self::CMD_SAVE));
-        }else {
+        } else {
             $form->addCommandButton(self::CMD_UPDATE, $DIC->language()->txt(self::CMD_SAVE));
         }
         $form->addCommandButton(self::CMD_CANCEL, $DIC->language()->txt(self::CMD_CANCEL));
@@ -453,8 +439,7 @@ class ilChartPluginGUI extends ilPageComponentPluginGUI
      *
      * @return ilPropertyFormGUI
      */
-    public function initFormStyleEdit()
-    {
+    public function initFormStyleEdit() {
         global $DIC;
 
         include_once("Services/Form/classes/class.ilPropertyFormGUI.php");
@@ -468,8 +453,8 @@ class ilChartPluginGUI extends ilPageComponentPluginGUI
         $prop = $this->getProperties();
 
         $countColors = 0;
-        foreach($prop as $k => $val){
-            if(strpos($k, "key") > -1){
+        foreach ($prop as $k => $val) {
+            if (strpos($k, "key") > -1) {
                 $i = substr($k, strpos($k, "key")+3, strlen($k));
                 $colorInput = new ilColorPickerInputGUI($val, "color".$i);
 
@@ -497,8 +482,7 @@ class ilChartPluginGUI extends ilPageComponentPluginGUI
     /**
      * Cancel
      */
-    function cancel()
-    {
+    function cancel() {
         $this->returnToParent();
     }
 
@@ -508,15 +492,12 @@ class ilChartPluginGUI extends ilPageComponentPluginGUI
      * @param string $chart_type
      * @return string
      */
-    private function getChartType(string $chart_type) :string 
-    {
-        if ($chart_type == '1'){
+    private function getChartType(string $chart_type) :string {
+        if ($chart_type == '1') {
             return 'horizontalBar';
-        }
-        else if ($chart_type == '2'){
+        } else if ($chart_type == '2') {
             return 'bar';
-        }
-        else{
+        } else{
             return 'pie';
         }
     }
@@ -527,16 +508,15 @@ class ilChartPluginGUI extends ilPageComponentPluginGUI
      * @param array $a_properties 
      * @return string
      */
-    private function percentDataFormat(array $a_properties) :string
-    {
+    private function percentDataFormat(array $a_properties) :string {
         $summ = 0;
         $valArray = [];
         $result = [];
         $percent = "";
         
-        if($a_properties['data_format'] === '2'){
+        if ($a_properties['data_format'] === '2') {
             foreach ($a_properties as $key => $value) {
-                if(strpos($key, "val") > -1){
+                if (strpos($key, "val") > -1) {
                     $value = str_replace(',', '.', $value);                    
                     $valArray[] = floatval($value);
                     $valInteger = floatval($value);
@@ -560,12 +540,11 @@ class ilChartPluginGUI extends ilPageComponentPluginGUI
      * @param array $a_properties
      * @return string
      */
-    private function keyInputField(array $a_properties) :string
-    {
+    private function keyInputField(array $a_properties) :string {
         $keyFields = "";
         
         foreach ($a_properties as $key => $value) {
-            if(strpos($key, "key") > -1){                
+            if (strpos($key, "key") > -1) {
                 $keyFields .= '<input type="hidden" id="'.$key.'" value="'.$value.'">';
             }
         }
@@ -578,12 +557,11 @@ class ilChartPluginGUI extends ilPageComponentPluginGUI
      * @param array $a_properties
      * @return string
      */
-    private function valueInputField(array $a_properties) :string
-    {
+    private function valueInputField(array $a_properties) :string {
         $valueFields = "";
         
         foreach ($a_properties as $key => $value) {
-            if(strpos($key, "val") > -1){
+            if (strpos($key, "val") > -1) {
                 $value = str_replace(',', '.', $value);
                 $valueFields .= '<input type="hidden" id="'.$key.'" value="'.round($value, 2).'">';
             }
@@ -597,12 +575,11 @@ class ilChartPluginGUI extends ilPageComponentPluginGUI
      * @param array $a_properties
      * @return string
      */
-    private function colorInputField(array $a_properties) :string
-    {
+    private function colorInputField(array $a_properties) :string {
         $colorFields = "";
         
         foreach ($a_properties as $key => $value) {
-            if(strpos($key, "color") > -1){
+            if (strpos($key, "color") > -1) {
                 $colorFields .= '<input type="hidden" id="'.$key.'" value="'.$value.'">';
             }
         }
@@ -617,8 +594,7 @@ class ilChartPluginGUI extends ilPageComponentPluginGUI
      * @param $a_plugin_version
      * @return mixed
      */
-    public function getElementHTML($a_mode, array $a_properties, $a_plugin_version) 
-    {
+    public function getElementHTML($a_mode, array $a_properties, $a_plugin_version) {
         $pl = $this->getPlugin();
         $tpl = $pl->getTemplate("tpl.content.html");
         
@@ -649,8 +625,7 @@ class ilChartPluginGUI extends ilPageComponentPluginGUI
      * @param $a_active
      * @param $tabStyleVisible
      */
-    private function setTabs($a_active, $tabStyleVisible)
-    {
+    private function setTabs($a_active, $tabStyleVisible) {
         global $DIC;
 
         $pl = $this->getPlugin();
@@ -658,17 +633,14 @@ class ilChartPluginGUI extends ilPageComponentPluginGUI
         $DIC->tabs()->addTab(self::TAB_CHART, $pl->txt(self::LANG_CHART),
             $DIC->ctrl()->getLinkTarget($this, self::CMD_EDIT));
 
-        if($tabStyleVisible) {
+        if ($tabStyleVisible) {
             $DIC->tabs()->addTab(self::TAB_STYLE, $pl->txt(self::LANG_CHART_STYLE),
                 $DIC->ctrl()->getLinkTarget($this, self::CMD_EDIT_STYLE));
         }
 
-        if($a_active === "chart"){
-
+        if ($a_active === "chart") {
             $DIC->tabs()->activateTab(self::TAB_CHART);
-
-        }elseif($a_active === "style"){
-
+        } elseif ($a_active === "style") {
             $DIC->tabs()->activateTab(self::TAB_STYLE);
         }
     }
