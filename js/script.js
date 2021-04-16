@@ -4,7 +4,7 @@ var div = [];
 var j = 1;
 
 //Seperate DIV Container 
-for(let i = 0; i< divClass.length; i++){
+for (let i = 0; i< divClass.length; i++) {
     
     //Variables let
     let title, type, chId, chDataFormat, chCurrencySymbol, keyDiv, valueDiv, colorDiv, percDiv, chartDataSet, chartLabels, canVas, chDataTable, thisChart, optionsPie, optionsBar, symbol;
@@ -30,15 +30,15 @@ for(let i = 0; i< divClass.length; i++){
     chartLabels = {labels:[]};
 
     //If DataFormat === percent
-    if(chDataFormat === "2"){
-        for(let k = 0;k<keyDiv.length; k++){
+    if (chDataFormat === "2") {
+        for (let k = 0;k<keyDiv.length; k++) {
             chartDataSet.data[k] = percDiv[k].value;
         }
         symbol = function(value) {
                     return value + ' %';
                 };
-    }else{
-        for(let k = 0;k<keyDiv.length; k++){
+    } else {
+        for (let k = 0;k<keyDiv.length; k++) {
             chartDataSet.data[k] = valueDiv[k].value;
         }
         symbol = function(value) {
@@ -47,12 +47,12 @@ for(let i = 0; i< divClass.length; i++){
     }
 
     //Insert chartLabels
-    for(let k = 0;k<keyDiv.length; k++){
+    for (let k = 0;k<keyDiv.length; k++) {
         chartLabels.labels[k] = keyDiv[k].value;
     }
 
     //Insert color
-    for(let k = 0; k < colorDiv.length; k++){
+    for (let k = 0; k < colorDiv.length; k++) {
         chartDataSet.backgroundColor[k] = "#" + colorDiv[k].value;
         chartDataSet.borderColor[k] = "#" + colorDiv[k].value;
     }
@@ -140,7 +140,7 @@ for(let i = 0; i< divClass.length; i++){
     canVas = document.getElementById(chId).getContext('2d');
 
     //Check Datatype === pi || (bar/horizontalBar)
-    if(type === 'pie'){
+    if (type === 'pie') {
     chDataTable = 
         {
             type: type,
@@ -160,7 +160,7 @@ for(let i = 0; i< divClass.length; i++){
         //Pie Chart
         thisChart = new Chart(canVas, chDataTable);
 
-    }else{
+    } else {
         chDataTable = 
         {
             type: type,
