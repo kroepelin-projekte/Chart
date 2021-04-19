@@ -75,7 +75,7 @@ class ilChartPlugin extends ilPageComponentPlugin {
         global $ilCtrl;
 
         if ($ilCtrl->getCmd() !== "moveAfter") {
-		// TODO: soll hier noch was rein?
+
         }
     }
 
