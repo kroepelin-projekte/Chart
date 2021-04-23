@@ -1,17 +1,16 @@
 <?php
 /* Copyright (c) 1998-2015 ILIAS open source, Extended GPL, see LICENSE */
 
-include_once("./Services/COPage/classes/class.ilPageComponentPlugin.php");
+include_once "./Services/COPage/classes/class.ilPageComponentPlugin.php";
 
 /**
  * Class ilChartPlugin
  *
  * @author KPG <dev@kroepelin-projekte.de>
- *
  * @ilCtrl_isCalledBy ilChartPluginGUI: ilPCPluggedGUI
  */
-class ilChartPlugin extends ilPageComponentPlugin {
-    
+class ilChartPlugin extends ilPageComponentPlugin
+{
     const PLUGIN_ID = "chrt";
     const PLUGIN_NAME = "Chart";
     const PLUGIN_CLASS_NAME = self::class;
@@ -27,9 +26,10 @@ class ilChartPlugin extends ilPageComponentPlugin {
     protected static $instance = null;
 
     /**
-     * ilChartPlugin constructor.
+     * Constructor ilChartPlugin
      */
-    public function __construct() {
+    public function __construct()
+    {
         parent::__construct();
         $this->includePluginClasses();
         $this->config = new ilChartConfig($this->getSlotId().'_'.$this->getId());
@@ -38,16 +38,17 @@ class ilChartPlugin extends ilPageComponentPlugin {
     /**
      * @return string
      */
-    public function getPluginName() {
+    public function getPluginName()
+    {
         return self::PLUGIN_NAME;
     }
 
     /**
      * @param string $a_type
-     *
      * @return bool
      */
-    public function isValidParentType($a_type) {
+    public function isValidParentType($a_type)
+    {
         // Allow in all parent types
         return true;
     }
@@ -55,7 +56,8 @@ class ilChartPlugin extends ilPageComponentPlugin {
     /**
      * Include classes in plugin
      */
-    public function includePluginClasses() {
+    public function includePluginClasses()
+    {
         $this->includeClass('class.ilChartConfig.php');
         $this->includeClass('class.ilChartPluginGUI.php');
     }
@@ -63,20 +65,20 @@ class ilChartPlugin extends ilPageComponentPlugin {
     /**
      * @return ilChartConfig
      */
-    public function getConfig() {
+    public function getConfig()
+    {
         return $this->config;
     }
 
     /**
      * @param array  $properties
      * @param string $plugin_version
-     *
      */
-    public function onDelete($properties, $plugin_version) {
+    public function onDelete($properties, $plugin_version)
+    {
         global $ilCtrl;
-
+        
         if ($ilCtrl->getCmd() !== "moveAfter") {
-
         }
     }
 
@@ -84,25 +86,25 @@ class ilChartPlugin extends ilPageComponentPlugin {
      * @param array  $properties
      * @param string $plugin_version
      */
-    public function onClone(&$properties, $plugin_version) {
-        
+    public function onClone(&$properties, $plugin_version)
+    {
     }
 
     /**
      * @param $a_mode
-     *
      * @return array
      */
-    function getCssFiles($a_mode) {
+    public function getCssFiles($a_mode): array
+    {
         return ["css/chart.css"];
     }
-
+    
     /**
-     * 
-     * @param type $a_mode
+     * @param  type  $a_mode
      * @return array
      */
-    function getJavascriptFiles($a_mode):array {
+    public function getJavascriptFiles($a_mode): array
+    {
         $js = ["js/Chart.min.js", "js/chartjs-plugin-datalabels.min.js"];
         return $js;
     }

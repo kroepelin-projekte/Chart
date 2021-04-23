@@ -6,7 +6,8 @@
 *
 * @author KPG <dev@kroepelin-projekte.de>
 */
-class ilChartConfig {
+class ilChartConfig
+{
     /**
     * @var ilSetting
     */
@@ -16,7 +17,8 @@ class ilChartConfig {
     * ilChartConfig constructor.
     * @param string $settingsId
     */
-    public function __construct($settingsId) {
+    public function __construct($settingsId)
+    {
         $this->settings = new ilSetting($settingsId);
     }
 
@@ -24,7 +26,8 @@ class ilChartConfig {
      * @param $check
      * @return string
      */
-    public function getOption($check) {
+    public function getOption($check)
+    {
         return $this->settings->get($check, 0);
     }
 
@@ -32,7 +35,8 @@ class ilChartConfig {
      * @param $check
      * @param $checked
      */
-    public function setOption($check, $checked) {
+    public function setOption($check, $checked)
+    {
         $this->settings->set($check, $checked);
     }
 
@@ -40,7 +44,8 @@ class ilChartConfig {
      * @param $value
      * @return string
      */
-    public function getValue($value) {
+    public function getValue($value)
+    {
         return $this->settings->get($value, 0);
     }
 
@@ -48,8 +53,8 @@ class ilChartConfig {
      * @param $value
      * @param $_value
      */
-    public function setValue($value, $_value) {
+    public function setValue($value, $_value)
+    {
         $this->settings->set($value, $_value);
     }
 }
-

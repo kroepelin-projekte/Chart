@@ -3,7 +3,6 @@ var div = [];
 var j = 1;
 
 for (let i = 0; i< divClass.length; i++) {
-    
     let title, type, chId, chDataFormat, chCurrencySymbol, keyDiv, valueDiv, colorDiv, percDiv, chartDataSet, chartLabels, canVas, chDataTable, thisChart, optionsPie, optionsBar, symbol;
 
     div[i] = document.getElementById('chart_div_'+j).children;
@@ -24,22 +23,22 @@ for (let i = 0; i< divClass.length; i++) {
         for (let k = 0; k<keyDiv.length; k++) {
             chartDataSet.data[k] = percDiv[k].value;
         }
-        symbol = function(value) {
+        symbol = function (value) {
                     return value + ' %';
                 };
     } else {
         for (let k = 0; k<keyDiv.length; k++) {
             chartDataSet.data[k] = valueDiv[k].value;
         }
-        symbol = function(value) {
+        symbol = function (value) {
                     return chCurrencySymbol+ ' ' + value;
                 };
     }
-
+    
     for (let k = 0; k<keyDiv.length; k++) {
         chartLabels.labels[k] = keyDiv[k].value;
     }
-
+    
     for (let k = 0; k < colorDiv.length; k++) {
         chartDataSet.backgroundColor[k] = "#" + colorDiv[k].value;
         chartDataSet.borderColor[k] = "#" + colorDiv[k].value;
