@@ -151,7 +151,8 @@ for (let i = 0; i< divClass.length; i++) {
                     data: chartDataSet.data,
                     backgroundColor: chartDataSet.backgroundColor,
                     borderColor: '#000000',
-                    borderWidth: 1
+                    borderWidth: 1,
+                    categoryPercentage: 0.5
                 }]
             },
             options: optionsBar

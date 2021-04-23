@@ -1,4 +1,5 @@
 <?php
+/* Copyright (c) 1998-2015 ILIAS open source, Extended GPL, see LICENSE */
 
 /**
  * Class ilChartPluginGUI
@@ -102,7 +103,7 @@ class ilChartPluginGUI extends ilPageComponentPluginGUI {
                 "chart_title" => $form->getInput("chart_title"),
                 "chart_type" => $form->getInput("chart_type"),
                 "data_format" => $form->getInput("data_format"),
-                "currency_symbol" => "",
+                "currency_symbol" => $form->getInput("currency_symbol"),
             ];
             foreach ($form->getInput("categories")["answer"] as $key => $value) {
 
@@ -371,23 +372,22 @@ class ilChartPluginGUI extends ilPageComponentPluginGUI {
         $selectChartType->setValue($prop["chart_type"]);
         $form->addItem($selectChartType);
 
-        // Select data format
-        $selectDataFormat = new ilSelectInputGUI ($this->getPlugin()->txt("data_format"), "data_format");
-        $selectDataFormat->setRequired(true);
-        $optionsDataFormat = [
-            "1" => $this->getPlugin()->txt("numbers"),
-            "2" => $this->getPlugin()->txt("percent"),
-        ];
-        $selectDataFormat->setOptions($optionsDataFormat);
-        $selectDataFormat->setValue($prop["data_format"]);
-        $form->addItem($selectDataFormat);
+        // Radio buttons for data format
+        $radioGroup = new ilRadioGroupInputGUI($this->getPlugin()->txt("data_format"), "data_format");
+        $radioGroup->setRequired(false);
+        $radioGroup->setValue($prop["data_format"]);
 
-        if ($action === self::ACTION_EDIT) {
-            $symbolField = new ilTextInputGUI($this->getPlugin()->txt("currency_symbol"), "currency_symbol");
-            $symbolField->setRequired(false);
-            $symbolField->setValue($prop["currency_symbol"]);
-            $form->addItem($symbolField);
-        }
+        // Radio button for data format number with suditem for currency symbol
+        $radioNumber = new ilRadioOption($this->getPlugin()->txt("number"), "1");
+        $currencySymbol = new ilTextInputGUI($this->getPlugin()->txt("currency_symbol"), "currency_symbol");
+        $currencySymbol->setInfo($this->getPlugin()->txt('add_currency_symbol'));
+        $currencySymbol->setValue($prop["currency_symbol"]);
+        $radioNumber->addSubItem($currencySymbol);
+        $radioGroup->addOption($radioNumber);
+
+        $radioPercent = new ilRadioOption($this->getPlugin()->txt("percent"), "2");
+        $radioGroup->addOption($radioPercent);
+        $form->addItem($radioGroup);
 
         $header = new ilFormSectionHeaderGUI();
         $header->setTitle($this->getPlugin()->txt("categories"));
