@@ -7,7 +7,6 @@ include_once "./Services/COPage/classes/class.ilPageComponentPlugin.php";
  * Class ilChartPlugin
  *
  * @author KPG <dev@kroepelin-projekte.de>
- * @ilCtrl_isCalledBy ilChartPluginGUI: ilPCPluggedGUI
  */
 class ilChartPlugin extends ilPageComponentPlugin
 {
@@ -59,7 +58,6 @@ class ilChartPlugin extends ilPageComponentPlugin
     public function includePluginClasses()
     {
         $this->includeClass('class.ilChartConfig.php');
-        $this->includeClass('class.ilChartPluginGUI.php');
     }
 
     /**

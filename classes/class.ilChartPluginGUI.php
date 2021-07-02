@@ -5,6 +5,7 @@
  * Class ilChartPluginGUI
  *
  * @author KPG <dev@kroepelin-projekte.de>
+ * @ilCtrl_isCalledBy ilChartPluginGUI: ilPCPluggedGUI
  */
 class ilChartPluginGUI extends ilPageComponentPluginGUI
 {
