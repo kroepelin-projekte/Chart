@@ -5,7 +5,7 @@ This Plugin was developed by Kröpelin Projekt GmbH (https://www.kroepelin-proje
 See [doc/DOCUMENTATION.pdf](./doc/DOCUMENTATION.pdf)
 
 ## Requirements
-* ILIAS 6
+* ILIAS 6 or 7
 * PHP >= 7.2
 
 ## Installation and Update
