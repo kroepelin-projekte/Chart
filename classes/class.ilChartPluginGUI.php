@@ -29,6 +29,7 @@ class ilChartPluginGUI extends ilPageComponentPluginGUI
     const LANG_CHART_HORIZONTAL_BAR = "horizontal_bar_chart";
     const LANG_CHART_VERTICAL_BAR = "vertical_bar_chart";
     const LANG_CHART_PIE_CHART = "pie_chart";
+    const LANG_CHART_LINE_CHART = 'line_chart';
     const LANG_OBJ_MODIFIED = "msg_obj_modified";
     const ACTION_INSERT = "insert";
     const ACTION_EDIT = "edit";
@@ -369,7 +370,8 @@ class ilChartPluginGUI extends ilPageComponentPluginGUI
         $optionsChart = [
             "1" => $this->getPlugin()->txt(self::LANG_CHART_HORIZONTAL_BAR),
             "2" => $this->getPlugin()->txt(self::LANG_CHART_VERTICAL_BAR),
-            "3" => $this->getPlugin()->txt(self::LANG_CHART_PIE_CHART)
+            "3" => $this->getPlugin()->txt(self::LANG_CHART_PIE_CHART),
+            "4" => $this->getPlugin()->txt(self::LANG_CHART_LINE_CHART)
         ];
         $selectChartType->setOptions($optionsChart);
         $selectChartType->setValue($prop["chart_type"]);
@@ -426,6 +428,22 @@ class ilChartPluginGUI extends ilPageComponentPluginGUI
             }
         }
         $rows->setValues($matrixQuestion->getRows());
+
+
+
+
+
+        $header = new ilFormSectionHeaderGUI();
+        $header->setTitle($this->getPlugin()->txt("categories"));
+        $header->setInfo($this->getPlugin()->txt("categories_info"));
+        $form->addItem($header);
+
+
+
+
+
+
+
 
         if ($action === self::ACTION_INSERT) {
             $form->addCommandButton(self::CMD_CREATE, $DIC->language()->txt(self::CMD_SAVE));

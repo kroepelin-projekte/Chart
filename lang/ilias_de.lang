@@ -9,6 +9,7 @@ edit_chart#:#Diagramm Bearbeiten
 edit_style#:#Style Bearbeiten
 horizontal_bar_chart#:#Balkendiagramm
 vertical_bar_chart#:#Säulendiagramm
+line_chart#:#Liniediagramm
 pie_chart#:#Tortendiagramm
 chart_title#:#Diagrammtitel
 chart_type#:#Diagrammtyp
