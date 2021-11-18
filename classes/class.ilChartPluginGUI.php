@@ -326,9 +326,6 @@ class ilChartPluginGUI extends ilPageComponentPluginGUI
             $countDatasets = $this->getCountPropertiesByType($properties, "title_dataset");
             $countCategory = $this->getCountPropertiesByType($properties, "title_category");
 
-            var_dump($countDatasets);
-            var_dump($countCategory);
-
             for ($i = 0; $i < $countCategory; $i++) {
                 for ($j = 0; $j < $countDatasets; $j++) {
                     $properties["value_dataset_" . ($j+1). "_category_".($i+1)] = $form->getInput("dataset_" . ($j+1). "_category_".($i+1));
@@ -890,10 +887,9 @@ class ilChartPluginGUI extends ilPageComponentPluginGUI
 
                 for($j = 0; $j < $countDatasets; $j++) {
 
-
-
+                    var_dump($prop["value_dataset_" .($j+1)."_category_".($i+1)]);
                     $dataset = new ilTextInputGUI($prop["title_dataset_".($j+1)], "dataset_".($j+1)."_category_".($i+1));
-                    $dataset->setValue($prop["value_dataset_" . ($i + 1) . "_category_" . ($j + 1)]);
+                    $dataset->setValue($prop["value_dataset_" .($j+1)."_category_".($i+1)]);
                     $radioNumber->addSubItem($dataset);
                 }
             }
