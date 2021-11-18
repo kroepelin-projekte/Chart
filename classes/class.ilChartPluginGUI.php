@@ -19,6 +19,7 @@ class ilChartPluginGUI extends ilPageComponentPluginGUI
     const CMD_EDIT_STYLE = "editStyle";
     const CMD_EDIT_DATASETS = "editDatasets";
     const CMD_UPDATE_STYLE = "updateStyle";
+    const CMD_UPDATE_DATASETS = "updateDatasets";
     const TAB_CHART = "chart";
     const TAB_STYLE = "style";
     const TAB_STYLE_DATASETS = "style-datasets";
@@ -76,7 +77,7 @@ class ilChartPluginGUI extends ilPageComponentPluginGUI
             default:
                 // Perform valid commands
                 $cmd = $DIC->ctrl()->getCmd();
-                if (in_array($cmd, array(self::CMD_CREATE, self::CMD_SAVE, self::CMD_EDIT, self::CMD_EDIT_STYLE, self::CMD_EDIT_DATASETS, self::CMD_UPDATE, self::CMD_UPDATE_STYLE, self::CMD_CANCEL))) {
+                if (in_array($cmd, array(self::CMD_CREATE, self::CMD_SAVE, self::CMD_EDIT, self::CMD_EDIT_STYLE, self::CMD_EDIT_DATASETS, self::CMD_UPDATE, self::CMD_UPDATE_STYLE, self::CMD_UPDATE_DATASETS, self::CMD_CANCEL))) {
                     $this->$cmd();
                 }
                 break;
@@ -122,6 +123,13 @@ class ilChartPluginGUI extends ilPageComponentPluginGUI
 
             foreach ($form->getInput("datasets") as $key => $value) {
                 $properties["title_dataset_" . ($key + 1)] = $value;
+            }
+
+            foreach ($form->getInput("categories") as $key => $value) {
+
+                foreach ($form->getInput("datasets") as $k => $val) {
+                    $properties["value_dataset_" . ($k + 1) . "_category_" . ($key + 1)] = "";
+                }
             }
 
             /*foreach ($form->getInput("categories")["answer"] as $key => $value) {
@@ -171,9 +179,9 @@ class ilChartPluginGUI extends ilPageComponentPluginGUI
 
             if ($this->createElement($properties)) {
 
-               // var_dump($properties);
+                var_dump($properties);
                 ilUtil::sendSuccess($DIC->language()->txt(self::LANG_OBJ_MODIFIED), true);
-                $this->returnToParent();
+                //$this->returnToParent();
             }
         }
     }
@@ -305,6 +313,56 @@ class ilChartPluginGUI extends ilPageComponentPluginGUI
                 $this->returnToParent();
             }
         }
+    }
+
+    private function updateDatasets()
+    {
+        global $DIC;
+
+        $form = $this->initFormStyleEdit();
+        if ($form->checkInput()) {
+            $properties = $this->getProperties();
+
+            $countDatasets = $this->getCountPropertiesByType($properties, "title_dataset");
+            $countCategory = $this->getCountPropertiesByType($properties, "title_category");
+
+            var_dump($countDatasets);
+            var_dump($countCategory);
+
+            for ($i = 0; $i < $countCategory; $i++) {
+                for ($j = 0; $j < $countDatasets; $j++) {
+                    $properties["value_dataset_" . ($j+1). "_category_".($i+1)] = $form->getInput("dataset_" . ($j+1). "_category_".($i+1));
+                }
+            }
+            var_dump($properties);
+            /*$countColorsCategories = $form->getInput("count_colors_categories");
+            $countColorsDatasets = $form->getInput("count_colors_datasets");
+
+            for ($i = 0; $i < $countColorsCategories; $i++) {
+                $properties["color_category_".($i+1)] = $form->getInput("color_category_".($i+1));
+            }
+
+            for ($i = 0; $i < $countColorsDatasets; $i++) {
+                $properties["color_dataset_".($i+1)] = $form->getInput("color_dataset_".($i+1));
+            }
+
+            if ($this->updateElement($properties)) {
+                ilUtil::sendSuccess($DIC->language()->txt(self::LANG_OBJ_MODIFIED), true);
+                $this->returnToParent();
+            }*/
+        }
+    }
+
+    private function getCountPropertiesByType(array $properties, string $searchString): int
+    {
+        $count = 0;
+        foreach($properties as $key => $value){
+
+            if (strpos($key, $searchString) > -1) {
+                $count += 1;
+            }
+        }
+        return $count;
     }
 
     /**
@@ -556,9 +614,46 @@ class ilChartPluginGUI extends ilPageComponentPluginGUI
         $header->setTitle($this->lng->txt('categories'));
         $form->addItem($header);
 
+        $countCategory = $this->getCountPropertiesByType($prop, 'title_category');
+
+        $categoriesTitle = [];
+        for($i = 0; $i < $countCategory; $i++){
+            $categoriesTitle[] = $prop["title_category_".($i + 1)];
+        }
+
         $category = new ilTextInputGUI($this->lng->txt("title"), "categories");
         $category->setRequired(true);
         $category->setMulti(true, true);
+        $form->addItem($category);
+
+        $category->setMultiValues($categoriesTitle);
+
+        $countDataset = $this->getCountPropertiesByType($prop, 'title_dataset');
+
+        $datasetsTitle = [];
+        for($i = 0; $i < $countDataset; $i++){
+            $datasetsTitle[] = $prop["title_dataset_".($i + 1)];
+        }
+
+
+
+        var_dump($categoriesTitle);
+
+        $header = new ilFormSectionHeaderGUI();
+        $header->setTitle($this->getPlugin()->txt('datasets'));
+        $form->addItem($header);
+
+        $dataset = new ilTextInputGUI($this->getPlugin()->txt("dataset"), "datasets");
+        //$dataset->setRequired(true);
+        $dataset->setMulti(true, true);
+        $dataset->setMultiValues($datasetsTitle);
+        $form->addItem($dataset);
+
+
+
+        /*$category = new ilTextInputGUI($this->lng->txt("title"), "categories");
+        $category->setRequired(true);
+        $category->setMulti(true, true);*/
 
 
 
@@ -596,20 +691,17 @@ class ilChartPluginGUI extends ilPageComponentPluginGUI
 
         $category->addSubItem($rows);*/
 
-        $form->addItem($category);
+        //$form->addItem($category);
 
         // Datasets
-        $header = new ilFormSectionHeaderGUI();
+        /*$header = new ilFormSectionHeaderGUI();
         $header->setTitle($this->getPlugin()->txt('datasets'));
         $form->addItem($header);
 
         $dataset = new ilTextInputGUI($this->getPlugin()->txt("dataset"), "datasets");
         $dataset->setRequired(true);
         $dataset->setMulti(true, true);
-
-
-        //$dataset->setValue($prop["datasets"]);
-        $form->addItem($dataset);
+        $form->addItem($dataset);*/
 
         //$formField->setInteractionEnabled(true);
 
@@ -789,20 +881,21 @@ class ilChartPluginGUI extends ilPageComponentPluginGUI
 
 
 
-            $radioGroup = new ilRadioGroupInputGUI($this->getPlugin()->txt("data_format"), "data_format");
+            $radioGroup = new ilRadioGroupInputGUI($this->getPlugin()->txt("datasets"), "dataset_values");
             for($i = 0; $i < $countCategories; $i++){
 
-                $radioNumber = new ilRadioOption($prop["title_category_".($i+1)], "1");
+                $radioNumber = new ilRadioOption($prop["title_category_".($i+1)], "dataset". ($i+1));
                 $radioGroup->addOption($radioNumber);
+                $radioGroup->setValue("dataset". ($i+1));
 
                 for($j = 0; $j < $countDatasets; $j++) {
 
+
+
                     $dataset = new ilTextInputGUI($prop["title_dataset_".($j+1)], "dataset_".($j+1)."_category_".($i+1));
-                    $dataset->setValue( $prop["datasets"]["category_".($i+1)][$j]);
+                    $dataset->setValue($prop["value_dataset_" . ($i + 1) . "_category_" . ($j + 1)]);
                     $radioNumber->addSubItem($dataset);
                 }
-
-
             }
             $form->addItem($radioGroup);
 
@@ -822,7 +915,7 @@ class ilChartPluginGUI extends ilPageComponentPluginGUI
         $form->addItem($titleChart);*/
 
 
-        $form->addCommandButton(self::CMD_UPDATE_STYLE, $DIC->language()->txt(self::CMD_SAVE));
+        $form->addCommandButton(self::CMD_UPDATE_DATASETS, $DIC->language()->txt(self::CMD_SAVE));
         $form->addCommandButton(self::CMD_CANCEL, $DIC->language()->txt(self::CMD_CANCEL));
         $form->setFormAction($DIC->ctrl()->getFormAction($this));
 
