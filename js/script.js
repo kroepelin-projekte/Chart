@@ -2,13 +2,20 @@ var divClass = document.getElementsByClassName('chdiv');
 var div = [];
 var j = 1;
 
-for (let i = 0; i< divClass.length; i++) {
-    let title, type, chId, chDataFormat, chCurrencySymbol, keyDiv, valueDiv, colorDiv, percDiv, chartDataSet, chartLabels, canVas, chDataTable, thisChart, optionsPie, optionsBar, symbol;
+for (let i = 0; i < divClass.length; i++) {
+    //was testing here with highestChartData and axes but now they are not there
+    let title, type, chId, chDataFormat, chCurrencySymbol, chMaxSize, keyDiv, valueDiv, colorDiv, percDiv, chartDataSet, chartLabels, canVas, chDataTable, thisChart, optionsPie, optionsBar, symbol;
 
-    div[i] = document.getElementById('chart_div_'+j).children;
-    
+    div[i] = document.getElementById('chart_div_' + j).children;
+
     title = div[i].chart_title.value;
     type = div[i].chart_type.value;
+    
+    //testing here
+
+    chMaxSize = parseInt(div[i].chart_max_size.value);
+    
+    
     chId = div[i].chart_id.value;
     chDataFormat = div[i].chart_data_format.value;
     chCurrencySymbol = div[i].chart_currency_symbol.value;
@@ -16,29 +23,32 @@ for (let i = 0; i< divClass.length; i++) {
     valueDiv = div[i].div_value.children;
     colorDiv = div[i].div_color.children;
     percDiv = div[i].div_percent.children;
-    chartDataSet = {label:[],data:[],backgroundColor: [],borderColor: [],borderWidth: 1};
-    chartLabels = {labels:[]};
+    chartDataSet = {label: [], data: [], backgroundColor: [], borderColor: [], borderWidth: 1};
+    chartLabels = {labels: []};
+
+    //I'm not sure whether pie and bar ifs down there should go into ticks and not here (for coherence?)???
+
 
     if (chDataFormat === "2") {
-        for (let k = 0; k<keyDiv.length; k++) {
+        for (let k = 0; k < keyDiv.length; k++) {
             chartDataSet.data[k] = percDiv[k].value;
         }
         symbol = function (value) {
-                    return value + ' %';
-                };
+            return value + ' %';
+        };
     } else {
-        for (let k = 0; k<keyDiv.length; k++) {
+        for (let k = 0; k < keyDiv.length; k++) {
             chartDataSet.data[k] = valueDiv[k].value;
         }
         symbol = function (value) {
-                    return chCurrencySymbol+ ' ' + value;
-                };
+            return chCurrencySymbol + ' ' + value;
+        };
     }
-    
-    for (let k = 0; k<keyDiv.length; k++) {
+
+    for (let k = 0; k < keyDiv.length; k++) {
         chartLabels.labels[k] = keyDiv[k].value;
     }
-    
+
     for (let k = 0; k < colorDiv.length; k++) {
         chartDataSet.backgroundColor[k] = "#" + colorDiv[k].value;
         chartDataSet.borderColor[k] = "#" + colorDiv[k].value;
@@ -55,8 +65,8 @@ for (let i = 0; i< divClass.length; i++) {
                 borderWidth: 0.5,
                 color: '#000000',
                 font: {
-                  size: 13,
-                  weight: 600
+                    size: 13,
+                    weight: 600
                 },
                 padding: 2,
                 display: 'auto',
@@ -67,7 +77,7 @@ for (let i = 0; i< divClass.length; i++) {
         maintainAspectRatio: true,
         legend: {
             display: true,
-            labels:{
+            labels: {
                 boxWidth: 5,
                 usePointStyle: true,
                 boxHeight: 1
@@ -80,8 +90,8 @@ for (let i = 0; i< divClass.length; i++) {
     };
 
     optionsBar = {
-            plugins: {
-              datalabels: {
+        plugins: {
+            datalabels: {
                 align: 'start',
                 anchor: 'end',
                 backgroundColor: '#ffffff',
@@ -90,8 +100,8 @@ for (let i = 0; i< divClass.length; i++) {
                 borderWidth: 0.5,
                 color: '#000000',
                 font: {
-                  size: 13,
-                  weight: 600
+                    size: 13,
+                    weight: 600
                 },
                 offset: 1,
                 padding: 2,
@@ -99,60 +109,83 @@ for (let i = 0; i< divClass.length; i++) {
                 clip: true,
                 display: 'auto',
                 formatter: symbol
-              }
-            },
-            scales: {
-                xAxes: [{
-                stacked: true
+            }
+        },
+        scales: {
+            xAxes: [{
+                    stacked: true,
+                    ticks: {
+                        suggestedMax: chMaxSize ? chMaxSize : 100
+                    }
                 }],
-                yAxes: [{
-                stacked: true
+            yAxes: [{
+                    stacked: true,
+                       ticks: {
+                        suggestedMax: chMaxSize ? chMaxSize : 100
+                    }
                 }]
-            },
-            responsive: true,
-            maintainAspectRatio: true,
-            legend: {
-                display: false
-            },
-            title: {
-                display: true,
-                text: title
-            },
-            tooltip: false
-          };
+        },
+        responsive: true,
+        maintainAspectRatio: true,
+        legend: {
+            display: false
+        },
+        title: {
+            display: true,
+            text: title
+        },
+        tooltip: false
+    };
 
     canVas = document.getElementById(chId).getContext('2d');
 
     if (type === 'pie') {
-    chDataTable = {
+        chDataTable = {
             type: type,
             data: {
                 labels: chartLabels.labels,
                 datasets: [{
-                    label: chartDataSet.label,
-                    data: chartDataSet.data,
-                    backgroundColor: chartDataSet.backgroundColor,
-                    borderColor: '#000000',
-                    borderWidth: 1
-                }]
+                        label: chartDataSet.label,
+                        data: chartDataSet.data,
+                        backgroundColor: chartDataSet.backgroundColor,
+                        borderColor: '#000000',
+                        borderWidth: 1
+                    }]
             },
             options: optionsPie
         };
 
         thisChart = new Chart(canVas, chDataTable);
     } else {
+        //I don't think we need this
+//        console.log("highest value is " + Math.max.apply(Math, chartDataSet.data));
+//        console.log("array is " + chartDataSet.data.toString());
+//        highestChartData = Math.max.apply(Math, chartDataSet.data);
+//        if (type === "bar") {
+//            chMaxSizeYAxe = chMaxSize;
+//            //is this necessary?
+//            chMaxSizeXAxe = "";
+//        } else if (type === "horizontalBar") {
+//            chMaxSizeXAxe = chMaxSize;
+//            chMaxSizeYAxe = "";
+//        }
+//        
+        
+        
+        
+        
         chDataTable = {
             type: type,
             data: {
                 labels: chartLabels.labels,
                 datasets: [{
-                    label: chartDataSet.label,
-                    data: chartDataSet.data,
-                    backgroundColor: chartDataSet.backgroundColor,
-                    borderColor: '#000000',
-                    borderWidth: 1,
-                    categoryPercentage: 0.5
-                }]
+                        label: chartDataSet.label,
+                        data: chartDataSet.data,
+                        backgroundColor: chartDataSet.backgroundColor,
+                        borderColor: '#000000',
+                        borderWidth: 1,
+                        categoryPercentage: 0.5
+                    }]
             },
             options: optionsBar
         };

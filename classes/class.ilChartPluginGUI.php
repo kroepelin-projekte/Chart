@@ -35,6 +35,8 @@ class ilChartPluginGUI extends ilPageComponentPluginGUI
     const CANVAS_ID_PREFIX = "chart_page_component_";
     const DIV_CANVAS_ID_PREFIX = "div_canvas_";
     const DIV_ID_PREFIX = "chart_div_";
+    //testing here; dunno if it should be like this in the end
+    const LANG_CHART_MAX_SIZE = "chart_max_size";
 
     /**
      * @var ilChartPlugin
@@ -109,6 +111,7 @@ class ilChartPluginGUI extends ilPageComponentPluginGUI
                 "chart_type" => $form->getInput("chart_type"),
                 "data_format" => $form->getInput("data_format"),
                 "currency_symbol" => $form->getInput("currency_symbol"),
+                "chart_max_size" => $form->getInput("chart_max_size"),
             ];
             foreach ($form->getInput("categories")["answer"] as $key => $value) {
                 $properties["key" . ($key + 1)] = $value;
@@ -191,6 +194,7 @@ class ilChartPluginGUI extends ilPageComponentPluginGUI
             $properties["chart_type"] = $form->getInput("chart_type");
             $properties["data_format"] = $form->getInput("data_format");
             $properties["currency_symbol"] = $form->getInput("currency_symbol");
+            $properties["chart_max_size"] = $form->getInput("chart_max_size");
             $properties = array_merge($properties, $propertiesTmp);
 
             foreach ($form->getInput("categories")["answer"] as $key => $value) {
@@ -374,13 +378,38 @@ class ilChartPluginGUI extends ilPageComponentPluginGUI
         $selectChartType->setOptions($optionsChart);
         $selectChartType->setValue($prop["chart_type"]);
         $form->addItem($selectChartType);
+        
+        //heeeeeeeeey--------testing here
+        //maxvalue of axes
+        $maxSizeChart = new ilTextInputGUI($this->getPlugin()->txt(self::LANG_CHART_MAX_SIZE), "chart_max_size");
+        $maxSizeChart->setRequired(false);
+        $maxSizeChart->setValue($prop["chart_max_size"]);
+        //echo "<script>console.log('chat max size is : " . $prop["chart_max_size"] . "' );</script>";
+        
+        $selectChartType->addSubItem($maxSizeChart);
+        $selectChartType->setHideSubForm($prop["chart_type"] === "3");
+        
 
+        //make dynamic?
+//                if (!$a_reload) {
+//            // show date only if active recurrence
+//            $rec_mode->setHideSubForm(true, '>= 1');
+//
+//            if ($min_date) {
+//                $rec_end->setDate(new ilDateTime($min_date, IL_CAL_UNIX));
+//            }
+//        } else {
+//            // recurrence may not be changed on reload
+//            $rec_mode->setDisabled(true);
+//            $rec_end->setDisabled(true);
+//        }
+        
         // Radio buttons for data format
         $radioGroup = new ilRadioGroupInputGUI($this->getPlugin()->txt("data_format"), "data_format");
         $radioGroup->setRequired(true);
         $radioGroup->setValue($prop["data_format"]);
 
-        // Radio button for data format number with suditem for currency symbol
+        // Radio button for data format number with subitem for currency symbol
         $radioNumber = new ilRadioOption($this->getPlugin()->txt("number"), "1");
         $currencySymbol = new ilTextInputGUI($this->getPlugin()->txt("currency_symbol"), "currency_symbol");
         $currencySymbol->setInfo($this->getPlugin()->txt('add_currency_symbol'));
@@ -622,6 +651,11 @@ class ilChartPluginGUI extends ilPageComponentPluginGUI
         $tpl->setVariable("CHART_TYPE", $this->getChartType($a_properties['chart_type']));
         $tpl->setVariable("CHART_DATA_FORMAT", $a_properties['data_format']);
         $tpl->setVariable("CHART_CURR_SYMBOL", $a_properties['currency_symbol']);
+//        testing
+//let's see if this works
+//but we are still checking the data input part
+//        $tpl->setVariable("CHART_MAX_SIZE", $this->maxSizeInputField($a_properties['chart_max_size']));
+        $tpl->setVariable("CHART_MAX_SIZE", $a_properties['chart_max_size']);
         $tpl->setVariable("KEYS", $this->keyInputField($a_properties));
         $tpl->setVariable("VALUES", $this->valueInputField($a_properties));
         $tpl->setVariable("COLOR", $this->colorInputField($a_properties));
