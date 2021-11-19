@@ -12,6 +12,7 @@ vertical_bar_chart#:#Säulendiagramm
 pie_chart#:#Tortendiagramm
 chart_title#:#Diagrammtitel
 chart_type#:#Diagrammtyp
+chart_max_size#:#Empfohlene Diagrammlänge
 key#:#Kategorie
 value#:#Value
 number#:#Zahl

@@ -14,6 +14,7 @@ for (let i = 0; i < divClass.length; i++) {
     //testing here
 
     chMaxSize = parseInt(div[i].chart_max_size.value);
+
     
     
     chId = div[i].chart_id.value;
@@ -25,8 +26,6 @@ for (let i = 0; i < divClass.length; i++) {
     percDiv = div[i].div_percent.children;
     chartDataSet = {label: [], data: [], backgroundColor: [], borderColor: [], borderWidth: 1};
     chartLabels = {labels: []};
-
-    //I'm not sure whether pie and bar ifs down there should go into ticks and not here (for coherence?)???
 
 
     if (chDataFormat === "2") {
@@ -136,6 +135,10 @@ for (let i = 0; i < divClass.length; i++) {
         },
         tooltip: false
     };
+    
+//this doesn't seem to work anywhere
+//        this.optionsBar.scales.yAxes[0].ticks.suggestedMax = 200;
+//    this.optionsBar.scales.xAxes[0].ticks.suggestedMax = 200;
 
     canVas = document.getElementById(chId).getContext('2d');
 
@@ -157,23 +160,6 @@ for (let i = 0; i < divClass.length; i++) {
 
         thisChart = new Chart(canVas, chDataTable);
     } else {
-        //I don't think we need this
-//        console.log("highest value is " + Math.max.apply(Math, chartDataSet.data));
-//        console.log("array is " + chartDataSet.data.toString());
-//        highestChartData = Math.max.apply(Math, chartDataSet.data);
-//        if (type === "bar") {
-//            chMaxSizeYAxe = chMaxSize;
-//            //is this necessary?
-//            chMaxSizeXAxe = "";
-//        } else if (type === "horizontalBar") {
-//            chMaxSizeXAxe = chMaxSize;
-//            chMaxSizeYAxe = "";
-//        }
-//        
-        
-        
-        
-        
         chDataTable = {
             type: type,
             data: {

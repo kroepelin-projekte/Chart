@@ -12,6 +12,7 @@ vertical_bar_chart#:#Vertical Bar Chart
 pie_chart#:#Pie Chart
 chart_title#:#Title Chart
 chart_type#:#Type Chart
+chart_max_size#:#Suggested Chart Length
 key#:#Category
 value#:#value
 number#:#Number
