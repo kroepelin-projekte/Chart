@@ -126,11 +126,19 @@ class ilChartPluginGUI extends ilPageComponentPluginGUI
             }
 
             foreach ($form->getInput("categories") as $key => $value) {
-
                 foreach ($form->getInput("datasets") as $k => $val) {
-                    $properties["value_dataset_" . ($k + 1) . "_category_" . ($key + 1)] = "";
+                    if(!array_key_exists("value_dataset_" . ($k + 1) . "_category_" . ($key + 1), $properties)) {
+
+                        var_dump("OKOKOK");
+                        $properties["value_dataset_" . ($k + 1) . "_category_" . ($key + 1)] = "";
+                    }else{
+
+                        var_dump("NOTOK");
+                    }
                 }
             }
+
+
 
             /*foreach ($form->getInput("categories")["answer"] as $key => $value) {
                 $properties["key" . ($key + 1)] = $value;
@@ -178,6 +186,7 @@ class ilChartPluginGUI extends ilPageComponentPluginGUI
             }
 
             if ($this->createElement($properties)) {
+
 
                 var_dump($properties);
                 ilUtil::sendSuccess($DIC->language()->txt(self::LANG_OBJ_MODIFIED), true);
@@ -342,11 +351,11 @@ class ilChartPluginGUI extends ilPageComponentPluginGUI
             for ($i = 0; $i < $countColorsDatasets; $i++) {
                 $properties["color_dataset_".($i+1)] = $form->getInput("color_dataset_".($i+1));
             }
-
+*/
             if ($this->updateElement($properties)) {
                 ilUtil::sendSuccess($DIC->language()->txt(self::LANG_OBJ_MODIFIED), true);
                 $this->returnToParent();
-            }*/
+            }
         }
     }
 
@@ -472,6 +481,7 @@ class ilChartPluginGUI extends ilPageComponentPluginGUI
         // Get Properties
         $prop = $this->getProperties();
 
+        var_dump($prop);
         // Title of chart
         $titleChart = new ilTextInputGUI($this->getPlugin()->txt(self::LANG_CHART_TITLE), "chart_title");
         $titleChart->setRequired(false);
@@ -505,107 +515,14 @@ class ilChartPluginGUI extends ilPageComponentPluginGUI
 
         $radioGroup->addOption($radioNumber);
 
-
-
         $radioPercent = new ilRadioOption($this->getPlugin()->txt("percent"), "2");
         $radioGroup->addOption($radioPercent);
         $form->addItem($radioGroup);
-
-        /*$header = new ilFormSectionHeaderGUI();
-        $header->setTitle($this->getPlugin()->txt("categories"));
-        $header->setInfo($this->getPlugin()->txt("categories_info"));
-        $form->addItem($header);
-
-        $rows = new ilMatrixRowWizardInputGUI("", "categories");
-        $rows->setCategoryText($this->getPlugin()->txt('key'));
-        $rows->setRequired(true);
-        $rows->setAllowMove(true);
-        $rows->setLabelText($DIC->language()->txt('value'));
-        $form->addItem($rows);
-
-        $matrixQuestion = new SurveyMatrixQuestion();
-        $matrixQuestion->flushRows();
-
-        if ($action === self::ACTION_INSERT) {
-            $matrixQuestion->getRows()->addCategory("");
-        } else {
-            $tmp = [];
-            foreach ($prop as $k => $val) {
-                if (strpos($k, "key") > -1) {
-                    $index = substr($k, strpos($k, "key")+3, strlen($k));
-                    $tmp[$index]["key"] = $val;
-                } elseif (strpos($k, "value") > -1) {
-                    $indexValue = substr($k, strpos($k, "value")+5, strlen($k));
-                    $tmp[$indexValue]["value"] = $val;
-                }
-            }
-
-            foreach ($tmp as $key => $value) {
-                $matrixQuestion->getRows()->addCategory($tmp[$key]["key"], "", 0, $tmp[$key]["value"]);
-            }
-        }
-        $rows->setValues($matrixQuestion->getRows());*/
-
-
-
-
 
         $header = new ilFormSectionHeaderGUI();
         $header->setTitle($this->getPlugin()->txt("categories"));
         $header->setInfo($this->getPlugin()->txt("categories_info"));
         $form->addItem($header);
-
-
-        /*$category = new ilTextInputGUI($this->getPlugin()->txt("title"), "title");
-        $category->setInfo($this->getPlugin()->txt('add_title_category'));
-        $category->setValue($prop["currency_symbol"]); // TODO*/
-
-        /*$rows = new ilMatrixRowWizardInputGUI("", "datasets");
-        $rows->setCategoryText($this->getPlugin()->txt('key'));
-        $rows->setRequired(true);
-        $rows->setAllowMove(true);
-        $rows->setLabelText($DIC->language()->txt('color'));
-        $category->addSubItem($rows);
-
-        $matrixQuestion = new SurveyMatrixQuestion();
-        $matrixQuestion->flushRows();
-
-        if ($action === self::ACTION_INSERT) {
-            $matrixQuestion->getRows()->addCategory("");
-        } else {
-            $tmp = [];
-            foreach ($prop as $k => $val) {
-                if (strpos($k, "key") > -1) {
-                    $index = substr($k, strpos($k, "key")+3, strlen($k));
-                    $tmp[$index]["key"] = $val;
-                } elseif (strpos($k, "value") > -1) {
-                    $indexValue = substr($k, strpos($k, "value")+5, strlen($k));
-                    $tmp[$indexValue]["value"] = $val;
-                }
-            }
-
-            foreach ($tmp as $key => $value) {
-                $matrixQuestion->getRows()->addCategory($tmp[$key]["key"], "", 0, $tmp[$key]["value"]);
-            }
-        }
-        $rows->setValues($matrixQuestion->getRows());
-
-
-        $form->addItem($category);*/
-
-
-        /*$radioGroup = new ilRadioGroupInputGUI($this->getPlugin()->txt("test4"), "test4");
-        $radioGroup->setRequired(true);
-        //$radioGroup->setValue($prop["data_format"]);
-
-        $radioNumber = new ilRadioOption($this->getPlugin()->txt("test2"), "test2");
-        $currencySymbol = new ilTextInputGUI($this->getPlugin()->txt("test3"), "test3");
-        $currencySymbol->setInfo($this->getPlugin()->txt('test3'));
-        $currencySymbol->setValue('1');
-        $radioNumber->addSubItem($currencySymbol);
-        $radioGroup->addOption($radioNumber);
-
-        $form->addItem($radioGroup);*/
 
         $header = new ilFormSectionHeaderGUI();
         $header->setTitle($this->lng->txt('categories'));
@@ -632,8 +549,6 @@ class ilChartPluginGUI extends ilPageComponentPluginGUI
             $datasetsTitle[] = $prop["title_dataset_".($i + 1)];
         }
 
-
-
         var_dump($categoriesTitle);
 
         $header = new ilFormSectionHeaderGUI();
@@ -645,84 +560,6 @@ class ilChartPluginGUI extends ilPageComponentPluginGUI
         $dataset->setMulti(true, true);
         $dataset->setMultiValues($datasetsTitle);
         $form->addItem($dataset);
-
-
-
-        /*$category = new ilTextInputGUI($this->lng->txt("title"), "categories");
-        $category->setRequired(true);
-        $category->setMulti(true, true);*/
-
-
-
-
-        /*$rows = new ilMatrixRowWizardInputGUI("", "datasets");
-        $rows->setCategoryText($this->getPlugin()->txt('key'));
-        $rows->setRequired(true);
-        $rows->setAllowMove(true);
-        $rows->setLabelText($DIC->language()->txt('color'));
-
-
-        $matrixQuestion = new SurveyMatrixQuestion();
-        $matrixQuestion->flushRows();
-
-        if ($action === self::ACTION_INSERT) {
-            $matrixQuestion->getRows()->addCategory("");
-        } else {
-            $tmp = [];
-            foreach ($prop as $k => $val) {
-                if (strpos($k, "key") > -1) {
-                    $index = substr($k, strpos($k, "key")+3, strlen($k));
-                    $tmp[$index]["key"] = $val;
-                } elseif (strpos($k, "value") > -1) {
-                    $indexValue = substr($k, strpos($k, "value")+5, strlen($k));
-                    $tmp[$indexValue]["value"] = $val;
-                }
-            }
-
-            foreach ($tmp as $key => $value) {
-                $matrixQuestion->getRows()->addCategory($tmp[$key]["key"], "", 0, $tmp[$key]["value"]);
-            }
-        }
-        $rows->setParent('title[0]');
-        $rows->setValues($matrixQuestion->getRows());
-
-        $category->addSubItem($rows);*/
-
-        //$form->addItem($category);
-
-        // Datasets
-        /*$header = new ilFormSectionHeaderGUI();
-        $header->setTitle($this->getPlugin()->txt('datasets'));
-        $form->addItem($header);
-
-        $dataset = new ilTextInputGUI($this->getPlugin()->txt("dataset"), "datasets");
-        $dataset->setRequired(true);
-        $dataset->setMulti(true, true);
-        $form->addItem($dataset);*/
-
-        //$formField->setInteractionEnabled(true);
-
-        //$test = $this->buildOrderingTextsInputGui();
-
-        /*require_once 'Modules/TestQuestionPool/classes/forms/class.ilAssOrderingFormValuesObjectsConverter.php';
-        $converter = new ilAssOrderingFormValuesObjectsConverter();
-        $converter->setPostVar('test20');
-
-        require_once 'Modules/TestQuestionPool/classes/forms/class.ilAssOrderingTextsInputGUI.php';
-
-        $orderingElementInput = new ilAssOrderingTextsInputGUI(
-            $converter,
-            'test10', 'tesrt11'
-        );
-
-        $orderingElementInput->setInfo($this->lng->txt('ordering_answer_sequence_info'));
-        $orderingElementInput->setTitle($this->lng->txt('answers'));
-
-        $form->addItem($orderingElementInput);*/
-
-        //$form->addItem($test);
-
-
 
 
         if ($action === self::ACTION_INSERT) {
@@ -858,58 +695,36 @@ class ilChartPluginGUI extends ilPageComponentPluginGUI
         $header = new ilFormSectionHeaderGUI();
         $header->setTitle($this->getPlugin()->txt("categories"));
         $form->addItem($header);
-        if (!$form->checkInput() || !$this->validate($form)) {
-            /*ilUtil::sendFailure($DIC->language()->txt("form_input_not_valid"), true);
-            $DIC->ctrl()->redirectByClass(self::PLUGIN_CLASS_NAME, self::CMD_EDIT);*/
-        } else {
 
-            $countCategories = 0;
-            $countDatasets = 0;
-            foreach($prop as $key => $value){
+        $countCategories = 0;
+        $countDatasets = 0;
+        foreach($prop as $key => $value){
 
-                if(strpos($key, "title_category_") > -1){
-                    $countCategories += 1;
-                }
-
-                if(strpos($key, "title_dataset_") > -1){
-                    $countDatasets += 1;
-                }
+            if(strpos($key, "title_category_") > -1){
+                $countCategories += 1;
             }
 
-
-
-            $radioGroup = new ilRadioGroupInputGUI($this->getPlugin()->txt("datasets"), "dataset_values");
-            for($i = 0; $i < $countCategories; $i++){
-
-                $radioNumber = new ilRadioOption($prop["title_category_".($i+1)], "dataset". ($i+1));
-                $radioGroup->addOption($radioNumber);
-                $radioGroup->setValue("dataset". ($i+1));
-
-                for($j = 0; $j < $countDatasets; $j++) {
-
-                    var_dump($prop["value_dataset_" .($j+1)."_category_".($i+1)]);
-                    $dataset = new ilTextInputGUI($prop["title_dataset_".($j+1)], "dataset_".($j+1)."_category_".($i+1));
-                    $dataset->setValue($prop["value_dataset_" .($j+1)."_category_".($i+1)]);
-                    $radioNumber->addSubItem($dataset);
-                }
+            if(strpos($key, "title_dataset_") > -1){
+                $countDatasets += 1;
             }
-            $form->addItem($radioGroup);
-
-
-            /*$category = new ilTextInputGUI("Kategorie", "title_category_".($i+1));
-            $category->setValue("title_category_".($i+1));
-            $form->addItem($category);*/
-
         }
 
+        $radioGroup = new ilRadioGroupInputGUI($this->getPlugin()->txt("datasets"), "dataset_values");
+        for($i = 0; $i < $countCategories; $i++){
 
+            $radioNumber = new ilRadioOption($prop["title_category_".($i+1)], "dataset". ($i+1));
+            $radioGroup->addOption($radioNumber);
+            $radioGroup->setValue("dataset". ($i+1));
 
+            for($j = 0; $j < $countDatasets; $j++) {
 
-       /* $titleChart = new ilTextInputGUI($this->getPlugin()->txt(self::LANG_CHART_TITLE), "chart_title");
-        $titleChart->setRequired(false);
-        $titleChart->setValue($prop["chart_title"]);
-        $form->addItem($titleChart);*/
-
+                var_dump($prop["value_dataset_" .($j+1)."_category_".($i+1)]);
+                $dataset = new ilTextInputGUI($prop["title_dataset_".($j+1)], "dataset_".($j+1)."_category_".($i+1));
+                $dataset->setValue($prop["value_dataset_" .($j+1)."_category_".($i+1)]);
+                $radioNumber->addSubItem($dataset);
+            }
+        }
+        $form->addItem($radioGroup);
 
         $form->addCommandButton(self::CMD_UPDATE_DATASETS, $DIC->language()->txt(self::CMD_SAVE));
         $form->addCommandButton(self::CMD_CANCEL, $DIC->language()->txt(self::CMD_CANCEL));
@@ -1081,11 +896,11 @@ class ilChartPluginGUI extends ilPageComponentPluginGUI
             $DIC->ctrl()->getLinkTarget($this, self::CMD_EDIT));
 
         if ($tabStyleVisible) {
-            $DIC->tabs()->addTab(self::TAB_STYLE, $pl->txt(self::LANG_CHART_STYLE),
-                $DIC->ctrl()->getLinkTarget($this, self::CMD_EDIT_STYLE));
-
             $DIC->tabs()->addTab(self::TAB_DATASETS, $pl->txt(self::LANG_CHART_DATASETS),
                 $DIC->ctrl()->getLinkTarget($this, self::CMD_EDIT_DATASETS));
+
+            $DIC->tabs()->addTab(self::TAB_STYLE, $pl->txt(self::LANG_CHART_STYLE),
+                $DIC->ctrl()->getLinkTarget($this, self::CMD_EDIT_STYLE));
         }
 
         if ($a_active === "chart") {
