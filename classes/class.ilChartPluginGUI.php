@@ -138,27 +138,6 @@ class ilChartPluginGUI extends ilPageComponentPluginGUI
                 }
             }
 
-
-
-            /*foreach ($form->getInput("categories")["answer"] as $key => $value) {
-                $properties["key" . ($key + 1)] = $value;
-            }
-            foreach ($form->getInput("categories")["label"] as $key => $value) {
-                $properties["value" . ($key + 1)] = $value;
-            }
-            $extendedColors = $this->getExtendendColors();
-            // Set default colors for chart
-            $j = 0; // Key in $extendedColors array
-            for ($i = 0; $i < count($form->getInput("categories")["answer"]); $i ++) {
-                $color = $extendedColors[$j];
-
-                if ($j === count($extendedColors) - 1) {
-                    $j = 0;
-                } else {
-                    $j += 1;
-                }
-                $properties["color".($i + 1)] = $color;
-            }*/
             $extendedColors = $this->getExtendendColors();
             // Set default colors for chart
             $j = 0; // Key in $extendedColors array
@@ -187,10 +166,8 @@ class ilChartPluginGUI extends ilPageComponentPluginGUI
 
             if ($this->createElement($properties)) {
 
-
-                var_dump($properties);
                 ilUtil::sendSuccess($DIC->language()->txt(self::LANG_OBJ_MODIFIED), true);
-                //$this->returnToParent();
+                $this->returnToParent();
             }
         }
     }
@@ -319,7 +296,7 @@ class ilChartPluginGUI extends ilPageComponentPluginGUI
 
             if ($this->updateElement($properties)) {
                 ilUtil::sendSuccess($DIC->language()->txt(self::LANG_OBJ_MODIFIED), true);
-                $this->returnToParent();
+                $DIC->ctrl()->redirect($this, self::CMD_EDIT_STYLE);
             }
         }
     }
@@ -340,21 +317,10 @@ class ilChartPluginGUI extends ilPageComponentPluginGUI
                     $properties["value_dataset_" . ($j+1). "_category_".($i+1)] = $form->getInput("dataset_" . ($j+1). "_category_".($i+1));
                 }
             }
-            var_dump($properties);
-            /*$countColorsCategories = $form->getInput("count_colors_categories");
-            $countColorsDatasets = $form->getInput("count_colors_datasets");
 
-            for ($i = 0; $i < $countColorsCategories; $i++) {
-                $properties["color_category_".($i+1)] = $form->getInput("color_category_".($i+1));
-            }
-
-            for ($i = 0; $i < $countColorsDatasets; $i++) {
-                $properties["color_dataset_".($i+1)] = $form->getInput("color_dataset_".($i+1));
-            }
-*/
             if ($this->updateElement($properties)) {
                 ilUtil::sendSuccess($DIC->language()->txt(self::LANG_OBJ_MODIFIED), true);
-                $this->returnToParent();
+                $DIC->ctrl()->redirect($this, self::CMD_EDIT_DATASETS);
             }
         }
     }
@@ -688,6 +654,8 @@ class ilChartPluginGUI extends ilPageComponentPluginGUI
 
 
         $form = new ilPropertyFormGUI();
+        $form->addCommandButton(self::CMD_UPDATE_DATASETS, $DIC->language()->txt(self::CMD_SAVE));
+        $form->addCommandButton(self::CMD_CANCEL, $DIC->language()->txt(self::CMD_CANCEL));
         // Get Properties
         $prop = $this->getProperties();
 
