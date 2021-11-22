@@ -213,8 +213,6 @@ class ilChartPluginGUI extends ilPageComponentPluginGUI
     {
         global $DIC;
 
-
-
         $form = $this->initFormChart(self::ACTION_EDIT);
 
         if (!$form->checkInput() || !$this->validate($form)) {
@@ -222,6 +220,8 @@ class ilChartPluginGUI extends ilPageComponentPluginGUI
             $DIC->ctrl()->redirectByClass(self::PLUGIN_CLASS_NAME, self::CMD_EDIT);
         } else {
             $properties = $this->getProperties();
+
+            var_dump($properties);
 
             $countColorsCategories = count($form->getInput("categories"));
             $propertiesTmp = [];
@@ -236,30 +236,13 @@ class ilChartPluginGUI extends ilPageComponentPluginGUI
             $properties["currency_symbol"] = $form->getInput("currency_symbol");
             $properties = array_merge($properties, $propertiesTmp);
 
-            /*foreach ($form->getInput("categories")["answer"] as $key => $value) {
-                $properties["key".($key+1)] = $value;
+            foreach ($form->getInput("categories") as $key => $value) {
+                $properties["title_category_".($key+1)] = $value;
             }
 
-            foreach ($form->getInput("categories")["label"] as $key => $value) {
-                $properties["value".($key+1)] = $value;
-            }*/
-            
-            // Set colors for new datas entry in chart
-            /*foreach ($properties as $key => $value) {
-                if (strpos($key, "color") > -1 && $value === null) {
-                    $prevColorKey = substr($key, 5, strlen($key)) - 1;
-                    $extendedColors = $this->getExtendendColors();
-                    foreach ($extendedColors as $k => $color) {
-                        if ($color === $properties["color".$prevColorKey]) {
-                            if ($k === count($extendedColors) - 1) {
-                                $properties[$key] = $extendedColors[0];
-                            } else {
-                                $properties[$key] = $extendedColors[$k + 1];
-                            }
-                        }
-                    }
-                }
-            }*/
+            foreach ($form->getInput("datasets") as $key => $value) {
+                $properties["title_dataset_".($key+1)] = $value;
+            }
             
             if ($this->updateElement($properties)) {
                 ilUtil::sendSuccess($DIC->language()->txt(self::LANG_OBJ_MODIFIED), true);
