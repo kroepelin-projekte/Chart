@@ -128,12 +128,7 @@ class ilChartPluginGUI extends ilPageComponentPluginGUI
             foreach ($form->getInput("categories") as $key => $value) {
                 foreach ($form->getInput("datasets") as $k => $val) {
                     if(!array_key_exists("value_dataset_" . ($k + 1) . "_category_" . ($key + 1), $properties)) {
-
-                        var_dump("OKOKOK");
                         $properties["value_dataset_" . ($k + 1) . "_category_" . ($key + 1)] = "";
-                    }else{
-
-                        var_dump("NOTOK");
                     }
                 }
             }
@@ -268,7 +263,7 @@ class ilChartPluginGUI extends ilPageComponentPluginGUI
             
             if ($this->updateElement($properties)) {
                 ilUtil::sendSuccess($DIC->language()->txt(self::LANG_OBJ_MODIFIED), true);
-                //$DIC->ctrl()->redirectByClass(self::PLUGIN_CLASS_NAME, self::CMD_EDIT);
+                $DIC->ctrl()->redirectByClass(self::PLUGIN_CLASS_NAME, self::CMD_EDIT);
             }
         }
     }
@@ -447,7 +442,6 @@ class ilChartPluginGUI extends ilPageComponentPluginGUI
         // Get Properties
         $prop = $this->getProperties();
 
-        var_dump($prop);
         // Title of chart
         $titleChart = new ilTextInputGUI($this->getPlugin()->txt(self::LANG_CHART_TITLE), "chart_title");
         $titleChart->setRequired(false);
@@ -486,12 +480,8 @@ class ilChartPluginGUI extends ilPageComponentPluginGUI
         $form->addItem($radioGroup);
 
         $header = new ilFormSectionHeaderGUI();
-        $header->setTitle($this->getPlugin()->txt("categories"));
-        $header->setInfo($this->getPlugin()->txt("categories_info"));
-        $form->addItem($header);
-
-        $header = new ilFormSectionHeaderGUI();
         $header->setTitle($this->lng->txt('categories'));
+        //$header->setInfo($this->getPlugin()->txt("categories_info"));
         $form->addItem($header);
 
         $countCategory = $this->getCountPropertiesByType($prop, 'title_category');
@@ -504,9 +494,23 @@ class ilChartPluginGUI extends ilPageComponentPluginGUI
         $category = new ilTextInputGUI($this->lng->txt("title"), "categories");
         $category->setRequired(true);
         $category->setMulti(true, true);
+
+        $multiCategories = [];
+        foreach ($categoriesTitle as $key => $title) {
+            if (!$key) {
+                $category->setValue($title);
+            }
+            $multiCategories[] = $title;
+        }
+        $category->setMultiValues($multiCategories);
+
         $form->addItem($category);
 
-        $category->setMultiValues($categoriesTitle);
+
+
+        $header = new ilFormSectionHeaderGUI();
+        $header->setTitle($this->getPlugin()->txt('datasets'));
+        $form->addItem($header);
 
         $countDataset = $this->getCountPropertiesByType($prop, 'title_dataset');
 
@@ -515,16 +519,19 @@ class ilChartPluginGUI extends ilPageComponentPluginGUI
             $datasetsTitle[] = $prop["title_dataset_".($i + 1)];
         }
 
-        var_dump($categoriesTitle);
-
-        $header = new ilFormSectionHeaderGUI();
-        $header->setTitle($this->getPlugin()->txt('datasets'));
-        $form->addItem($header);
-
         $dataset = new ilTextInputGUI($this->getPlugin()->txt("dataset"), "datasets");
         //$dataset->setRequired(true);
         $dataset->setMulti(true, true);
-        $dataset->setMultiValues($datasetsTitle);
+
+        $multiDatasets = [];
+        foreach ($datasetsTitle as $key => $title) {
+            if (!$key) {
+                $dataset->setValue($title);
+            }
+            $multiDatasets[] = $title;
+        }
+        $dataset->setMultiValues($multiDatasets);
+
         $form->addItem($dataset);
 
 
@@ -589,7 +596,6 @@ class ilChartPluginGUI extends ilPageComponentPluginGUI
         $header->setInfo($this->getPlugin()->txt(self::LANG_DESCRIPTION_STYLE));
         $form->addItem($header);
 
-      //  var_dump($prop);
         $countColorsCategory = 0;
         foreach ($prop as $k => $val) {
             if (strpos($k, "title_category") > -1) {
@@ -659,7 +665,6 @@ class ilChartPluginGUI extends ilPageComponentPluginGUI
         // Get Properties
         $prop = $this->getProperties();
 
-        var_dump($prop);
         $header = new ilFormSectionHeaderGUI();
         $header->setTitle($this->getPlugin()->txt("categories"));
         $form->addItem($header);
@@ -685,8 +690,6 @@ class ilChartPluginGUI extends ilPageComponentPluginGUI
             $radioGroup->setValue("dataset". ($i+1));
 
             for($j = 0; $j < $countDatasets; $j++) {
-
-                var_dump($prop["value_dataset_" .($j+1)."_category_".($i+1)]);
                 $dataset = new ilTextInputGUI($prop["title_dataset_".($j+1)], "dataset_".($j+1)."_category_".($i+1));
                 $dataset->setValue($prop["value_dataset_" .($j+1)."_category_".($i+1)]);
                 $radioNumber->addSubItem($dataset);
