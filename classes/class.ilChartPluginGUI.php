@@ -110,6 +110,7 @@ class ilChartPluginGUI extends ilPageComponentPluginGUI
             $form->setValuesByPost();
             $tpl->setContent($form->getHtml());
         } else {
+
             $properties = [
                 "chart_title" => $form->getInput("chart_title"),
                 "chart_type" => $form->getInput("chart_type"),
@@ -134,7 +135,7 @@ class ilChartPluginGUI extends ilPageComponentPluginGUI
             }
 
             $extendedColors = $this->getExtendendColors();
-            // Set default colors for chart
+            // Set default colors for categories
             $j = 0; // Key in $extendedColors array
             for ($i = 0; $i < count($form->getInput("categories")); $i ++) {
                 $color = $extendedColors[$j];
@@ -147,6 +148,7 @@ class ilChartPluginGUI extends ilPageComponentPluginGUI
                 $properties["color_category_".($i + 1)] = $color;
             }
 
+            // Set default colors for datasets
             $j = 0; // Key in $extendedColors array
             for ($i = 0; $i < count($form->getInput("datasets")); $i ++) {
                 $color = $extendedColors[$j];
@@ -230,17 +232,26 @@ class ilChartPluginGUI extends ilPageComponentPluginGUI
             }
 
             $countColorsCategories = count($form->getInput("categories"));
-            $propertiesTmp = [];
+            $propertiesCategoriesColorsTmp = [];
             
             for ($i = 1; $i <= $countColorsCategories; $i++) {
-                $propertiesTmp["color_category_".$i] = $properties["color_category_".$i];
+                $propertiesCategoriesColorsTmp["color_category_".$i] = $properties["color_category_".$i];
             }
+
+            $countColorsDatasets = count($form->getInput("datasets"));
+            $propertiesDatasetsColorsTmp = [];
+
+            for ($i = 1; $i <= $countColorsDatasets; $i++) {
+                $propertiesDatasetsColorsTmp["color_dataset_".$i] = $properties["color_dataset_".$i];
+            }
+
             $properties = [];
             $properties["chart_title"] = $form->getInput("chart_title");
             $properties["chart_type"] = $form->getInput("chart_type");
             $properties["data_format"] = $form->getInput("data_format");
             $properties["currency_symbol"] = $form->getInput("currency_symbol");
-            $properties = array_merge($properties, $propertiesTmp);
+            $properties = array_merge($properties, $propertiesCategoriesColorsTmp);
+            $properties = array_merge($properties, $propertiesDatasetsColorsTmp);
             $properties = array_merge($properties, $datasetValues);
 
             foreach ($form->getInput("categories") as $key => $value) {
@@ -608,7 +619,6 @@ class ilChartPluginGUI extends ilPageComponentPluginGUI
         $header->setTitle($this->getPlugin()->txt("datasets"));
         $header->setInfo($this->getPlugin()->txt(self::LANG_DESCRIPTION_STYLE));
         $form->addItem($header);
-
 
         $countColorsDataset = 0;
         foreach ($prop as $k => $val) {
