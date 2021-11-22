@@ -221,8 +221,6 @@ class ilChartPluginGUI extends ilPageComponentPluginGUI
         } else {
             $properties = $this->getProperties();
 
-            var_dump($properties);
-
             $countColorsCategories = count($form->getInput("categories"));
             $propertiesTmp = [];
             
@@ -489,21 +487,18 @@ class ilChartPluginGUI extends ilPageComponentPluginGUI
 
         $form->addItem($category);
 
-
-
         $header = new ilFormSectionHeaderGUI();
         $header->setTitle($this->getPlugin()->txt('datasets'));
         $form->addItem($header);
 
         $countDataset = $this->getCountPropertiesByType($prop, 'title_dataset');
-
         $datasetsTitle = [];
         for($i = 0; $i < $countDataset; $i++){
             $datasetsTitle[] = $prop["title_dataset_".($i + 1)];
         }
 
         $dataset = new ilTextInputGUI($this->getPlugin()->txt("dataset"), "datasets");
-        //$dataset->setRequired(true);
+        $dataset->setRequired(true);
         $dataset->setMulti(true, true);
 
         $multiDatasets = [];
