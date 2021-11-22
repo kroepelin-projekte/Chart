@@ -219,7 +219,15 @@ class ilChartPluginGUI extends ilPageComponentPluginGUI
             ilUtil::sendFailure($DIC->language()->txt("form_input_not_valid"), true);
             $DIC->ctrl()->redirectByClass(self::PLUGIN_CLASS_NAME, self::CMD_EDIT);
         } else {
+
             $properties = $this->getProperties();
+
+            $datasetValues = [];
+            foreach($properties as $key => $value){
+                if(strpos($key, "value_dataset_") > -1){
+                    $datasetValues[$key] = $value;
+                }
+            }
 
             $countColorsCategories = count($form->getInput("categories"));
             $propertiesTmp = [];
@@ -233,6 +241,7 @@ class ilChartPluginGUI extends ilPageComponentPluginGUI
             $properties["data_format"] = $form->getInput("data_format");
             $properties["currency_symbol"] = $form->getInput("currency_symbol");
             $properties = array_merge($properties, $propertiesTmp);
+            $properties = array_merge($properties, $datasetValues);
 
             foreach ($form->getInput("categories") as $key => $value) {
                 $properties["title_category_".($key+1)] = $value;
