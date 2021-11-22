@@ -1,6 +1,10 @@
 <?php
 /* Copyright (c) 1998-2015 ILIAS open source, Extended GPL, see LICENSE */
 
+require_once __DIR__ . "/../vendor/autoload.php";
+
+use Kpg\Chart\Provider\ToolProvider;
+
 include_once "./Services/COPage/classes/class.ilPageComponentPlugin.php";
 
 /**
@@ -29,9 +33,12 @@ class ilChartPlugin extends ilPageComponentPlugin
      */
     public function __construct()
     {
+        global $DIC;
         parent::__construct();
         $this->includePluginClasses();
         $this->config = new ilChartConfig($this->getSlotId().'_'.$this->getId());
+
+        $this->provider_collection->setToolProvider(new ToolProvider($DIC, $this));
     }
 
     /**
