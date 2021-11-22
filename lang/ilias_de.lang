@@ -2,18 +2,22 @@ insert_chart#:#Diagramm einfügen
 cmd_insert#:#Diagramm einfügen
 chart#:#Diagramm
 chart_style#:#Style
+chart_datasets#:#Datasets
 categories#:#Kategorien
+datasets#:#Datasets
+dataset#:#Dataset
 description#:#Geben Sie den Diagrammtitel, den Diagrammtyp und das Datenformat ein. Nach dem Einfügen haben Sie die Möglichkeit, Farben auszuwählen.
 description_style#:#Sie können die Farben der Balken in HEX Farben definieren zB CA3E3E
 edit_chart#:#Diagramm Bearbeiten
 edit_style#:#Style Bearbeiten
 horizontal_bar_chart#:#Balkendiagramm
 vertical_bar_chart#:#Säulendiagramm
+line_chart#:#Liniediagramm
 pie_chart#:#Tortendiagramm
 chart_title#:#Diagrammtitel
 chart_type#:#Diagrammtyp
-key#:#Kategorie
-value#:#Value
+key#:#Value
+value#:#Wert
 number#:#Zahl
 percent#:#Prozent
 data_format#:#Datenformat

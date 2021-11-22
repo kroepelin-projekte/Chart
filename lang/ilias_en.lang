@@ -3,6 +3,9 @@ cmd_insert#:#Insert Chart
 chart#:#Chart
 chart_style#:#Style
 categories#:#Categories
+chart_datasets#:#Datasets
+datasets#:#Datasets
+dataset#:#Dataset
 description#:#Enter the title, type and data format of the chart. After inserting, you have the option of selecting colors.
 description_style#:#You can define the colors of the bars in HEX colors. Example: CA3E3E
 edit_chart#:#Edit Chart
@@ -10,10 +13,11 @@ edit_style#:#Edit Style
 horizontal_bar_chart#:#Horizontal Bar Chart
 vertical_bar_chart#:#Vertical Bar Chart
 pie_chart#:#Pie Chart
+line_chart#:#Line Chart
 chart_title#:#Title Chart
 chart_type#:#Type Chart
 key#:#Category
-value#:#value
+value#:#Value
 number#:#Number
 percent#:#Percent
 data_format#:#Data Format
