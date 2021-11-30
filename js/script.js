@@ -3,11 +3,8 @@ var div = [];
 var j = 1;
 
 for (let i = 0; i < divClass.length; i++) {
-    //was testing here with highestChartData and axes but now they are not there
     let title, type, chId, chDataFormat, chCurrencySymbol, chMaxSize, keyDiv, valueDiv, colorDiv, percDiv, chartDataSet, chartLabels, canVas, chDataTable, thisChart, optionsPie, optionsBar, symbol;
-
     div[i] = document.getElementById('chart_div_' + j).children;
-
     title = div[i].chart_title.value;
     type = div[i].chart_type.value;
     
