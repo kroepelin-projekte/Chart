@@ -7,13 +7,7 @@ for (let i = 0; i < divClass.length; i++) {
     div[i] = document.getElementById('chart_div_' + j).children;
     title = div[i].chart_title.value;
     type = div[i].chart_type.value;
-    
-    //testing here
-
     chMaxSize = parseInt(div[i].chart_max_size.value);
-
-    
-    
     chId = div[i].chart_id.value;
     chDataFormat = div[i].chart_data_format.value;
     chCurrencySymbol = div[i].chart_currency_symbol.value;
