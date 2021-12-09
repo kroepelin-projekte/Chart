@@ -14,8 +14,8 @@ horizontal_bar_chart#:#Horizontal Bar Chart
 vertical_bar_chart#:#Vertical Bar Chart
 pie_chart#:#Pie Chart
 line_chart#:#Line Chart
-chart_title#:#Title Chart
-chart_type#:#Type Chart
+chart_title#:#Title
+chart_type#:#Type
 key#:#Category
 value#:#Value
 number#:#Number

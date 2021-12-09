@@ -6,6 +6,7 @@ require_once __DIR__ . "/../vendor/autoload.php";
 use Kpg\Chart\Provider\ToolProvider;
 
 include_once "./Services/COPage/classes/class.ilPageComponentPlugin.php";
+//include_once "./Customizing/global/plugins/Services/COPage/PageComponent/Chart/classes/class.ilChartPluginGUI.php";
 
 /**
  * Class ilChartPlugin
@@ -38,7 +39,9 @@ class ilChartPlugin extends ilPageComponentPlugin
         $this->includePluginClasses();
         $this->config = new ilChartConfig($this->getSlotId().'_'.$this->getId());
 
-        $this->provider_collection->setToolProvider(new ToolProvider($DIC, $this));
+        if($this->getId() === self::PLUGIN_ID) {
+            $this->provider_collection->setToolProvider(new ToolProvider($DIC, $this));
+        }
     }
 
     /**
@@ -110,7 +113,7 @@ class ilChartPlugin extends ilPageComponentPlugin
      */
     public function getJavascriptFiles($a_mode): array
     {
-        $js = ["js/Chart.min.js", "js/chartjs-plugin-datalabels.min.js"];
+        $js = ["js/Chart.min.js", "js/chartjs-plugin-datalabels.min.js", "js/editor.js"];
         return $js;
     }
 }

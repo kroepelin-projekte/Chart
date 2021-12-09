@@ -42,6 +42,8 @@ class ilChartPluginGUI extends ilPageComponentPluginGUI
     const DIV_CANVAS_ID_PREFIX = "div_canvas_";
     const DIV_ID_PREFIX = "chart_div_";
 
+    private $editorIsActive = false;
+
     /**
      * @var ilChartPlugin
      */
@@ -59,6 +61,8 @@ class ilChartPluginGUI extends ilPageComponentPluginGUI
     {
         parent::__construct();
         $this->pl = new ilChartPlugin();
+
+        //$this->setCharacteristics(ilPCParagraphGUI::_getStandardCharacteristics());
     }
 
     /**
@@ -84,6 +88,10 @@ class ilChartPluginGUI extends ilPageComponentPluginGUI
         }
     }
 
+    public function editorIsActive()
+    {
+        return $this->editorIsActive;
+    }
 
     /**
      * Form for new elements
@@ -91,7 +99,9 @@ class ilChartPluginGUI extends ilPageComponentPluginGUI
     public function insert()
     {
         global $tpl;
+        $this->editorIsActive = true;
 
+        var_dump("OK");
         $this->setTabs(self::TAB_CHART, false);
         $form = $this->initFormChart(self::ACTION_INSERT);
         $tpl->setContent($form->getHTML());

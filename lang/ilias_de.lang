@@ -14,8 +14,8 @@ horizontal_bar_chart#:#Balkendiagramm
 vertical_bar_chart#:#Säulendiagramm
 line_chart#:#Liniediagramm
 pie_chart#:#Tortendiagramm
-chart_title#:#Diagrammtitel
-chart_type#:#Diagrammtyp
+chart_title#:#Titel
+chart_type#:#Typ
 key#:#Value
 value#:#Wert
 number#:#Zahl
