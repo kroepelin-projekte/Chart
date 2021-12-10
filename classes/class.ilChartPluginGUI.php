@@ -192,6 +192,8 @@ class ilChartPluginGUI extends ilPageComponentPluginGUI
         $this->setTabs(self::TAB_CHART, true);
         $form = $this->initFormChart(self::ACTION_EDIT);
         $tpl->setContent($form->getHTML());
+        $tpl->addJavaScript("./Customizing/global/plugins/Services/COPage/PageComponent/Chart/js/editor.js");
+        $tpl->addCss("./Customizing/global/plugins/Services/COPage/PageComponent/Chart/css/editor.css");
     }
 
     /**
@@ -277,6 +279,11 @@ class ilChartPluginGUI extends ilPageComponentPluginGUI
                 $DIC->ctrl()->redirectByClass(self::PLUGIN_CLASS_NAME, self::CMD_EDIT);
             }
         }
+    }
+
+    public function updateSlate()
+    {
+        var_dump("OK");
     }
 
     /**
@@ -453,6 +460,18 @@ class ilChartPluginGUI extends ilPageComponentPluginGUI
         // Get Properties
         $prop = $this->getProperties();
 
+        /*$titleChart = new ilTextInputGUI($this->getPlugin()->txt(self::LANG_CHART_TITLE), "chart_title");
+        $titleChart->setRequired(false);
+        $titleChart->setValue($prop["chart_title"]);
+        $form->addItem($titleChart);*/
+
+        $titleChart = new ilHiddenInputGUI("chart_title");
+        $titleChart->setValue($prop["chart_title"]);
+        $form->addItem($titleChart);
+
+        //var_dump($titleChart->getToolbarHTML());
+
+        /*
         // Title of chart
         $titleChart = new ilTextInputGUI($this->getPlugin()->txt(self::LANG_CHART_TITLE), "chart_title");
         $titleChart->setRequired(false);
@@ -488,7 +507,7 @@ class ilChartPluginGUI extends ilPageComponentPluginGUI
 
         $radioPercent = new ilRadioOption($this->getPlugin()->txt("percent"), "2");
         $radioGroup->addOption($radioPercent);
-        $form->addItem($radioGroup);
+        $form->addItem($radioGroup);*/
 
         $header = new ilFormSectionHeaderGUI();
         $header->setTitle($this->lng->txt('categories'));

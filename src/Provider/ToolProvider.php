@@ -22,6 +22,8 @@ class ToolProvider extends AbstractDynamicToolPluginProvider
     const SHOW_EDITOR = "copg_show_editor";
     const TPL_FILE = "tpl.editor_slate.html";
     const PLUGIN_ID = "chrt";
+    const CMD_SAVE = "save";
+    const CMD_UPDATE = "update";
 
 
     public function getToolsForContextStack(CalledContexts $called_contexts) : array
@@ -108,12 +110,13 @@ class ToolProvider extends AbstractDynamicToolPluginProvider
 
         //var_dump($properties);
         $form = new \ilPropertyFormGUI();
-        $form->setTitle($pl->txt(self::LANG_CHART));
+        /*$form->setTitle($pl->txt(self::LANG_CHART));*/
 
-        $titleChart = new \ilTextInputGUI($pl->txt(self::LANG_CHART_TITLE), "chart_title");
+        $titleChart = new \ilTextInputGUI($pl->txt(self::LANG_CHART_TITLE), "chart_title_slate");
         $titleChart->setRequired(false);
         $titleChart->setValue("test");
         $form->addItem($titleChart);
+
 
         $selectChartType = new \ilSelectInputGUI($pl->txt(self::LANG_CHART_TYPE), "chart_type");
         $selectChartType->setRequired(true);
@@ -128,16 +131,17 @@ class ToolProvider extends AbstractDynamicToolPluginProvider
         $form->addItem($selectChartType);
 
         // Radio buttons for data format
-        $radioGroup = new \ilRadioGroupInputGUI($pl->txt("data_format"), "data_format");
+        $radioGroup = new \ilRadioGroupInputGUI("Format", "data_format");
         $radioGroup->setRequired(true);
         $radioGroup->setValue($prop["data_format"]);
 
         // Radio button for data format number with suditem for currency symbol
         $radioNumber = new \ilRadioOption($pl->txt("number"), "1");
-        $currencySymbol = new \ilTextInputGUI($pl->txt("currency_symbol"), "currency_symbol");
+        $currencySymbol = new \ilTextInputGUI("Symbol", "currency_symbol");
         $currencySymbol->setInfo($pl->txt('add_currency_symbol'));
         $currencySymbol->setValue($prop["currency_symbol"]);
         $radioNumber->addSubItem($currencySymbol);
+
 
         $radioGroup->addOption($radioNumber);
 
@@ -145,6 +149,9 @@ class ToolProvider extends AbstractDynamicToolPluginProvider
         $radioGroup->addOption($radioPercent);
         $form->addItem($radioGroup);
 
+        $form->addCommandButton('#', $DIC->language()->txt(self::CMD_SAVE));
+
+        //$form->setFormAction($DIC->ctrl()->getFormAction(\ilChartPluginGUI::class));
         return $form->getHTML();
         /*$pl = new \ilChartPlugin();
         $tpl = $pl->getTemplate(self::TPL_FILE, true, true);
@@ -156,5 +163,11 @@ class ToolProvider extends AbstractDynamicToolPluginProvider
         //$tpl->setVariable("TXT_SEL", $lng->txt("cont_double_click_to_delete"));
        /* $tpl->parseCurrentBlock();
         return $tpl->get();*/
+    }
+
+    private function update()
+    {
+        $plugin_gui = new \ilChartPluginGUI();
+        $plugin_gui->updateSlate();
     }
 }

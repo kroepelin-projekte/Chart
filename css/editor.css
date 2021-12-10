@@ -1,0 +1,9 @@
+.il-mainbar-slates label  {
+
+}
+.il-mainbar-slates .form-horizontal .control-label  {
+    text-align: left;
+}
+#il_prop_cont_currency_symbol  {
+    padding-left: 10px;
+}
