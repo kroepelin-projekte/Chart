@@ -114,11 +114,10 @@ class ToolProvider extends AbstractDynamicToolPluginProvider
 
         $titleChart = new \ilTextInputGUI($pl->txt(self::LANG_CHART_TITLE), "chart_title_slate");
         $titleChart->setRequired(false);
-        $titleChart->setValue("test");
         $form->addItem($titleChart);
 
 
-        $selectChartType = new \ilSelectInputGUI($pl->txt(self::LANG_CHART_TYPE), "chart_type");
+        $selectChartType = new \ilSelectInputGUI($pl->txt(self::LANG_CHART_TYPE), "chart_type_slate");
         $selectChartType->setRequired(true);
         $optionsChart = [
             "1" => $pl->txt(self::LANG_CHART_HORIZONTAL_BAR),
@@ -127,19 +126,16 @@ class ToolProvider extends AbstractDynamicToolPluginProvider
             "4" => $pl->txt(self::LANG_CHART_LINE_CHART)
         ];
         $selectChartType->setOptions($optionsChart);
-        $selectChartType->setValue($prop["chart_type"]);
         $form->addItem($selectChartType);
 
         // Radio buttons for data format
-        $radioGroup = new \ilRadioGroupInputGUI("Format", "data_format");
+        $radioGroup = new \ilRadioGroupInputGUI("Format", "data_format_slate");
         $radioGroup->setRequired(true);
-        $radioGroup->setValue($prop["data_format"]);
 
         // Radio button for data format number with suditem for currency symbol
         $radioNumber = new \ilRadioOption($pl->txt("number"), "1");
-        $currencySymbol = new \ilTextInputGUI("Symbol", "currency_symbol");
+        $currencySymbol = new \ilTextInputGUI("Symbol", "currency_symbol_slate");
         $currencySymbol->setInfo($pl->txt('add_currency_symbol'));
-        $currencySymbol->setValue($prop["currency_symbol"]);
         $radioNumber->addSubItem($currencySymbol);
 
 
@@ -149,8 +145,12 @@ class ToolProvider extends AbstractDynamicToolPluginProvider
         $radioGroup->addOption($radioPercent);
         $form->addItem($radioGroup);
 
-        $form->addCommandButton('#', $DIC->language()->txt(self::CMD_SAVE));
+        $form->addCommandButton('', $DIC->language()->txt(self::CMD_SAVE));
 
+
+        /*var_dump($DIC->ctrl()->getFormActionByClass('ilChartPluginGUI', 'test'));*/
+        //$form->setFormAction($DIC->ctrl()->getFormActionByClass('ilChartPluginGUI', 'test'));
+        //$form->setFormAction($DIC->ctrl()->getFormAction($this));
         //$form->setFormAction($DIC->ctrl()->getFormAction(\ilChartPluginGUI::class));
         return $form->getHTML();
         /*$pl = new \ilChartPlugin();

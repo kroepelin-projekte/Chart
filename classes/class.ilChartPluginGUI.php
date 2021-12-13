@@ -93,6 +93,11 @@ class ilChartPluginGUI extends ilPageComponentPluginGUI
         return $this->editorIsActive;
     }
 
+    public function test()
+    {
+
+    }
+
     /**
      * Form for new elements
      */
@@ -172,7 +177,6 @@ class ilChartPluginGUI extends ilPageComponentPluginGUI
             }
 
             if ($this->createElement($properties)) {
-
                 ilUtil::sendSuccess($DIC->language()->txt(self::LANG_OBJ_MODIFIED), true);
                 $this->returnToParent();
             }
@@ -275,8 +279,10 @@ class ilChartPluginGUI extends ilPageComponentPluginGUI
             }
             
             if ($this->updateElement($properties)) {
+
+                var_dump($properties);
                 ilUtil::sendSuccess($DIC->language()->txt(self::LANG_OBJ_MODIFIED), true);
-                $DIC->ctrl()->redirectByClass(self::PLUGIN_CLASS_NAME, self::CMD_EDIT);
+                //$DIC->ctrl()->redirectByClass(self::PLUGIN_CLASS_NAME, self::CMD_EDIT);
             }
         }
     }
@@ -467,6 +473,18 @@ class ilChartPluginGUI extends ilPageComponentPluginGUI
 
         $titleChart = new ilHiddenInputGUI("chart_title");
         $titleChart->setValue($prop["chart_title"]);
+        $form->addItem($titleChart);
+
+        $titleChart = new ilHiddenInputGUI("chart_type");
+        $titleChart->setValue($prop["chart_type"]);
+        $form->addItem($titleChart);
+
+        $titleChart = new ilHiddenInputGUI("data_format");
+        $titleChart->setValue($prop["data_format"]);
+        $form->addItem($titleChart);
+
+        $titleChart = new ilHiddenInputGUI("currency_symbol");
+        $titleChart->setValue($prop["currency_symbol"]);
         $form->addItem($titleChart);
 
         //var_dump($titleChart->getToolbarHTML());
@@ -763,7 +781,7 @@ class ilChartPluginGUI extends ilPageComponentPluginGUI
      */
     private function percentDataFormat(array $a_properties): string
     {
-        $summ = 0;
+        /*$summ = 0;
         $valArray = [];
         $result = [];
         $percent = "";
@@ -785,7 +803,9 @@ class ilChartPluginGUI extends ilPageComponentPluginGUI
         foreach ($result as $key => $value) {
             $percent .= '<input type="hidden" id="'.$key.'" value="'.$value.'">';
         }
-        return $percent;
+        return $percent;*/
+
+        return "test";
     }
     
     /**

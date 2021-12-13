@@ -1,24 +1,7 @@
 window.onload = function() {
 
-
-    /*let inputs = document.getElementsByTagName("INPUT");
-
-    let title = "";
-    for(let i = 0; i < inputs.length; i++){
-
-        //alert(i);
-        //alert(inputs[i].getAttribute("class"));
-
-        if(inputs[i].id === "chart_title_slate"){
-
-            title = inputs[i].value;
-        }
-    }
-    document.getElementById("chart_title").value = title;
-
-    alert(document.getElementById("chart_title").value);*/
-
-    let containers = ['il_prop_cont_chart_title_slate', 'il_prop_cont_chart_type', 'il_prop_cont_data_format', 'il_prop_cont_currency_symbol'];
+    let containers = ['il_prop_cont_chart_title_slate', 'il_prop_cont_chart_type_slate', 'il_prop_cont_data_format_slate', 'il_prop_cont_currency_symbol_slate'];
+    let inputsSlate =  ['chart_title_slate', 'chart_type_slate', 'data_format_slate_1', 'data_format_slate_2', 'currency_symbol_slate'];
 
     for(let i = 0; i < containers.length; i++){
 
@@ -28,15 +11,47 @@ window.onload = function() {
         changeClassName(label, 'col-sm-3', 'col-sm-12');
     }
 
-    changeClassName(document.getElementById('il_prop_cont_currency_symbol').querySelector('div:nth-child(2)'), 'col-sm-9', 'col-sm-12');
+    changeClassName(document.getElementById('il_prop_cont_currency_symbol_slate').querySelector('div:nth-child(2)'), 'col-sm-9', 'col-sm-12');
+
+    setValue(document.getElementById('chart_title_slate'), document.getElementById('chart_title'));
+    setValue(document.getElementById('chart_type_slate'), document.getElementById('chart_type'));
+    setValue(document.getElementById('currency_symbol_slate'), document.getElementById('currency_symbol'));
+
+    if(document.getElementById('data_format').value === '1') {
+        setChecked(document.getElementById('data_format_slate_1'), true);
+    }else if(document.getElementById('data_format').value === '2') {
+        setChecked(document.getElementById('data_format_slate_2'), true);
+    }
 
 
-    let form = document.getElementById('il_prop_cont_chart_title_slate').parentNode;
+    let form = document.getElementById('il_prop_cont_chart_title_slate').parentNode.parentNode;
     let submitButton = form.getElementsByClassName('btn').item(0);
 
-    submitButton.addEventListener("click", function(e) {
+    document.getElementById("chart_title_slate").addEventListener("keyup", function(){
+        document.getElementById('chart_title').value = getValue(document.getElementById("chart_title_slate"));
+    });
 
-        e.preventDefault;
+    document.getElementById("chart_type_slate").addEventListener("change", function(){
+        document.getElementById('chart_type').value = getValue(document.getElementById("chart_type_slate"));
+    });
+
+    document.getElementById('data_format_slate_1').addEventListener("click", function(){
+        document.getElementById('data_format').value = getValue(document.getElementById('data_format_slate_1'));
+    });
+
+    document.getElementById('data_format_slate_2').addEventListener("click", function(){
+        document.getElementById('data_format').value = getValue(document.getElementById('data_format_slate_2'));
+    });
+
+    document.getElementById('currency_symbol_slate').addEventListener("keyup", function(){
+        document.getElementById('currency_symbol').value = getValue(document.getElementById('currency_symbol_slate'));
+    });
+
+
+    form.addEventListener("submit", function(e){
+
+        e.preventDefault();
+        alert("OK");
     });
 
 
@@ -63,6 +78,18 @@ function textAlign(sel, position) {
 function changeClassName(sel, oldClassName, newClassName) {
     sel.classList.remove(oldClassName);
     sel.classList.add(newClassName);
+}
+
+function getValue(sel)  {
+    return sel.value;
+}
+
+function setValue(selSlate, selGUI)  {
+    selSlate.value = selGUI.value;
+}
+
+function setChecked(selSlate, checked)  {
+    selSlate.setAttribute('checked', checked);
 }
 
 /*
