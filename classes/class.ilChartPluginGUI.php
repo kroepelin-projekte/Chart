@@ -6,6 +6,7 @@
  *
  * @author KPG <dev@kroepelin-projekte.de>
  * @ilCtrl_isCalledBy ilChartPluginGUI: ilPCPluggedGUI
+ * @ilCtrl_isCalledBy ilChartPluginGUI: ilUIPluginRouterGUI
  */
 class ilChartPluginGUI extends ilPageComponentPluginGUI
 {
@@ -61,8 +62,6 @@ class ilChartPluginGUI extends ilPageComponentPluginGUI
     {
         parent::__construct();
         $this->pl = new ilChartPlugin();
-
-        //$this->setCharacteristics(ilPCParagraphGUI::_getStandardCharacteristics());
     }
 
     /**
@@ -106,7 +105,6 @@ class ilChartPluginGUI extends ilPageComponentPluginGUI
         global $tpl;
         $this->editorIsActive = true;
 
-        var_dump("OK");
         $this->setTabs(self::TAB_CHART, false);
         $form = $this->initFormChart(self::ACTION_INSERT);
         $tpl->setContent($form->getHTML());
@@ -579,6 +577,15 @@ class ilChartPluginGUI extends ilPageComponentPluginGUI
 
         $form->addItem($dataset);
 
+        /*var_dump($DIC->ctrl()->getFormAction($this));
+        var_dump("OK");
+
+        $link = $DIC->ctrl()->getLinkTargetByClass(
+            self::class,
+            "testAjax");
+
+
+        var_dump($link);*/
 
         if ($action === self::ACTION_INSERT) {
             $form->addCommandButton(self::CMD_CREATE, $DIC->language()->txt(self::CMD_SAVE));
@@ -589,6 +596,28 @@ class ilChartPluginGUI extends ilPageComponentPluginGUI
         $form->setFormAction($DIC->ctrl()->getFormAction($this));
 
         return $form;
+    }
+
+    public function testAjax()
+    {
+        global $DIC;
+
+        $DIC->ctrl()->redirectToUrl($_SERVER['HTTP_REFERER']);
+        var_dump("O");
+        $prop = $this->getProperties();
+        var_dump($prop);
+    }
+
+    public function getLink()
+    {
+        global $DIC;
+
+        $link = $DIC->ctrl()->getLinkTargetByClass(
+            [\ilUIPluginRouterGUI::class, self::class],
+            "testAjax"
+        );
+
+        return $link;
     }
 
     public function buildOrderingTextsInputGui()
@@ -768,8 +797,10 @@ class ilChartPluginGUI extends ilPageComponentPluginGUI
             return 'horizontalBar';
         } elseif ($chart_type == '2') {
             return 'bar';
-        } else {
+        } elseif ($chart_type == '3') {
             return 'pie';
+        } else {
+            return 'line';
         }
     }
     
@@ -814,16 +845,40 @@ class ilChartPluginGUI extends ilPageComponentPluginGUI
      * @param array $a_properties
      * @return string
      */
-    private function keyInputField(array $a_properties): string
+    private function titleCategoryInputFields(array $a_properties): string
     {
-        $keyFields = "";
+        $categoryFields = "";
         
         foreach ($a_properties as $key => $value) {
-            if (strpos($key, "key") > -1) {
+            /*if (strpos($key, "key") > -1) {
                 $keyFields .= '<input type="hidden" id="'.$key.'" value="'.$value.'">';
+            }*/
+            if (strpos($key, "title_category") > -1) {
+                $categoryFields .= '<input type="hidden" id="'.$key.'" value="'.$value.'">';
             }
         }
-        return $keyFields;
+        return $categoryFields;
+    }
+
+    /**
+     * Get title dataset Input Fields
+     *
+     * @param array $a_properties
+     * @return string
+     */
+    private function titleDatasetInputFields(array $a_properties): string
+    {
+        $datasetFields = "";
+
+        foreach ($a_properties as $key => $value) {
+            /*if (strpos($key, "key") > -1) {
+                $keyFields .= '<input type="hidden" id="'.$key.'" value="'.$value.'">';
+            }*/
+            if (strpos($key, "title_dataset") > -1) {
+                $datasetFields .= '<input type="hidden" id="'.$key.'" value="'.$value.'">';
+            }
+        }
+        return $datasetFields;
     }
     
     /**
@@ -832,14 +887,15 @@ class ilChartPluginGUI extends ilPageComponentPluginGUI
      * @param array $a_properties
      * @return string
      */
-    private function valueInputField(array $a_properties): string
+    private function valueDatasetInputFields(array $a_properties): string
     {
         $valueFields = "";
         
         foreach ($a_properties as $key => $value) {
-            if (strpos($key, "val") > -1) {
+
+            if (strpos($key, "value_dataset") > -1) {
                 $value = str_replace(',', '.', $value);
-                $valueFields .= '<input type="hidden" id="'.$key.'" value="'.round($value, 2).'">';
+                $valueFields .= '<input type="hidden" id="'.$key.'" value="' . $value . '">';
             }
         }
         return $valueFields;
@@ -851,12 +907,24 @@ class ilChartPluginGUI extends ilPageComponentPluginGUI
      * @param array $a_properties
      * @return string
      */
-    private function colorInputField(array $a_properties): string
+    private function colorCategoryInputField(array $a_properties): string
     {
         $colorFields = "";
         
         foreach ($a_properties as $key => $value) {
             if (strpos($key, "color_category") > -1) {
+                $colorFields .= '<input type="hidden" id="'.$key.'" value="'.$value.'">';
+            }
+        }
+        return $colorFields;
+    }
+
+    private function colorDatasetInputField(array $a_properties): string
+    {
+        $colorFields = "";
+
+        foreach ($a_properties as $key => $value) {
+            if (strpos($key, "color_dataset") > -1) {
                 $colorFields .= '<input type="hidden" id="'.$key.'" value="'.$value.'">';
             }
         }
@@ -875,6 +943,9 @@ class ilChartPluginGUI extends ilPageComponentPluginGUI
     {
         $pl = $this->getPlugin();
         $tpl = $pl->getTemplate("tpl.content.html");
+
+        var_dump($a_properties);
+        //var_dump($this->keyInputField($a_properties));
         
         self::$id_counter += 1;
         $divcanid = self::DIV_CANVAS_ID_PREFIX . self::$id_counter;
@@ -888,9 +959,11 @@ class ilChartPluginGUI extends ilPageComponentPluginGUI
         $tpl->setVariable("CHART_TYPE", $this->getChartType($a_properties['chart_type']));
         $tpl->setVariable("CHART_DATA_FORMAT", $a_properties['data_format']);
         $tpl->setVariable("CHART_CURR_SYMBOL", $a_properties['currency_symbol']);
-        $tpl->setVariable("KEYS", $this->keyInputField($a_properties));
-        $tpl->setVariable("VALUES", $this->valueInputField($a_properties));
-        $tpl->setVariable("COLOR", $this->colorInputField($a_properties));
+        $tpl->setVariable("TITLE_CATEGORIES", $this->titleCategoryInputFields($a_properties));
+        $tpl->setVariable("TITLE_DATASETS", $this->titleDatasetInputFields($a_properties));
+        $tpl->setVariable("VALUE_DATASETS", $this->valueDatasetInputFields($a_properties));
+        $tpl->setVariable("COLOR_CATEGORY", $this->colorCategoryInputField($a_properties));
+        $tpl->setVariable("COLOR_DATASET", $this->colorDatasetInputField($a_properties));
         $tpl->setVariable("PERC", $this->percentDataFormat($a_properties));
         $tpl->parseCurrentBlock();
         

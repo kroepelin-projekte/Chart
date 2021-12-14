@@ -8,6 +8,12 @@ use ILIAS\GlobalScreen\ScreenContext\Stack\CalledContexts;
 
 include_once "./Customizing/global/plugins/Services/COPage/PageComponent/Chart/classes/class.ilChartPluginGUI.php";
 
+/**
+ * Class ilChartPluginGUI
+ *
+ * @author KPG <dev@kroepelin-projekte.de>
+ * @ilCtrl_isCalledBy ToolProvider: ilPCPluggedGUI
+ */
 class ToolProvider extends AbstractDynamicToolPluginProvider
 {
     const LANG_CHART_TITLE = "chart_title";
@@ -46,7 +52,7 @@ class ToolProvider extends AbstractDynamicToolPluginProvider
 
         /*if ($additional_data->is(self::SHOW_EDITOR, true)) {*/
 
-        if($plugin->getId() === 'chrt' && $DIC->ctrl()->getCmd() === 'edit') {
+        if($plugin->getId() === 'chrt' && $DIC->ctrl()->getCmd() === 'edit' && $DIC->ctrl()->getCmdClass() === 'ilpcpluggedgui') {
 
 
             //var_dump($plugin->getId());
@@ -112,6 +118,8 @@ class ToolProvider extends AbstractDynamicToolPluginProvider
         $form = new \ilPropertyFormGUI();
         /*$form->setTitle($pl->txt(self::LANG_CHART));*/
 
+        //$form = new \ilAsyncPropertyFormGUI();
+
         $titleChart = new \ilTextInputGUI($pl->txt(self::LANG_CHART_TITLE), "chart_title_slate");
         $titleChart->setRequired(false);
         $form->addItem($titleChart);
@@ -145,29 +153,6 @@ class ToolProvider extends AbstractDynamicToolPluginProvider
         $radioGroup->addOption($radioPercent);
         $form->addItem($radioGroup);
 
-        $form->addCommandButton('', $DIC->language()->txt(self::CMD_SAVE));
-
-
-        /*var_dump($DIC->ctrl()->getFormActionByClass('ilChartPluginGUI', 'test'));*/
-        //$form->setFormAction($DIC->ctrl()->getFormActionByClass('ilChartPluginGUI', 'test'));
-        //$form->setFormAction($DIC->ctrl()->getFormAction($this));
-        //$form->setFormAction($DIC->ctrl()->getFormAction(\ilChartPluginGUI::class));
         return $form->getHTML();
-        /*$pl = new \ilChartPlugin();
-        $tpl = $pl->getTemplate(self::TPL_FILE, true, true);
-        $tpl->setCurrentBlock("chart_title");
-        $tpl->setVariable("TXT_ADD_EL", $lng->txt("cont_add_elements"));*/
-        //$tpl->setVariable("PLUS", ilGlyphGUI::get(ilGlyphGUI::ADD));
-        //$tpl->setVariable("DRAG_ARROW", ilGlyphGUI::get(ilGlyphGUI::DRAG));
-        //$tpl->setVariable("TXT_DRAG", $lng->txt("cont_drag_and_drop_elements"));
-        //$tpl->setVariable("TXT_SEL", $lng->txt("cont_double_click_to_delete"));
-       /* $tpl->parseCurrentBlock();
-        return $tpl->get();*/
-    }
-
-    private function update()
-    {
-        $plugin_gui = new \ilChartPluginGUI();
-        $plugin_gui->updateSlate();
     }
 }

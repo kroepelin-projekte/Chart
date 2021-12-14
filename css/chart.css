@@ -1,4 +1,10 @@
 .chart-container {
+    position: relative;
+    max-width: 60vw;
+    height: 80vh;
+    margin: auto;
+}
+/*.chart-container {
     position: relative; 
     margin: auto; 
     padding: 10px;
@@ -33,4 +39,4 @@
     .chart-container {
         max-width: 275px;
     }
-}
+}*/
