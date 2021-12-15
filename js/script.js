@@ -36,7 +36,7 @@ for (let i = 0; i < divClass.length; i++) {
     chartDataSet = {label:[], data:[], backgroundColor: [], borderColor: []};
 
     // category
-    chartLabels = {labels:[]};
+    chartLabels = {labels:[], datasetsTitle:[]};
 
     // Percent(2)/Currency
     if (chDataFormat === "2") {
@@ -73,6 +73,15 @@ for (let i = 0; i < divClass.length; i++) {
         chartLabels.labels[k] = categoryDiv[k].value;
     }
 
+    for (let k = 0; k < datasetDiv.length; k++) {
+        chartLabels.datasetsTitle[k] = datasetDiv[k].value;
+    }
+
+    let datasetColors = [];
+    for (let k = 0; k < colorDatasetDiv.length; k++) {
+        datasetColors.push('#' + colorDatasetDiv[k].value);
+    }
+
     // Find count of datasets
     let datasetIndexes = [];
     for(let n = 0; n < datasetValueDiv.length; n++){
@@ -101,7 +110,7 @@ for (let i = 0; i < divClass.length; i++) {
         console.log(dataDatasetTmp);
         dataDataset[n] = dataDatasetTmp;
 
-       // alert(type);
+        alert(datasetDiv[n].value);
 
         if(type === 'horizontalBar' || type === 'bar'){
 
@@ -116,19 +125,14 @@ for (let i = 0; i < divClass.length; i++) {
                 //barThickness: 24,
                 minBarLength: 25
             }
+
         }else if(type === 'pie'){
-
-           /* let colors = [];
-            for(let i = 0; i < colorCategoryDiv.length; i ++){
-
-                colors.push('#' + colorCategoryDiv[n].value);
-            }*/
 
             datasetForChart[n] = {
 
                 label: datasetDiv[n].value,
                 data: dataDataset[n],
-                backgroundColor: ['#AAA', '#777'],//'#' + colorCategoryDiv[n].value,
+                backgroundColor: datasetColors,//'#' + colorDatasetDiv[n].value,
                 borderColor: '#000000',
                 borderWidth: 1
             }
@@ -378,7 +382,7 @@ for (let i = 0; i < divClass.length; i++) {
         chDataTable = {
             type: type,
             data: {
-                labels: chartLabels.labels,
+                labels: chartLabels.datasetsTitle/*chartLabels.labels*/,
                 datasets: datasetForChart/*[{
                     label: chartDataSet.label,
                     data: chartDataSet.data,

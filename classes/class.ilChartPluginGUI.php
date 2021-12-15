@@ -296,8 +296,11 @@ class ilChartPluginGUI extends ilPageComponentPluginGUI
             }
 
             if ($this->updateElement($properties)) {
+
+                var_dump($properties);
+
                 ilUtil::sendSuccess($DIC->language()->txt(self::LANG_OBJ_MODIFIED), true);
-                $DIC->ctrl()->redirectByClass(self::PLUGIN_CLASS_NAME, self::CMD_EDIT);
+                //$DIC->ctrl()->redirectByClass(self::PLUGIN_CLASS_NAME, self::CMD_EDIT);
             }
         }
     }
