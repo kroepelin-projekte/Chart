@@ -38,24 +38,15 @@ class ToolProvider extends AbstractDynamicToolPluginProvider
         $tools = [];
         $additional_data = $called_contexts->current()->getAdditionalData();
 
-        //$pageObjectGUI = new \ilPageObjectGUI('copa', 327);
-        //var_dump($pageObjectGUI->getOutputMode());
+        $plugin = new \ilChartPlugin();
 
-       $plugin = new \ilChartPlugin();
+
         var_dump($plugin->getId());
-        /* $plugin_gui = new \ilChartPluginGUI();
-        $editorIsActive = $plugin_gui->editorIsActive();*/
-
-        /*var_dump($DIC->ctrl()->getCmd());
+        var_dump($DIC->ctrl()->getCmd());
         var_dump($DIC->ctrl()->getCmdClass());
-        var_dump($DIC->ctrl()->getCmdNode());*/
 
-        /*if ($additional_data->is(self::SHOW_EDITOR, true)) {*/
+        if($plugin->getId() === 'chrt' && ($DIC->ctrl()->getCmd() === 'edit' || $DIC->ctrl()->getCmd() === 'insert')/* && $DIC->ctrl()->getCmdClass() === 'ilpcpluggedgui'*/) {
 
-        if($plugin->getId() === 'chrt' && $DIC->ctrl()->getCmd() === 'edit' && $DIC->ctrl()->getCmdClass() === 'ilpcpluggedgui') {
-
-
-            //var_dump($plugin->getId());
             $title = $this->dic->language()->txt('editor');
             $icon = $this->dic->ui()->factory()->symbol()->icon()->custom(\ilUtil::getImagePath("outlined/icon_edtr.svg"), $title);
             $iff = function () {
@@ -70,30 +61,8 @@ class ToolProvider extends AbstractDynamicToolPluginProvider
                 ->withContent($l($this->getContent()));
 
             return $tools;
-            /*$title = $this->dic->language()->txt('editor');
-            $icon = $this->dic->ui()->factory()->symbol()->icon()->custom(\ilUtil::getImagePath("outlined/icon_edtr.svg"), $title);
-
-            $iff = function ($id) {
-                //var_dump($this->identification_provider->contextAwareIdentifier($id));
-                return $this->identification_provider->contextAwareIdentifier('test');
-            };
-            $l = function (string $content) {
-                return $this->dic->ui()->factory()->legacy($content);
-            };
-            $tools[] = $this->factory->tool($iff("copg_editor"))
-                ->withSymbol($icon)
-                ->withTitle($title)
-                ->withContent($l($this->getContent()));
-
-            return $tools;*/
         }
         return [];
-        /*if ($additional_data->is(self::SHOW_EDITOR, true)) {
-
-        }*/
-
-
-        //return [];
     }
 
     public function isInterestedInContexts() : ContextCollection

@@ -2,12 +2,12 @@ var divClass = document.getElementsByClassName('chdiv');
 var div = [];
 var j = 1;
 
-for (let i = 0; i< divClass.length; i++) {
+for (let i = 0; i < divClass.length; i++) {
 
-    let title, type, chId, chDataFormat, chCurrencySymbol, categoryDiv, datasetDiv, datasetValueDiv, colorCategoryDiv, colorDatasetDiv, percDiv, chartDataSet, chartLabels, canVas, chDataTable, thisChart, optionsPie, optionsBar, optionsLine, symbol,
+    let title, type, chId, chDataFormat, chCurrencySymbol, categoryDiv, datasetDiv, datasetCount, datasetValueDiv, colorCategoryDiv, colorDatasetDiv, percDiv, chartDataSet, chartLabels, canVas, chDataTable, thisChart, optionsPie, optionsBar, optionsLine, symbol,
     object = {};
 
-    div[i] = document.getElementById('chart_div_'+j).children;
+    div[i] = document.getElementById('chart_div_' + j).children;
 
 
     title = div[i].chart_title.value;
@@ -35,7 +35,7 @@ for (let i = 0; i< divClass.length; i++) {
      */
     chartDataSet = {label:[], data:[], backgroundColor: [], borderColor: []};
 
-    // category1
+    // category
     chartLabels = {labels:[]};
 
     // Percent(2)/Currency
@@ -47,11 +47,21 @@ for (let i = 0; i< divClass.length; i++) {
             return value + ' %';
         };
     } else {
-        for (let k = 0; k < categoryDiv.length; k++) {
+        /*for (let k = 0; k < categoryDiv.length; k++) {
             let parseVal = [];
             parseVal[k] = parseFloat(datasetValueDiv[k].value);
             chartDataSet.data[k] = parseVal[k];
+        }*/
+
+        /*let datasetIndexes = [];
+        for(let n = 0; n < datasetValueDiv.length; n++){
+            let id = datasetValueDiv[n].getAttribute('id');
+            datasetIndexes.push(id.substr(parseInt(id.indexOf('value_dataset_') + 14), parseInt(id.indexOf('_category')) - parseInt(id.indexOf('value_dataset_') + 14)));
         }
+
+        datasetLength = Math.max.apply(Math, datasetIndexes);*/
+
+
 
         symbol = function (value) {
             let parseVal = parseFloat(value);
@@ -63,137 +73,159 @@ for (let i = 0; i< divClass.length; i++) {
         chartLabels.labels[k] = categoryDiv[k].value;
     }
 
-
-
-
-    /* START IOANNA */
-    let allCharts = {};
-    let chart = {category:[], dataset:[], datasetValues: [], backgroundColorDataset: [], borderColorDataset: []};
-
-    let datasetValues = {};
-    for (let k = 0; k < categoryDiv.length; k++) {
-        chart.category[k] = categoryDiv[k].value;
-
-        datasetValues[k] = {
-            'category' : k
-        };
+    // Find count of datasets
+    let datasetIndexes = [];
+    for(let n = 0; n < datasetValueDiv.length; n++){
+        let id = datasetValueDiv[n].getAttribute('id');
+        datasetIndexes.push(id.substr(parseInt(id.indexOf('value_dataset_') + 14), parseInt(id.indexOf('_category')) - parseInt(id.indexOf('value_dataset_') + 14)));
     }
-
-    for (let k = 0; k < datasetDiv.length; k++) {
-        chart.dataset[k] = datasetDiv[k].value;
-    }
-
-
-    // Set dataset values pro category
-    let catDatasetValues = [];
-    /*for (let n = 0; n < categoryDiv.length; n++) {
-
-        let tmpDatasetValues = [];
-
-        for (let k = 0; k < datasetValueDiv.length; k++) {
-            if(datasetValueDiv[k].id.indexOf('category_' + (n+1)) > -1){
-
-                tmpDatasetValues.push(datasetValueDiv[k].value);
-            }
-        }
-        catDatasetValues[n] = tmpDatasetValues;
-    }*/
-
-    for (let n = 0; n < datasetValueDiv.length; n++) {
-
-        console.log(datasetValueDiv[n].id);
-
-        let tmpDatasetValues = [];
-
-        for (let k = 0; k < categoryDiv.length; k++) {
-
-            if(datasetValueDiv[n].id.indexOf('category_' + (k+1)) > -1){
-
-                tmpDatasetValues[k] = datasetValueDiv[n].value;
-
-
-            }
-        }
-        catDatasetValues[n] = tmpDatasetValues;
-    }
-
-    /*console.log('CAT');
-    console.log(catDatasetValues);*/
-    chart.datasetValues = catDatasetValues;
-
-    for (let k = 0; k < categoryDiv.length; k++) {
-
-    }
+    datasetCount = Math.max.apply(Math, datasetIndexes);
 
 
 
-    /* END IOANNA */
-
-
-
-
-
-
-    for (let k = 0; k < colorCategoryDiv.length; k++) {
-        chartDataSet.backgroundColor[k] = "#" + colorCategoryDiv[k].value;
-        chartDataSet.borderColor[k] = "#" + colorCategoryDiv[k].value;
-    }
-
-
-
-
-    /* START IOANNA */
-    for (let k = 0; k < colorDatasetDiv.length; k++) {
-        chart.backgroundColorDataset[k] = "#" + colorDatasetDiv[k].value;
-        chart.borderColorDataset[k] = "#" + colorDatasetDiv[k].value;
-    }
-
-  /*  console.log("CHART");
-    console.log(chart);*/
-
-
+    /* S T A R T  I O A N N A */
 
     let datasetForChart = [];
-    /*for (let k = 0; k < chart.category.length; k++) {
+    let dataDataset = [];
+    for(let n = 0; n < datasetCount; n++){
 
-        object[k] = {
-            label : chart.category[k],
-            data : chart.datasetValues[k],
-            backgroundColor : chart.backgroundColorDataset[k],
-            borderColor : chart.borderColorDataset,
-            borderWidth: 2,
-            barPercentage: 0.8,
-            //barThickness: 24,
-            minBarLength: 25
+        let dataDatasetTmp = [];
+        for(let m = 0; m < datasetValueDiv.length; m++) {
+
+            if (datasetValueDiv[m].getAttribute('id').indexOf('value_dataset_' + (n + 1)) > -1) {
+                dataDatasetTmp.push(datasetValueDiv[m].value);
+            }
         }
-        datasetForChart.push(object[k]);
-    }*/
 
-  /*  alert(chart.datasetValues.length);
-    alert(chart.dataset.length);*/
+        console.log("DATASETTMP");
+        console.log(dataDatasetTmp);
+        dataDataset[n] = dataDatasetTmp;
 
-    //let j = 0;
-    for (let k = 0; k < chart.dataset.length; k++) {
+       // alert(type);
 
-        object[k] = {
-            label : chart.dataset[k],
-            data : chart.datasetValues[k],
-            backgroundColor : chart.backgroundColorDataset[k],
-            borderColor : chart.borderColorDataset,
-            borderWidth: 2,
-            barPercentage: 0.8,
-            //barThickness: 24,
-            minBarLength: 25
+        if(type === 'horizontalBar' || type === 'bar'){
+
+            datasetForChart[n] = {
+
+                label: datasetDiv[n].value,
+                data: dataDataset[n],
+                backgroundColor: "#" + colorDatasetDiv[n].value,
+                borderColor: '#000000',
+                borderWidth: 1,
+                barPercentage: 0.8,
+                //barThickness: 24,
+                minBarLength: 25
+            }
+        }else if(type === 'pie'){
+
+           /* let colors = [];
+            for(let i = 0; i < colorCategoryDiv.length; i ++){
+
+                colors.push('#' + colorCategoryDiv[n].value);
+            }*/
+
+            datasetForChart[n] = {
+
+                label: datasetDiv[n].value,
+                data: dataDataset[n],
+                backgroundColor: ['#AAA', '#777'],//'#' + colorCategoryDiv[n].value,
+                borderColor: '#000000',
+                borderWidth: 1
+            }
+
+        }else if(type === 'line'){
+
+            // fill: true,
+            //     borderColor: 'rgba(75, 192, 192, 0.2)',
+            //alert(datasetDiv[n].value);
+            datasetForChart[n] = {
+
+                label: datasetDiv[n].value,
+                data: dataDataset[n],
+                backgroundColor: "#" + colorDatasetDiv[n].value,
+                borderColor: "#" + colorDatasetDiv[n].value,
+                borderWidth: 2,
+                fill: false,
+                tension: 0.0,
+            }
         }
-        datasetForChart.push(object[k]);
-        //j = j + 1;
+
     }
 
+    /*[{
+        label: "Dataset 1",
+        data: chartDataSet.data,
+        backgroundColor: "blue",
+        borderColor: 'blue',
+        fill: false,
+        tension: 0.0,
+    },
+        {
+            label: "Dataset 2",
+            data: chartDataSet.data,
+            backgroundColor: "red",
+            borderColor: 'red',
+            fill: false,
+            tension: 0.4,
+        },
+        {
+            label: "Dataset 3",
+            data: chartDataSet.data,
+            backgroundColor: "green",
+            borderColor: 'green',
+            fill: false,
+            tension: 0.0,
+        }]*/
+
+    /*[{
+                    label: chartDataSet.label,
+                    data: chartDataSet.data,
+                    backgroundColor: chartDataSet.backgroundColor,
+                    borderColor: '#000000',
+                    borderWidth: 2
+                },
+                {
+                    label: chartDataSet.label,
+                    data: chartDataSet.data,
+                    backgroundColor: chartDataSet.backgroundColor,
+                    borderColor: '#000000',
+                    borderWidth: 2
+                }]*/
+
+    /*datasetForChart = [{
+        label: "Dataset 1",
+        data: [22, 23],
+        backgroundColor: "blue",
+        borderColor: '#000000',
+        borderWidth: 1,
+        barPercentage: 0.8,
+        //barThickness: 24,
+        minBarLength: 25
+    },
+        {
+            label: "Dataset 2",
+            data: [23, 21],
+            backgroundColor: "red",
+            borderColor: '#000000',
+            borderWidth: 1,
+            barPercentage: 0.8,
+            //barThickness: 24,
+            minBarLength: 25
+        },
+        {
+            label: "Dataset 3",
+            data: [20, 22],
+            backgroundColor: "green",
+            borderColor: '#000000',
+            borderWidth: 1,
+            barPercentage: 0.8,
+            //barThickness: 24,
+            minBarLength: 25
+        }];*/
+
     console.log(datasetForChart);
-    //console.log(object);
 
-    /* END IOANNA */
-
+    /* E N D  I O A N N A */
 
     optionsPie = {
         plugins: {
@@ -253,10 +285,14 @@ for (let i = 0; i< divClass.length; i++) {
         },
         scales: {
             xAxes: [{
-                stacked: false
+                ticks: {
+                    beginAtZero: true
+                }
             }],
             yAxes: [{
-                stacked: false
+                ticks: {
+                    beginAtZero: true
+                }
             }]
         },
         responsive: true,
@@ -291,11 +327,18 @@ for (let i = 0; i< divClass.length; i++) {
                 },
                 offset: 1,
                 padding: 2,
-                clamp: true,
-                clip: true,
+                clamp: false,
+                clip: false,
                 display: 'auto',
                 formatter: symbol
             }
+        },
+        scales: {
+            yAxes: [{
+                ticks: {
+                    beginAtZero: true
+                }
+            }]
         },
         // scales: {
         //     xAxes: [{
@@ -324,17 +367,19 @@ for (let i = 0; i< divClass.length; i++) {
 
     canVas = document.getElementById(chId).getContext('2d');
 
+    console.log(chartLabels.labels);
     /**
      * @todo create diff datasets
      * @todo only pie backgroundColor: chartDataSet.backgroundColor !!!!
      *
      */
     if (type === 'pie') {
+
         chDataTable = {
             type: type,
             data: {
                 labels: chartLabels.labels,
-                datasets: [{
+                datasets: datasetForChart/*[{
                     label: chartDataSet.label,
                     data: chartDataSet.data,
                     backgroundColor: chartDataSet.backgroundColor,
@@ -347,18 +392,20 @@ for (let i = 0; i< divClass.length; i++) {
                     backgroundColor: chartDataSet.backgroundColor,
                     borderColor: '#000000',
                     borderWidth: 2
-                }]
+                }]*/
             },
             options: optionsPie
         };
 
         thisChart = new Chart(canVas, chDataTable);
+
     }else if (type === 'line'){
+
         chDataTable = {
             type: type,
             data: {
                 labels: chartLabels.labels,
-                datasets: [{
+                datasets: datasetForChart/*[{
                     label: "Dataset 1",
                     data: chartDataSet.data,
                     backgroundColor: "blue",
@@ -381,12 +428,13 @@ for (let i = 0; i< divClass.length; i++) {
                         borderColor: 'green',
                         fill: false,
                         tension: 0.0,
-                    }]
+                    }]*/
             },
             options: optionsLine
         };
 
         thisChart = new Chart(canVas, chDataTable);
+
     }else {
         chDataTable = {
             type: type,
@@ -430,223 +478,4 @@ for (let i = 0; i< divClass.length; i++) {
     }
     j++;
 }
-
-
-/*var divClass = document.getElementsByClassName('chdiv');
-var div = [];
-var j = 1;
-
-for (let i = 0; i< divClass.length; i++) {
-    let title, type, chId, chDataFormat, chCurrencySymbol, keyDiv, valueDiv, colorDiv, percDiv, chartDataSet, chartLabels, canVas, chDataTable, thisChart, optionsPie, optionsBar, optionsLine, symbol;
-
-    div[i] = document.getElementById('chart_div_'+j).children;
-    
-    title = div[i].chart_title.value;
-    type = div[i].chart_type.value;
-    chId = div[i].chart_id.value;
-    chDataFormat = div[i].chart_data_format.value;
-    chCurrencySymbol = div[i].chart_currency_symbol.value;
-    keyDiv = div[i].div_title_category.children;
-    valueDiv = div[i].div_value_dataset.children;
-    colorDiv = div[i].div_color.children;
-    percDiv = div[i].div_percent.children;
-    chartDataSet = {label:[],data:[],backgroundColor: [],borderColor: [],borderWidth: 1};
-    chartLabels = {labels:[]};
-
-    if (chDataFormat === "2") {
-        for (let k = 0; k<keyDiv.length; k++) {
-            chartDataSet.data[k] = percDiv[k].value;
-        }
-        symbol = function (value) {
-                    return value + ' %';
-                };
-    } else {
-        for (let k = 0; k<keyDiv.length; k++) {
-            chartDataSet.data[k] = valueDiv[k].value;
-        }
-        symbol = function (value) {
-                    return chCurrencySymbol+ ' ' + value;
-                };
-    }
-    
-    for (let k = 0; k<keyDiv.length; k++) {
-        chartLabels.labels[k] = keyDiv[k].value;
-    }
-    
-    for (let k = 0; k < colorDiv.length; k++) {
-        chartDataSet.backgroundColor[k] = "#" + colorDiv[k].value;
-        chartDataSet.borderColor[k] = "#" + colorDiv[k].value;
-    }
-
-    optionsPie = {
-        plugins: {
-            datalabels: {
-                align: 'end',
-                anchor: 'center',
-                backgroundColor: '#ffffff',
-                borderColor: '#000000',
-                borderRadius: 1,
-                borderWidth: 0.5,
-                color: '#000000',
-                font: {
-                  size: 13,
-                  weight: 600
-                },
-                padding: 2,
-                display: 'auto',
-                formatter: symbol
-            }
-        },
-        responsive: true,
-        maintainAspectRatio: true,
-        legend: {
-            display: true,
-            labels:{
-                boxWidth: 5,
-                usePointStyle: true,
-                boxHeight: 1
-            }
-        },
-        title: {
-            display: true,
-            text: title
-        }
-    };
-
-    optionsBar = {
-        plugins: {
-            datalabels: {
-                align: 'start',
-                anchor: 'end',
-                backgroundColor: '#ffffff',
-                borderColor: '#000000',
-                borderRadius: 1,
-                borderWidth: 0.5,
-                color: '#000000',
-                font: {
-                  size: 13,
-                  weight: 600
-                },
-                offset: 1,
-                padding: 2,
-                clamp: true,
-                clip: true,
-                display: 'auto',
-                formatter: symbol
-            }
-        },
-        scales: {
-            xAxes: [{
-            stacked: true
-            }],
-            yAxes: [{
-            stacked: true
-            }]
-        },
-        responsive: true,
-        maintainAspectRatio: true,
-        legend: {
-            display: false
-        },
-        title: {
-            display: true,
-            text: title
-        },
-        tooltip: false
-      };
-
-    optionsLine = {
-        plugins: {
-            datalabels: {
-                align: 'end',
-                anchor: 'center',
-                backgroundColor: '#ffffff',
-                borderColor: '#000000',
-                borderRadius: 1,
-                borderWidth: 0.5,
-                color: '#000000',
-                font: {
-                    size: 13,
-                    weight: 600
-                },
-                padding: 2,
-                display: 'auto',
-                formatter: symbol
-            }
-        },
-        responsive: true,
-        maintainAspectRatio: true,
-        legend: {
-            display: true,
-            labels:{
-                boxWidth: 5,
-                usePointStyle: true,
-                boxHeight: 1
-            }
-        },
-        title: {
-            display: true,
-            text: title
-        },
-
-    };
-
-    canVas = document.getElementById(chId).getContext('2d');
-
-    if (type === 'pie') {
-    chDataTable = {
-            type: type,
-            data: {
-                labels: chartLabels.labels,
-                datasets: [{
-                    label: chartDataSet.label,
-                    data: chartDataSet.data,
-                    backgroundColor: chartDataSet.backgroundColor,
-                    borderColor: '#000000',
-                    borderWidth: 1
-                }]
-            },
-            options: optionsPie
-        };
-
-        thisChart = new Chart(canVas, chDataTable);
-
-    }else if (type === 'line') {
-        chDataTable = {
-            type: type,
-            data: {
-                labels: chartLabels.labels,
-                datasets: [{
-                    label: chartDataSet.label,
-                    data: chartDataSet.data,
-                    backgroundColor: chartDataSet.backgroundColor,
-                    borderColor: '#000000',
-                    borderWidth: 1
-                }]
-            },
-            options: optionsLine
-        };
-
-        thisChart = new Chart(canVas, chDataTable);
-    } else {
-        chDataTable = {
-            type: type,
-            data: {
-                labels: chartLabels.labels,
-                datasets: [{
-                    label: chartDataSet.label,
-                    data: chartDataSet.data,
-                    backgroundColor: chartDataSet.backgroundColor,
-                    borderColor: '#000000',
-                    borderWidth: 1,
-                    categoryPercentage: 0.5
-                }]
-            },
-            options: optionsBar
-        };
-
-        thisChart = new Chart(canVas, chDataTable);
-    }
-    j++;
-}*/
 

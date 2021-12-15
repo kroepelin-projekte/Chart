@@ -108,6 +108,8 @@ class ilChartPluginGUI extends ilPageComponentPluginGUI
         $this->setTabs(self::TAB_CHART, false);
         $form = $this->initFormChart(self::ACTION_INSERT);
         $tpl->setContent($form->getHTML());
+        $tpl->addJavaScript("./Customizing/global/plugins/Services/COPage/PageComponent/Chart/js/editor.js");
+        $tpl->addCss("./Customizing/global/plugins/Services/COPage/PageComponent/Chart/css/editor.css");
     }
 
     /**
@@ -239,9 +241,15 @@ class ilChartPluginGUI extends ilPageComponentPluginGUI
             $properties = $this->getProperties();
 
             $datasetValues = [];
-            foreach($properties as $key => $value){
-                if(strpos($key, "value_dataset_") > -1){
-                    $datasetValues[$key] = $value;
+
+            foreach ($form->getInput("categories") as $key => $value) {
+                foreach ($form->getInput("datasets") as $k => $val) {
+
+                    if(array_key_exists("value_dataset_" . ($k + 1) . "_category_" . ($key + 1), $properties)) {
+                        $datasetValues["value_dataset_" . ($k + 1) . "_category_" . ($key + 1)] = $properties["value_dataset_" . ($k + 1) . "_category_" . ($key + 1)];
+                    }else{
+                        $datasetValues["value_dataset_" . ($k + 1) . "_category_" . ($key + 1)] = "0";
+                    }
                 }
             }
 
@@ -257,6 +265,16 @@ class ilChartPluginGUI extends ilPageComponentPluginGUI
 
             for ($i = 1; $i <= $countColorsDatasets; $i++) {
                 $propertiesDatasetsColorsTmp["color_dataset_".$i] = $properties["color_dataset_".$i];
+
+                if(array_key_exists("color_dataset_".$i, $properties)) {
+                    $datasetValues["color_dataset_".$i] = $properties["color_dataset_".$i];
+                }else{
+
+                    $extendedColors = $this->getExtendendColors();
+                    $color = $extendedColors[rand(0, count($extendedColors)-1)];
+
+                    $datasetValues["color_dataset_".$i] = $color;
+                }
             }
 
             $properties = [];
@@ -272,15 +290,14 @@ class ilChartPluginGUI extends ilPageComponentPluginGUI
                 $properties["title_category_".($key+1)] = $value;
             }
 
-            foreach ($form->getInput("datasets") as $key => $value) {
+            $datasets = $form->getInput("datasets");
+            foreach ($datasets as $key => $value) {
                 $properties["title_dataset_".($key+1)] = $value;
             }
-            
-            if ($this->updateElement($properties)) {
 
-                var_dump($properties);
+            if ($this->updateElement($properties)) {
                 ilUtil::sendSuccess($DIC->language()->txt(self::LANG_OBJ_MODIFIED), true);
-                //$DIC->ctrl()->redirectByClass(self::PLUGIN_CLASS_NAME, self::CMD_EDIT);
+                $DIC->ctrl()->redirectByClass(self::PLUGIN_CLASS_NAME, self::CMD_EDIT);
             }
         }
     }
@@ -322,7 +339,7 @@ class ilChartPluginGUI extends ilPageComponentPluginGUI
     {
         global $DIC;
 
-        $form = $this->initFormStyleEdit();
+        $form = $this->initFormDatasetsEdit();
         if ($form->checkInput()) {
             $properties = $this->getProperties();
 
@@ -336,8 +353,11 @@ class ilChartPluginGUI extends ilPageComponentPluginGUI
             }
 
             if ($this->updateElement($properties)) {
+
+                var_dump($properties);
+
                 ilUtil::sendSuccess($DIC->language()->txt(self::LANG_OBJ_MODIFIED), true);
-                $DIC->ctrl()->redirect($this, self::CMD_EDIT_DATASETS);
+                //$DIC->ctrl()->redirect($this, self::CMD_EDIT_DATASETS);
             }
         }
     }
@@ -600,12 +620,12 @@ class ilChartPluginGUI extends ilPageComponentPluginGUI
 
     public function testAjax()
     {
-        global $DIC;
+        /*global $DIC;
 
         $DIC->ctrl()->redirectToUrl($_SERVER['HTTP_REFERER']);
         var_dump("O");
-        $prop = $this->getProperties();
-        var_dump($prop);
+        $prop = $this->getProperties();*/
+        //var_dump($prop);
     }
 
     public function getLink()
@@ -871,9 +891,6 @@ class ilChartPluginGUI extends ilPageComponentPluginGUI
         $datasetFields = "";
 
         foreach ($a_properties as $key => $value) {
-            /*if (strpos($key, "key") > -1) {
-                $keyFields .= '<input type="hidden" id="'.$key.'" value="'.$value.'">';
-            }*/
             if (strpos($key, "title_dataset") > -1) {
                 $datasetFields .= '<input type="hidden" id="'.$key.'" value="'.$value.'">';
             }
@@ -944,7 +961,7 @@ class ilChartPluginGUI extends ilPageComponentPluginGUI
         $pl = $this->getPlugin();
         $tpl = $pl->getTemplate("tpl.content.html");
 
-        var_dump($a_properties);
+        //var_dump($a_properties);
         //var_dump($this->keyInputField($a_properties));
         
         self::$id_counter += 1;
