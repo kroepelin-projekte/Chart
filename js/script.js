@@ -40,9 +40,17 @@ for (let i = 0; i < divClass.length; i++) {
 
     // Percent(2)/Currency
     if (chDataFormat === "2") {
+        /*for (let k = 0; k < categoryDiv.length; k++) {
+            chartDataSet.data[k] = percDiv[k].value;
+        }*/
         for (let k = 0; k < categoryDiv.length; k++) {
             chartDataSet.data[k] = percDiv[k].value;
         }
+
+        console.log("DATASET");
+        console.log(chartDataSet.data);
+
+
         symbol = function(value) {
             return value + ' %';
         };
@@ -93,26 +101,39 @@ for (let i = 0; i < divClass.length; i++) {
 
 
     /* S T A R T  I O A N N A */
-
+    alert("OK");
     let datasetForChart = [];
     let dataDataset = [];
     for(let n = 0; n < datasetCount; n++){
 
         let dataDatasetTmp = [];
-        for(let m = 0; m < datasetValueDiv.length; m++) {
 
-            if (datasetValueDiv[m].getAttribute('id').indexOf('value_dataset_' + (n + 1)) > -1) {
-                dataDatasetTmp.push(datasetValueDiv[m].value);
+        if (chDataFormat === "1") {
+
+            for (let m = 0; m < datasetValueDiv.length; m++) {
+
+                if (datasetValueDiv[m].getAttribute('id').indexOf('value_dataset_' + (n + 1)) > -1) {
+
+                    dataDatasetTmp.push(datasetValueDiv[m].value);
+                }
             }
-        }
 
-        console.log("DATASETTMP");
-        console.log(dataDatasetTmp);
+        }else{
+
+            for (let m = 0; m < percDiv.length; m++) {
+
+                if (percDiv[m].getAttribute('id').indexOf('value_dataset_' + (n + 1)) > -1) {
+                    dataDatasetTmp.push(percDiv[m].value);
+                }
+            }
+
+        }
         dataDataset[n] = dataDatasetTmp;
 
-        alert(datasetDiv[n].value);
-
         if(type === 'horizontalBar' || type === 'bar'){
+
+           // alert(dataDataset[n].value);
+
 
             datasetForChart[n] = {
 
@@ -144,7 +165,7 @@ for (let i = 0; i < divClass.length; i++) {
             //alert(datasetDiv[n].value);
             datasetForChart[n] = {
 
-                label: datasetDiv[n].value,
+                label: '#' + datasetDiv[n].value,
                 data: dataDataset[n],
                 backgroundColor: "#" + colorDatasetDiv[n].value,
                 borderColor: "#" + colorDatasetDiv[n].value,
@@ -155,6 +176,9 @@ for (let i = 0; i < divClass.length; i++) {
         }
 
     }
+
+    console.log('DATASET');
+    console.log(datasetForChart);
 
     /*[{
         label: "Dataset 1",

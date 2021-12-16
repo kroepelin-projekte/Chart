@@ -297,7 +297,7 @@ class ilChartPluginGUI extends ilPageComponentPluginGUI
 
             if ($this->updateElement($properties)) {
 
-                var_dump($properties);
+                //var_dump($properties);
 
                 ilUtil::sendSuccess($DIC->language()->txt(self::LANG_OBJ_MODIFIED), true);
                 //$DIC->ctrl()->redirectByClass(self::PLUGIN_CLASS_NAME, self::CMD_EDIT);
@@ -808,6 +808,17 @@ class ilChartPluginGUI extends ilPageComponentPluginGUI
         $this->returnToParent();
     }
 
+    private function getCountCategories(array $properties): int
+    {
+        $count = 0;
+        foreach($properties as $key => $value){
+
+            if(strpos($key, 'title_category') > -1){
+                $count += 1;
+            }
+        }
+        return $count;
+    }
     /**
      * Get Chart Type
      *
@@ -833,33 +844,109 @@ class ilChartPluginGUI extends ilPageComponentPluginGUI
      * @param array $a_properties
      * @return string
      */
-    private function percentDataFormat(array $a_properties): string
+    private function percentDataFormat(array $a_properties)/*: string*/
     {
-        /*$summ = 0;
+        $summ = 0;
         $valArray = [];
         $result = [];
         $percent = "";
-        
-        if ($a_properties['data_format'] === '2') {
-            foreach ($a_properties as $key => $value) {
-                if (strpos($key, "val") > -1) {
-                    $value = str_replace(',', '.', $value);
-                    $valArray[] = floatval($value);
-                    $valInteger = floatval($value);
-                    $summ += round($valInteger, 2);
-                    
-                    for ($index = 0; $index < count($valArray); $index++) {
-                        $result[$index] = round(($valArray[$index]*100/$summ), 2);
+
+        $datasets = [];
+        $countCategories = $this->getCountCategories($a_properties);
+
+        $datasetsValueCategory = [];
+
+        if ($a_properties["data_format"] === "2") {
+
+            for($i = 0; $i < $countCategories; $i++) {
+
+                foreach ($a_properties as $key => $value) {
+
+                    if (strpos($key, "value_dataset") > -1 && strpos($key, "_category_" . ($i+1)) > -1) {
+
+                        $indexDataset = substr($key, 14, strpos($key, "_category_") - 14);
+
+                        //$test["category_" . $i]["dataset_" . $indexDataset] = '';
+                        /*$datasetsValueCategory["category_" . $i][""] = $value;*/
                     }
+
+                    if (strpos($key, "_category_" . ($i+1)) > -1 && ($key !== "title_category_" . ($i+1)) && ($key !== "color_category_" . ($i+1))) {
+
+                        $value = $a_properties["value_dataset_" . $indexDataset ."_category_" .($i+1)];
+
+
+                        if (strpos($value, ",") > -1) {
+                            $value = str_replace(',', '.', $value);
+                        }
+                        $datasetsValueCategory["category_" . ($i + 1)]["dataset_". $indexDataset] = $value;
+
+                        //$value = str_replace(',', '.', $value);
+                        /*$valArray[] = floatval($value);
+                        $valInteger = floatval($value);
+
+                        $summ += round($valInteger, 2);
+
+
+                        for ($index = 0; $index < count($valArray); $index++) {
+
+                            $result[$key] = round(($valArray[$index] * 100 / $summ), 2);
+                        }*/
+                    }
+                }
+                $summ = 0;
+            }
+
+            $sumDataset = [];
+            foreach($datasetsValueCategory as $key => $value){
+
+                $indexCategory = substr($key, strpos($key, "category_") + 9);
+                foreach($value as $k => $val){
+                    $indexDataset = substr($k, strpos($k, "dataset_") + 8);
+                    $datasets["dataset_" . $indexDataset]["category_" . $indexCategory] = $datasetsValueCategory["category_" . $indexCategory]["dataset_" . $indexDataset];
                 }
             }
         }
-        foreach ($result as $key => $value) {
-            $percent .= '<input type="hidden" id="'.$key.'" value="'.$value.'">';
-        }
-        return $percent;*/
 
-        return "test";
+        $sumDatasetValues = [];
+        foreach($datasets as $key => $value){
+
+            $indexDataset = substr($key, strpos($key, "dataset_") + 8);
+
+
+            $sumDataset = 0;
+            foreach($value as $k => $val){
+
+                $indexCategory = substr($k, strpos($k, "category_") + 9);
+
+                if(strpos($datasets["dataset_" . $indexDataset]["category_". $indexCategory], ",") > -1){
+                    $datasets["dataset_" . $indexDataset]["category_". $indexCategory] = str_replace(',', '.', $value);
+                }
+
+                $tmpVal = (float) $datasets["dataset_" . $indexDataset]["category_". $indexCategory];
+                $sumDataset += $tmpVal;
+            }
+            $sumDatasetValues["sum_dataset_" . $indexDataset] = $sumDataset;
+        }
+
+        foreach($datasets as $key => $value){
+
+            $indexDataset = substr($key, strpos($key, "dataset_") + 8);
+
+            foreach($value as $k => $val){
+
+                $indexCategory = substr($k, strpos($k, "category_") + 9);
+                $tmpVal = (float) $datasets["dataset_" . $indexDataset]["category_". $indexCategory];
+
+                $percentValue = round(($tmpVal * 100/ $sumDatasetValues["sum_dataset_" . $indexDataset]), 2);
+
+                $test['dataset_' . $indexDataset . '_category' . $indexCategory] = $percentValue;
+
+                $percent .= '<input type="hidden" id="' . $key . "_" . $k . '_percent" value="' . $percentValue . '">';
+
+            }
+        }
+
+        return $percent;
     }
     
     /**
