@@ -27,7 +27,14 @@ for (let i = 0; i < divClass.length; i++) {
     percDiv = div[i].div_percent.children;
 
 
-    console.log(datasetDiv);
+
+    console.log("OK");
+    for(let i = 0; i < percDiv.length; i++){
+
+        console.log(percDiv[i].value);
+    }
+    console.log("OK2");
+
 
 
     /**
@@ -44,7 +51,18 @@ for (let i = 0; i < divClass.length; i++) {
             chartDataSet.data[k] = percDiv[k].value;
         }*/
         for (let k = 0; k < categoryDiv.length; k++) {
-            chartDataSet.data[k] = percDiv[k].value;
+
+            let tmp = {};
+            let index = 0;
+            for (let n = 0; n < percDiv.length; n++) {
+
+                if (percDiv[n].id.indexOf('category_' + k) > -1) {
+
+                     tmp[index] = percDiv[n].value;
+                }
+                index += 1;
+            }
+            chartDataSet.data[k] = tmp;
         }
 
         console.log("DATASET");
@@ -101,7 +119,6 @@ for (let i = 0; i < divClass.length; i++) {
 
 
     /* S T A R T  I O A N N A */
-    alert("OK");
     let datasetForChart = [];
     let dataDataset = [];
     for(let n = 0; n < datasetCount; n++){
@@ -122,12 +139,13 @@ for (let i = 0; i < divClass.length; i++) {
 
             for (let m = 0; m < percDiv.length; m++) {
 
-                if (percDiv[m].getAttribute('id').indexOf('value_dataset_' + (n + 1)) > -1) {
+                if (percDiv[m].getAttribute('id').indexOf('dataset_' + (n+1) + '_category') > -1) {
                     dataDatasetTmp.push(percDiv[m].value);
                 }
             }
 
         }
+
         dataDataset[n] = dataDatasetTmp;
 
         if(type === 'horizontalBar' || type === 'bar'){
@@ -271,7 +289,7 @@ for (let i = 0; i < divClass.length; i++) {
                 },
                 padding: 2,
                 display: 'auto',
-                formatter: symbol
+                formatter: symbol,
             }
         },
         responsive: true,
