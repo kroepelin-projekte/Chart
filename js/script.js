@@ -95,17 +95,43 @@ for (let i = 0; i < divClass.length; i++) {
         };
     }
 
-    for (let k = 0; k < categoryDiv.length; k++) {
-        chartLabels.labels[k] = categoryDiv[k].value;
-    }
+    if(type === 'pie' || type === 'line') {
 
-    for (let k = 0; k < datasetDiv.length; k++) {
-        chartLabels.datasetsTitle[k] = datasetDiv[k].value;
+        for (let k = 0; k < categoryDiv.length; k++) {
+            chartLabels.labels[k] = categoryDiv[k].value;
+        }
+
+        /*let categoriesColors = [];
+        for (let k = 0; k < colorCategoryDiv.length; k++) {
+            categoriesColors.push('#' + colorCategoryDiv[k].value);
+        }
+
+        console.log(categoriesColors);*/
+
+        console.log("EDO");
+        console.log(chartLabels);
+
+    } else {
+
+        for (let k = 0; k < categoryDiv.length; k++) {
+            chartLabels.labels[k] = categoryDiv[k].value;
+            chartLabels.datasetsTitle[k] = categoryDiv[k].value; // TODO to delete
+        }
+
+        /*let datasetColors = [];
+        for (let k = 0; k < colorDatasetDiv.length; k++) {
+            datasetColors.push('#' + colorDatasetDiv[k].value);
+        }*/
     }
 
     let datasetColors = [];
     for (let k = 0; k < colorDatasetDiv.length; k++) {
         datasetColors.push('#' + colorDatasetDiv[k].value);
+    }
+
+    let categoriesColors = [];
+    for (let k = 0; k < colorCategoryDiv.length; k++) {
+        categoriesColors.push('#' + colorCategoryDiv[k].value);
     }
 
     // Find count of datasets
@@ -126,6 +152,7 @@ for (let i = 0; i < divClass.length; i++) {
         let dataDatasetTmp = [];
 
         if (chDataFormat === "1") {
+
 
             for (let m = 0; m < datasetValueDiv.length; m++) {
 
@@ -148,10 +175,24 @@ for (let i = 0; i < divClass.length; i++) {
 
         dataDataset[n] = dataDatasetTmp;
 
-        if(type === 'horizontalBar' || type === 'bar'){
+        if(type === 'horizontalBar'){
 
-           // alert(dataDataset[n].value);
+            datasetForChart[n] = {
 
+                label: datasetDiv[n].value,
+                data: dataDataset[n],
+                backgroundColor: "#" + colorDatasetDiv[n].value,
+                borderColor: '#000000',
+                borderWidth: 1,
+                barPercentage: 0.8,
+                //barThickness: 24,
+                minBarLength: 25
+            }
+
+            console.log("Horizontal");
+            console.log(datasetForChart);
+
+        }else if(type === 'bar'){
 
             datasetForChart[n] = {
 
@@ -171,19 +212,16 @@ for (let i = 0; i < divClass.length; i++) {
 
                 label: datasetDiv[n].value,
                 data: dataDataset[n],
-                backgroundColor: datasetColors,//'#' + colorDatasetDiv[n].value,
+                backgroundColor: categoriesColors/*datasetColors*/,//'#' + colorDatasetDiv[n].value,
                 borderColor: '#000000',
                 borderWidth: 1
             }
 
         }else if(type === 'line'){
 
-            // fill: true,
-            //     borderColor: 'rgba(75, 192, 192, 0.2)',
-            //alert(datasetDiv[n].value);
             datasetForChart[n] = {
 
-                label: '#' + datasetDiv[n].value,
+                label: datasetDiv[n].value,
                 data: dataDataset[n],
                 backgroundColor: "#" + colorDatasetDiv[n].value,
                 borderColor: "#" + colorDatasetDiv[n].value,
@@ -195,80 +233,8 @@ for (let i = 0; i < divClass.length; i++) {
 
     }
 
-    console.log('DATASET');
+    console.log('DATASETCHART');
     console.log(datasetForChart);
-
-    /*[{
-        label: "Dataset 1",
-        data: chartDataSet.data,
-        backgroundColor: "blue",
-        borderColor: 'blue',
-        fill: false,
-        tension: 0.0,
-    },
-        {
-            label: "Dataset 2",
-            data: chartDataSet.data,
-            backgroundColor: "red",
-            borderColor: 'red',
-            fill: false,
-            tension: 0.4,
-        },
-        {
-            label: "Dataset 3",
-            data: chartDataSet.data,
-            backgroundColor: "green",
-            borderColor: 'green',
-            fill: false,
-            tension: 0.0,
-        }]*/
-
-    /*[{
-                    label: chartDataSet.label,
-                    data: chartDataSet.data,
-                    backgroundColor: chartDataSet.backgroundColor,
-                    borderColor: '#000000',
-                    borderWidth: 2
-                },
-                {
-                    label: chartDataSet.label,
-                    data: chartDataSet.data,
-                    backgroundColor: chartDataSet.backgroundColor,
-                    borderColor: '#000000',
-                    borderWidth: 2
-                }]*/
-
-    /*datasetForChart = [{
-        label: "Dataset 1",
-        data: [22, 23],
-        backgroundColor: "blue",
-        borderColor: '#000000',
-        borderWidth: 1,
-        barPercentage: 0.8,
-        //barThickness: 24,
-        minBarLength: 25
-    },
-        {
-            label: "Dataset 2",
-            data: [23, 21],
-            backgroundColor: "red",
-            borderColor: '#000000',
-            borderWidth: 1,
-            barPercentage: 0.8,
-            //barThickness: 24,
-            minBarLength: 25
-        },
-        {
-            label: "Dataset 3",
-            data: [20, 22],
-            backgroundColor: "green",
-            borderColor: '#000000',
-            borderWidth: 1,
-            barPercentage: 0.8,
-            //barThickness: 24,
-            minBarLength: 25
-        }];*/
-
     console.log(datasetForChart);
 
     /* E N D  I O A N N A */
@@ -305,7 +271,8 @@ for (let i = 0; i < divClass.length; i++) {
         title: {
             display: true,
             text: title
-        }
+        },
+        tooltip: true
     };
     optionsBar = {
         plugins: {
@@ -345,7 +312,7 @@ for (let i = 0; i < divClass.length; i++) {
         maintainAspectRatio: false,
         legend: {
             display: true,
-            labels:{
+            labels: {
                 boxWidth: 5,
                 usePointStyle: true,
                 boxHeight: 1
@@ -355,7 +322,7 @@ for (let i = 0; i < divClass.length; i++) {
             display: true,
             text: title
         },
-        tooltip: false
+        tooltip: true
     };
     optionsLine = {
         plugins: {
@@ -408,7 +375,7 @@ for (let i = 0; i < divClass.length; i++) {
             display: true,
             text: title
         },
-        tooltip: false
+        tooltip: true
     };
 
     canVas = document.getElementById(chId).getContext('2d');
@@ -424,7 +391,7 @@ for (let i = 0; i < divClass.length; i++) {
         chDataTable = {
             type: type,
             data: {
-                labels: chartLabels.datasetsTitle/*chartLabels.labels*/,
+                labels: chartLabels.labels/*chartLabels.labels*/,
                 datasets: datasetForChart/*[{
                     label: chartDataSet.label,
                     data: chartDataSet.data,
@@ -451,30 +418,7 @@ for (let i = 0; i < divClass.length; i++) {
             type: type,
             data: {
                 labels: chartLabels.labels,
-                datasets: datasetForChart/*[{
-                    label: "Dataset 1",
-                    data: chartDataSet.data,
-                    backgroundColor: "blue",
-                    borderColor: 'blue',
-                    fill: false,
-                    tension: 0.0,
-                },
-                    {
-                        label: "Dataset 2",
-                        data: chartDataSet.data,
-                        backgroundColor: "red",
-                        borderColor: 'red',
-                        fill: false,
-                        tension: 0.4,
-                    },
-                    {
-                        label: "Dataset 3",
-                        data: chartDataSet.data,
-                        backgroundColor: "green",
-                        borderColor: 'green',
-                        fill: false,
-                        tension: 0.0,
-                    }]*/
+                datasets: datasetForChart
             },
             options: optionsLine
         };
@@ -482,40 +426,16 @@ for (let i = 0; i < divClass.length; i++) {
         thisChart = new Chart(canVas, chDataTable);
 
     }else {
+
+
+        console.log("LABELS");
+        console.log(chartLabels);
+
         chDataTable = {
             type: type,
             data: {
-                labels: chartLabels.labels,
-                datasets: datasetForChart/*[{
-                    label: "Dataset 1",
-                    data: chartDataSet.data,
-                    backgroundColor: "blue",
-                    borderColor: '#000000',
-                    borderWidth: 1,
-                    barPercentage: 0.8,
-                    //barThickness: 24,
-                    minBarLength: 25
-                },
-                    {
-                        label: "Dataset 2",
-                        data: chartDataSet.data,
-                        backgroundColor: "red",
-                        borderColor: '#000000',
-                        borderWidth: 1,
-                        barPercentage: 0.8,
-                        //barThickness: 24,
-                        minBarLength: 25
-                    },
-                    {
-                        label: "Dataset 3",
-                        data: chartDataSet.data,
-                        backgroundColor: "green",
-                        borderColor: '#000000',
-                        borderWidth: 1,
-                        barPercentage: 0.8,
-                        //barThickness: 24,
-                        minBarLength: 25
-                    }]*/
+                labels: chartLabels.labels/*chartLabels.datasetsTitle*/,
+                datasets: datasetForChart
             },
             options: optionsBar
         };

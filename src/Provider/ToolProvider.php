@@ -45,7 +45,7 @@ class ToolProvider extends AbstractDynamicToolPluginProvider
         var_dump($DIC->ctrl()->getCmd());
         var_dump($DIC->ctrl()->getCmdClass());
 
-        if($plugin->getId() === 'chrt' && ($DIC->ctrl()->getCmd() === 'edit' || $DIC->ctrl()->getCmd() === 'insert') || $DIC->ctrl()->getCmd() === 'ilchartplugingui'/* && $DIC->ctrl()->getCmdClass() === 'ilpcpluggedgui'*/) {
+        if(($plugin->getId() === 'chrt' && ($DIC->ctrl()->getCmd() === 'edit' || $DIC->ctrl()->getCmd() === 'insert') || $DIC->ctrl()->getCmd() === 'ilchartplugingui')/* && $DIC->ctrl()->getCmdClass() !== "ilcontentpagepagegui"*//* && $DIC->ctrl()->getCmdClass() === 'ilpcpluggedgui'*/) {
 
             $title = $this->dic->language()->txt('editor');
             $icon = $this->dic->ui()->factory()->symbol()->icon()->custom(\ilUtil::getImagePath("outlined/icon_edtr.svg"), $title);
