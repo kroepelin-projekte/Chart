@@ -6,7 +6,7 @@ for (let i = 0; i < divClass.length; i++) {
 
     let title, type, chId, chDataFormat, chCurrencySymbol, categoryDiv, datasetDiv, datasetCount, datasetValueDiv,
         colorCategoryDiv, colorDatasetDiv, percDiv, chartDataSet, chartLabels, canVas, chDataTable, thisChart,
-        optionsPie, optionsBar, optionsLine, symbol,
+        optionsPie, optionsHorizontalBar, optionsBar, optionsLine, symbol,
         object = {};
 
     div[i] = document.getElementById('chart_div_' + j).children;
@@ -274,11 +274,15 @@ for (let i = 0; i < divClass.length; i++) {
             callbacks: {
                 title: function(tooltipItem, data) {
                     return data['datasets'][tooltipItem[0]['datasetIndex']]['label'];
-                }/*,
-                label: function(tooltipItem, data) {
-                    return data['datasets'][0]['data'][tooltipItem['index']];
                 },
-                afterLabel: function(tooltipItem, data) {
+                label: function(tooltipItem, data) {
+
+                    return parseFloat(data['datasets'][tooltipItem['datasetIndex']]['data'][tooltipItem['index']]).toLocaleString();
+                    /*return data['datasetIndex'];*/
+                    //return data['datasets'][tooltipItem[0]['datasetIndex']]['data'][0].toLocaleString();
+                    /*return data['datasets'][0]['data'][tooltipItem['index']].toLocaleString();*/
+                },
+                /*afterLabel: function(tooltipItem, data) {
                     let dataset = data['datasets'][0];
                     let percent = Math.round((dataset['data'][tooltipItem['index']] / dataset["_meta"][0]['total']) * 100)
                     return '(' + percent + '%)';
@@ -287,7 +291,8 @@ for (let i = 0; i < divClass.length; i++) {
         },
 
     };
-    optionsBar = {
+
+    optionsHorizontalBar = {
         plugins: {
             datalabels: {
                 align: 'start',
@@ -312,12 +317,10 @@ for (let i = 0; i < divClass.length; i++) {
         scales: {
             xAxes: [{
                 ticks: {
-                    beginAtZero: true
-                }
-            }],
-            yAxes: [{
-                ticks: {
-                    beginAtZero: true
+                    beginAtZero: true,
+                    callback: function (value) {
+                        return value.toLocaleString();
+                    }
                 }
             }]
         },
@@ -340,6 +343,59 @@ for (let i = 0; i < divClass.length; i++) {
             mode: 'point'
         }
     };
+
+    optionsBar = {
+        plugins: {
+            datalabels: {
+                align: 'start',
+                anchor: 'end',
+                backgroundColor: '#ffffff',
+                borderColor: '#000000',
+                borderRadius: 1,
+                borderWidth: 0.5,
+                color: '#000000',
+                font: {
+                    size: 12,
+                    weight: 600
+                },
+                offset: 1,
+                padding: 2,
+                clamp: true,
+                clip: true,
+                display: 'auto',
+                formatter: symbol
+            }
+        },
+        scales: {
+            yAxes: [{
+                ticks: {
+                    beginAtZero: true,
+                    callback: function (value) {
+                        return value.toLocaleString();
+                    }
+                }
+            }]
+        },
+        responsive: true,
+        maintainAspectRatio: false,
+        legend: {
+            display: true,
+            labels: {
+                boxWidth: 5,
+                usePointStyle: true,
+                boxHeight: 1
+            }
+        },
+        title: {
+            display: true,
+            text: title
+        },
+        tooltip: true,
+        tooltips: {
+            mode: 'point'
+        }
+    };
+
     optionsLine = {
         plugins: {
             datalabels: {
@@ -365,7 +421,10 @@ for (let i = 0; i < divClass.length; i++) {
         scales: {
             yAxes: [{
                 ticks: {
-                    beginAtZero: true
+                    beginAtZero: true,
+                    callback: function (value) {
+                        return value.toLocaleString();
+                    }
                 }
             }]
         },
@@ -441,7 +500,7 @@ for (let i = 0; i < divClass.length; i++) {
 
         thisChart = new Chart(canVas, chDataTable);
 
-    }else {
+    } else if (type === 'bar') {
 
 
         console.log("LABELS");
@@ -454,6 +513,23 @@ for (let i = 0; i < divClass.length; i++) {
                 datasets: datasetForChart
             },
             options: optionsBar
+        };
+
+        thisChart = new Chart(canVas, chDataTable);
+
+    } else if (type === 'horizontalBar') {
+
+
+        console.log("LABELS");
+        console.log(chartLabels.labels);
+
+        chDataTable = {
+            type: type,
+            data: {
+                labels: chartLabels.labels,//*chartLabels.datasetsTitle*/,
+                datasets: datasetForChart
+            },
+            options: optionsHorizontalBar
         };
 
         thisChart = new Chart(canVas, chDataTable);
