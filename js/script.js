@@ -6,7 +6,7 @@ for (let i = 0; i < divClass.length; i++) {
 
     let title, type, chId, chDataFormat, chCurrencySymbol, categoryDiv, datasetDiv, datasetCount, datasetValueDiv,
         colorCategoryDiv, colorDatasetDiv, percDiv, chartDataSet, chartLabels, canVas, chDataTable, thisChart,
-        optionsPie, optionsHorizontalBar, optionsBar, optionsLine, symbol,
+        optionsPie, optionsHorizontalBar, optionsBar, optionsLine, symbol, countVerticalBars, countHorizontalBarsGroup,
         object = {};
 
     div[i] = document.getElementById('chart_div_' + j).children;
@@ -100,6 +100,8 @@ for (let i = 0; i < divClass.length; i++) {
             chartLabels.labels[k] = categoryDiv[k].value;
         }
 
+
+
         /*let categoriesColors = [];
         for (let k = 0; k < colorCategoryDiv.length; k++) {
             categoriesColors.push('#' + colorCategoryDiv[k].value);
@@ -122,6 +124,12 @@ for (let i = 0; i < divClass.length; i++) {
             datasetColors.push('#' + colorDatasetDiv[k].value);
         }*/
     }
+
+   /* if (type === 'horizontalBar') {
+
+        countHorizontalBarsGroup = categoryDiv.length;
+
+    }*/
 
     let datasetColors = [];
     for (let k = 0; k < colorDatasetDiv.length; k++) {
@@ -533,7 +541,27 @@ for (let i = 0; i < divClass.length; i++) {
         };
 
         thisChart = new Chart(canVas, chDataTable);
+
+        // CSS
+        let countBars = categoryDiv.length * datasetDiv.length;
+        let heightChart = getHeightChart(countBars);//getHeightChart(countBars);
+        document.getElementById('chart_div_' + j).querySelector('.chart-container').style.height = heightChart + 'px';
     }
     j++;
 }
 
+function getHeightChart(countBars)  {
+
+    let heightChart = 0;
+
+    if(countBars >= 12){
+        heightChart = countBars * 45;
+    }else if(countBars >= 6){
+        heightChart = countBars * 65;
+    }else if(countBars >= 3){
+        heightChart = countBars * 80;
+    }else{
+        heightChart = countBars * 100;
+    }
+    return heightChart;
+}
