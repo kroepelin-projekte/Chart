@@ -4,8 +4,10 @@ var j = 1;
 
 for (let i = 0; i < divClass.length; i++) {
 
-    let title, type, chId, chDataFormat, chCurrencySymbol, categoryDiv, datasetDiv, datasetCount, datasetValueDiv, colorCategoryDiv, colorDatasetDiv, percDiv, chartDataSet, chartLabels, canVas, chDataTable, thisChart, optionsPie, optionsBar, optionsLine, symbol,
-    object = {};
+    let title, type, chId, chDataFormat, chCurrencySymbol, categoryDiv, datasetDiv, datasetCount, datasetValueDiv,
+        colorCategoryDiv, colorDatasetDiv, percDiv, chartDataSet, chartLabels, canVas, chDataTable, thisChart,
+        optionsPie, optionsBar, optionsLine, symbol,
+        object = {};
 
     div[i] = document.getElementById('chart_div_' + j).children;
 
@@ -27,23 +29,21 @@ for (let i = 0; i < divClass.length; i++) {
     percDiv = div[i].div_percent.children;
 
 
-
     console.log("OK");
-    for(let i = 0; i < percDiv.length; i++){
+    for (let i = 0; i < percDiv.length; i++) {
 
         console.log(percDiv[i].value);
     }
     console.log("OK2");
 
 
-
     /**
      * @todo multi Datasets
      */
-    chartDataSet = {label:[], data:[], backgroundColor: [], borderColor: []};
+    chartDataSet = {label: [], data: [], backgroundColor: [], borderColor: []};
 
     // category
-    chartLabels = {labels:[], datasetsTitle:[]};
+    chartLabels = {labels: [], datasetsTitle: []};
 
     // Percent(2)/Currency
     if (chDataFormat === "2") {
@@ -58,7 +58,7 @@ for (let i = 0; i < divClass.length; i++) {
 
                 if (percDiv[n].id.indexOf('category_' + k) > -1) {
 
-                     tmp[index] = percDiv[n].value;
+                    tmp[index] = percDiv[n].value;
                 }
                 index += 1;
             }
@@ -69,7 +69,7 @@ for (let i = 0; i < divClass.length; i++) {
         console.log(chartDataSet.data);
 
 
-        symbol = function(value) {
+        symbol = function (value) {
             return value + ' %';
         };
     } else {
@@ -88,14 +88,13 @@ for (let i = 0; i < divClass.length; i++) {
         datasetLength = Math.max.apply(Math, datasetIndexes);*/
 
 
-
         symbol = function (value) {
             let parseVal = parseFloat(value);
             return parseVal.toLocaleString() + ' ' + chCurrencySymbol;
         };
     }
 
-    if(type === 'pie' || type === 'line') {
+    if (type === 'pie' || type === 'line') {
 
         for (let k = 0; k < categoryDiv.length; k++) {
             chartLabels.labels[k] = categoryDiv[k].value;
@@ -136,18 +135,17 @@ for (let i = 0; i < divClass.length; i++) {
 
     // Find count of datasets
     let datasetIndexes = [];
-    for(let n = 0; n < datasetValueDiv.length; n++){
+    for (let n = 0; n < datasetValueDiv.length; n++) {
         let id = datasetValueDiv[n].getAttribute('id');
         datasetIndexes.push(id.substr(parseInt(id.indexOf('value_dataset_') + 14), parseInt(id.indexOf('_category')) - parseInt(id.indexOf('value_dataset_') + 14)));
     }
     datasetCount = Math.max.apply(Math, datasetIndexes);
 
 
-
     /* S T A R T  I O A N N A */
     let datasetForChart = [];
     let dataDataset = [];
-    for(let n = 0; n < datasetCount; n++){
+    for (let n = 0; n < datasetCount; n++) {
 
         let dataDatasetTmp = [];
 
@@ -162,11 +160,11 @@ for (let i = 0; i < divClass.length; i++) {
                 }
             }
 
-        }else{
+        } else {
 
             for (let m = 0; m < percDiv.length; m++) {
 
-                if (percDiv[m].getAttribute('id').indexOf('dataset_' + (n+1) + '_category') > -1) {
+                if (percDiv[m].getAttribute('id').indexOf('dataset_' + (n + 1) + '_category') > -1) {
                     dataDatasetTmp.push(percDiv[m].value);
                 }
             }
@@ -175,7 +173,7 @@ for (let i = 0; i < divClass.length; i++) {
 
         dataDataset[n] = dataDatasetTmp;
 
-        if(type === 'horizontalBar'){
+        if (type === 'horizontalBar') {
 
             datasetForChart[n] = {
 
@@ -192,7 +190,7 @@ for (let i = 0; i < divClass.length; i++) {
             console.log("Horizontal");
             console.log(datasetForChart);
 
-        }else if(type === 'bar'){
+        } else if (type === 'bar') {
 
             datasetForChart[n] = {
 
@@ -206,7 +204,7 @@ for (let i = 0; i < divClass.length; i++) {
                 minBarLength: 25
             }
 
-        }else if(type === 'pie'){
+        } else if (type === 'pie') {
 
             datasetForChart[n] = {
 
@@ -217,7 +215,7 @@ for (let i = 0; i < divClass.length; i++) {
                 borderWidth: 1
             }
 
-        }else if(type === 'line'){
+        } else if (type === 'line') {
 
             datasetForChart[n] = {
 
@@ -262,7 +260,7 @@ for (let i = 0; i < divClass.length; i++) {
         maintainAspectRatio: false,
         legend: {
             display: true,
-            labels:{
+            labels: {
                 boxWidth: 5,
                 usePointStyle: true,
                 boxHeight: 1
@@ -272,7 +270,22 @@ for (let i = 0; i < divClass.length; i++) {
             display: true,
             text: title
         },
-        tooltip: true
+        tooltips: {
+            callbacks: {
+                title: function(tooltipItem, data) {
+                    return data['datasets'][tooltipItem[0]['datasetIndex']]['label'];
+                }/*,
+                label: function(tooltipItem, data) {
+                    return data['datasets'][0]['data'][tooltipItem['index']];
+                },
+                afterLabel: function(tooltipItem, data) {
+                    let dataset = data['datasets'][0];
+                    let percent = Math.round((dataset['data'][tooltipItem['index']] / dataset["_meta"][0]['total']) * 100)
+                    return '(' + percent + '%)';
+                }*/
+            },
+        },
+
     };
     optionsBar = {
         plugins: {
@@ -322,7 +335,10 @@ for (let i = 0; i < divClass.length; i++) {
             display: true,
             text: title
         },
-        tooltip: true
+        tooltip: true,
+        tooltips: {
+            mode: 'point'
+        }
     };
     optionsLine = {
         plugins: {
@@ -429,12 +445,12 @@ for (let i = 0; i < divClass.length; i++) {
 
 
         console.log("LABELS");
-        console.log(chartLabels);
+        console.log(chartLabels.labels);
 
         chDataTable = {
             type: type,
             data: {
-                labels: chartLabels.labels/*chartLabels.datasetsTitle*/,
+                labels: chartLabels.labels,//*chartLabels.datasetsTitle*/,
                 datasets: datasetForChart
             },
             options: optionsBar
