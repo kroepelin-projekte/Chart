@@ -120,11 +120,21 @@ class ilChartPluginGUI extends ilPageComponentPluginGUI
         global $DIC, $tpl;
 
         $form = $this->initFormChart(self::ACTION_INSERT);
+
+
+
         if (!$form->checkInput() || !$this->validate($form)) {
+
+            var_dump($this->validate($form));
+            die;
+
             ilUtil::sendFailure($DIC->language()->txt("form_input_not_valid"), true);
             $form->setValuesByPost();
             $tpl->setContent($form->getHtml());
         } else {
+
+            var_dump($this->validate($form));
+            die;
 
             $properties = [
                 "chart_title" => $form->getInput("chart_title"),
@@ -383,9 +393,46 @@ class ilChartPluginGUI extends ilPageComponentPluginGUI
      * @param $form
      * @return bool
      */
-    private function validate($form): bool
+    private function validate($form)/*: bool*/
     {
+        /*$labels = $form->getInput("categories")["label"];*/
+
+        /*$properties["chart_title"] = $form->getInput("chart_title");
+        $properties["chart_type"] = $form->getInput("chart_type");
+        $properties["data_format"] = $form->getInput("data_format");*/
+
+        if($form->getInput("data_format") === ""){
+            return false;
+        }
+
+        $categories = $form->getInput("categories");
+        foreach($categories as $key => $value){
+
+            if($value === ""){
+                return false;
+            }
+        }
+
+        $datasets = $form->getInput("datasets");
+        foreach($datasets as $key => $value){
+
+            if($value === ""){
+                return false;
+            }
+        }
         return true;
+
+        /*$explodeDot = explode(".", $label);
+        $explodeComma = explode(",", $label);
+        if ((count($explodeDot) > 2 || count($explodeComma) > 2) || (count($explodeDot) > 1 && count($explodeComma) > 1) ||
+            (strpos($label, '.') === strlen($label) - 1 || strpos($label, ',') === strlen($label) -1) ||
+            (strpos($label, '.') === 0 || strpos($label, ',') === 0)) {
+            $validate = false;
+        }
+        if (!strpos($label, ".") && substr($label, 0, 1) == "0" && strlen($label) > 1) {
+            $validate = false;
+        }*/
+
         /*$labels = $form->getInput("categories")["label"];
         $validate = true;
         foreach ($labels as $k => $label) {
@@ -407,8 +454,7 @@ class ilChartPluginGUI extends ilPageComponentPluginGUI
             if (!strpos($label, ".") && substr($label, 0, 1) == "0" && strlen($label) > 1) {
                 $validate = false;
             }
-        }
-        return $validate;*/
+        }*/
     }
 
     /**
