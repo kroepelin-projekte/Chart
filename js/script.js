@@ -1,6 +1,6 @@
-var divClass = document.getElementsByClassName('chdiv');
-var div = [];
-var j = 1;
+let divClass = document.getElementsByClassName('chdiv');
+let div = [];
+let j = 1;
 
 for (let i = 0; i < divClass.length; i++) {
 
@@ -10,7 +10,6 @@ for (let i = 0; i < divClass.length; i++) {
         object = {};
 
     div[i] = document.getElementById('chart_div_' + j).children;
-
 
     title = div[i].chart_title.value;
     type = div[i].chart_type.value;
@@ -27,15 +26,6 @@ for (let i = 0; i < divClass.length; i++) {
     colorCategoryDiv = div[i].div_color_category.children;
     colorDatasetDiv = div[i].div_color_dataset.children;
     percDiv = div[i].div_percent.children;
-
-
-    /*console.log("OK");
-    for (let i = 0; i < percDiv.length; i++) {
-
-        console.log(percDiv[i].value);
-    }
-    console.log("OK2");*/
-
 
     /**
      * @todo multi Datasets
@@ -89,25 +79,12 @@ for (let i = 0; i < divClass.length; i++) {
         }
     }
 
-    /*let datasetColors = [];
-    for (let k = 0; k < colorDatasetDiv.length; k++) {
-        datasetColors.push('#' + colorDatasetDiv[k].value);
-    }*/
-
     let categoriesColors = [];
     for (let k = 0; k < colorCategoryDiv.length; k++) {
         categoriesColors.push('#' + colorCategoryDiv[k].value);
     }
 
     // Find count of datasets
-    /*let datasetIndexes = [];
-    for (let n = 0; n < datasetValueDiv.length; n++) {
-        let id = datasetValueDiv[n].getAttribute('id');
-        datasetIndexes.push(id.substr(parseInt(id.indexOf('value_dataset_') + 14), parseInt(id.indexOf('_category')) - parseInt(id.indexOf('value_dataset_') + 14)));
-    }
-
-    datasetCount = Math.max.apply(Math, datasetIndexes);*/
-
     datasetCount = getCountDatasets(datasetValueDiv);
 
 
@@ -413,6 +390,9 @@ for (let i = 0; i < divClass.length; i++) {
 
         dataTable = getDataTable(type, chartLabels.labels, datasetForChart, optionsPie);
 
+        console.log('DataTable');
+        console.log(dataTable);
+
         thisChart = new Chart(canVas, dataTable);
 
     }else if (type === 'line'){
@@ -468,6 +448,9 @@ for (let i = 0; i < divClass.length; i++) {
     j++;
 }
 
+/**
+ * Find count of datasets
+ */
 function getCountDatasets(datasetValueSel)  {
 
     let datasetIndexes = [];
@@ -542,11 +525,20 @@ function getOptionsVerticalBar(formatter, title)  {
         },
         tooltip: true,
         tooltips: {
-            mode: 'point'
+            mode: 'point',
+            callbacks: {
+                title: function(tooltipItem, data) {
+                    return data['datasets'][tooltipItem[0]['datasetIndex']]['label'];
+                },
+                label: function(tooltipItem, data) {
+                    return tooltipItem['label'] + ' ' + parseFloat(data['datasets'][tooltipItem['datasetIndex']]['data'][tooltipItem['index']]).toLocaleString();
+                }
+            },
         }
     };
     return options;
 }
+
 function getOptionsHorizontalBar(formatter, title)  {
 
     let options = {};
@@ -598,8 +590,16 @@ function getOptionsHorizontalBar(formatter, title)  {
         },
         tooltip: true,
         tooltips: {
-            mode: 'point'
-        }
+            mode: 'point',
+            callbacks: {
+                title: function(tooltipItem, data) {
+                    return data['datasets'][tooltipItem[0]['datasetIndex']]['label'];
+                },
+                label: function(tooltipItem, data) {
+                    return tooltipItem['label'] + ' ' + parseFloat(data['datasets'][tooltipItem['datasetIndex']]['data'][tooltipItem['index']]).toLocaleString();
+                }
+            },
+        },
     };
     return options;
 }
@@ -646,9 +646,9 @@ function getOptionsPie(formatter, title)  {
                     return data['datasets'][tooltipItem[0]['datasetIndex']]['label'];
                 },
                 label: function(tooltipItem, data) {
-                    return parseFloat(data['datasets'][tooltipItem['datasetIndex']]['data'][tooltipItem['index']]).toLocaleString();
+                    return data['labels'][tooltipItem['index']] + ' ' + parseFloat(data['datasets'][tooltipItem['datasetIndex']]['data'][tooltipItem['index']]).toLocaleString();
                 }
-            },
+            }
         },
     };
     return options;
@@ -702,7 +702,17 @@ function getOptionsLine(formatter, title)  {
             display: true,
             text: title
         },
-        tooltip: true
+        tooltip: true,
+        tooltips: {
+            callbacks: {
+                title: function(tooltipItem, data) {
+                    return data['datasets'][tooltipItem[0]['datasetIndex']]['label'];
+                },
+                label: function(tooltipItem, data) {
+                    return tooltipItem['label'] + ' ' + parseFloat(data['datasets'][tooltipItem['datasetIndex']]['data'][tooltipItem['index']]).toLocaleString();
+                }
+            },
+        },
     };
     return options;
 }
