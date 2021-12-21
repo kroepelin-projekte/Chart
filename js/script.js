@@ -5,7 +5,7 @@ var j = 1;
 for (let i = 0; i < divClass.length; i++) {
 
     let title, type, chId, chDataFormat, chCurrencySymbol, categoryDiv, datasetDiv, datasetCount, datasetValueDiv,
-        colorCategoryDiv, colorDatasetDiv, percDiv, chartDataSet, chartLabels, canVas, chDataTable, thisChart,
+        colorCategoryDiv, colorDatasetDiv, percDiv, chartDataSet, chartLabels, canVas, dataTable, thisChart,
         optionsPie, optionsHorizontalBar, optionsBar, optionsLine, symbol, countVerticalBars, countHorizontalBarsGroup,
         object = {};
 
@@ -29,12 +29,12 @@ for (let i = 0; i < divClass.length; i++) {
     percDiv = div[i].div_percent.children;
 
 
-    console.log("OK");
+    /*console.log("OK");
     for (let i = 0; i < percDiv.length; i++) {
 
         console.log(percDiv[i].value);
     }
-    console.log("OK2");
+    console.log("OK2");*/
 
 
     /**
@@ -47,9 +47,7 @@ for (let i = 0; i < divClass.length; i++) {
 
     // Percent(2)/Currency
     if (chDataFormat === "2") {
-        /*for (let k = 0; k < categoryDiv.length; k++) {
-            chartDataSet.data[k] = percDiv[k].value;
-        }*/
+
         for (let k = 0; k < categoryDiv.length; k++) {
 
             let tmp = {};
@@ -65,28 +63,11 @@ for (let i = 0; i < divClass.length; i++) {
             chartDataSet.data[k] = tmp;
         }
 
-        console.log("DATASET");
-        console.log(chartDataSet.data);
-
-
         symbol = function (value) {
             return value + ' %';
         };
+
     } else {
-        /*for (let k = 0; k < categoryDiv.length; k++) {
-            let parseVal = [];
-            parseVal[k] = parseFloat(datasetValueDiv[k].value);
-            chartDataSet.data[k] = parseVal[k];
-        }*/
-
-        /*let datasetIndexes = [];
-        for(let n = 0; n < datasetValueDiv.length; n++){
-            let id = datasetValueDiv[n].getAttribute('id');
-            datasetIndexes.push(id.substr(parseInt(id.indexOf('value_dataset_') + 14), parseInt(id.indexOf('_category')) - parseInt(id.indexOf('value_dataset_') + 14)));
-        }
-
-        datasetLength = Math.max.apply(Math, datasetIndexes);*/
-
 
         symbol = function (value) {
             let parseVal = parseFloat(value);
@@ -100,41 +81,18 @@ for (let i = 0; i < divClass.length; i++) {
             chartLabels.labels[k] = categoryDiv[k].value;
         }
 
-
-
-        /*let categoriesColors = [];
-        for (let k = 0; k < colorCategoryDiv.length; k++) {
-            categoriesColors.push('#' + colorCategoryDiv[k].value);
-        }
-
-        console.log(categoriesColors);*/
-
-        console.log("EDO");
-        console.log(chartLabels);
-
     } else {
 
         for (let k = 0; k < categoryDiv.length; k++) {
             chartLabels.labels[k] = categoryDiv[k].value;
             chartLabels.datasetsTitle[k] = categoryDiv[k].value; // TODO to delete
         }
-
-        /*let datasetColors = [];
-        for (let k = 0; k < colorDatasetDiv.length; k++) {
-            datasetColors.push('#' + colorDatasetDiv[k].value);
-        }*/
     }
 
-   /* if (type === 'horizontalBar') {
-
-        countHorizontalBarsGroup = categoryDiv.length;
-
-    }*/
-
-    let datasetColors = [];
+    /*let datasetColors = [];
     for (let k = 0; k < colorDatasetDiv.length; k++) {
         datasetColors.push('#' + colorDatasetDiv[k].value);
-    }
+    }*/
 
     let categoriesColors = [];
     for (let k = 0; k < colorCategoryDiv.length; k++) {
@@ -142,12 +100,15 @@ for (let i = 0; i < divClass.length; i++) {
     }
 
     // Find count of datasets
-    let datasetIndexes = [];
+    /*let datasetIndexes = [];
     for (let n = 0; n < datasetValueDiv.length; n++) {
         let id = datasetValueDiv[n].getAttribute('id');
         datasetIndexes.push(id.substr(parseInt(id.indexOf('value_dataset_') + 14), parseInt(id.indexOf('_category')) - parseInt(id.indexOf('value_dataset_') + 14)));
     }
-    datasetCount = Math.max.apply(Math, datasetIndexes);
+
+    datasetCount = Math.max.apply(Math, datasetIndexes);*/
+
+    datasetCount = getCountDatasets(datasetValueDiv);
 
 
     /* S T A R T  I O A N N A */
@@ -158,7 +119,6 @@ for (let i = 0; i < divClass.length; i++) {
         let dataDatasetTmp = [];
 
         if (chDataFormat === "1") {
-
 
             for (let m = 0; m < datasetValueDiv.length; m++) {
 
@@ -191,12 +151,8 @@ for (let i = 0; i < divClass.length; i++) {
                 borderColor: '#000000',
                 borderWidth: 1,
                 barPercentage: 0.8,
-                //barThickness: 24,
                 minBarLength: 25
             }
-
-            console.log("Horizontal");
-            console.log(datasetForChart);
 
         } else if (type === 'bar') {
 
@@ -208,7 +164,6 @@ for (let i = 0; i < divClass.length; i++) {
                 borderColor: '#000000',
                 borderWidth: 1,
                 barPercentage: 0.8,
-                //barThickness: 24,
                 minBarLength: 25
             }
 
@@ -218,7 +173,7 @@ for (let i = 0; i < divClass.length; i++) {
 
                 label: datasetDiv[n].value,
                 data: dataDataset[n],
-                backgroundColor: categoriesColors/*datasetColors*/,//'#' + colorDatasetDiv[n].value,
+                backgroundColor: categoriesColors,
                 borderColor: '#000000',
                 borderWidth: 1
             }
@@ -239,13 +194,9 @@ for (let i = 0; i < divClass.length; i++) {
 
     }
 
-    console.log('DATASETCHART');
-    console.log(datasetForChart);
-    console.log(datasetForChart);
-
     /* E N D  I O A N N A */
-
-    optionsPie = {
+    optionsPie = getOptionsPie(symbol, title);
+    /*optionsPie = {
         plugins: {
             datalabels: {
                 align: 'end',
@@ -284,23 +235,14 @@ for (let i = 0; i < divClass.length; i++) {
                     return data['datasets'][tooltipItem[0]['datasetIndex']]['label'];
                 },
                 label: function(tooltipItem, data) {
-
                     return parseFloat(data['datasets'][tooltipItem['datasetIndex']]['data'][tooltipItem['index']]).toLocaleString();
-                    /*return data['datasetIndex'];*/
-                    //return data['datasets'][tooltipItem[0]['datasetIndex']]['data'][0].toLocaleString();
-                    /*return data['datasets'][0]['data'][tooltipItem['index']].toLocaleString();*/
-                },
-                /*afterLabel: function(tooltipItem, data) {
-                    let dataset = data['datasets'][0];
-                    let percent = Math.round((dataset['data'][tooltipItem['index']] / dataset["_meta"][0]['total']) * 100)
-                    return '(' + percent + '%)';
-                }*/
+                }
             },
         },
+    };*/
 
-    };
-
-    optionsHorizontalBar = {
+    optionsHorizontalBar = getOptionsHorizontalBar(symbol, title)
+    /*optionsHorizontalBar = {
         plugins: {
             datalabels: {
                 align: 'start',
@@ -350,9 +292,10 @@ for (let i = 0; i < divClass.length; i++) {
         tooltips: {
             mode: 'point'
         }
-    };
+    };*/
 
-    optionsBar = {
+    optionsBar = getOptionsVerticalBar(symbol, title);
+    /*optionsBar = {
         plugins: {
             datalabels: {
                 align: 'start',
@@ -402,9 +345,11 @@ for (let i = 0; i < divClass.length; i++) {
         tooltips: {
             mode: 'point'
         }
-    };
+    };*/
 
-    optionsLine = {
+    optionsLine = getOptionsLine(symbol, title);
+
+    /*optionsLine = {
         plugins: {
             datalabels: {
                 align: 'start',
@@ -436,14 +381,313 @@ for (let i = 0; i < divClass.length; i++) {
                 }
             }]
         },
-        // scales: {
-        //     xAxes: [{
-        //         stacked: false
-        //     }],
-        //     yAxes: [{
-        //         stacked: false
-        //     }]
-        // },
+        responsive: true,
+        maintainAspectRatio: false,
+        legend: {
+            display: true,
+            labels:{
+                boxWidth: 5,
+                usePointStyle: true,
+                boxHeight: 1
+            }
+        },
+        title: {
+            display: true,
+            text: title
+        },
+        tooltip: true
+    };*/
+
+    canVas = document.getElementById(chId).getContext('2d');
+
+    if (type === 'pie') {
+
+        /*chDataTable = {
+            type: type,
+            data: {
+                labels: chartLabels.labels,
+                datasets: datasetForChart
+            },
+            options: optionsPie
+        };*/
+
+        dataTable = getDataTable(type, chartLabels.labels, datasetForChart, optionsPie);
+
+        thisChart = new Chart(canVas, dataTable);
+
+    }else if (type === 'line'){
+
+        /*chDataTable = {
+            type: type,
+            data: {
+                labels: chartLabels.labels,
+                datasets: datasetForChart
+            },
+            options: optionsLine
+        };*/
+
+        dataTable = getDataTable(type, chartLabels.labels, datasetForChart, optionsLine);
+
+        thisChart = new Chart(canVas, dataTable);
+
+    } else if (type === 'bar') {
+
+        /*chDataTable = {
+            type: type,
+            data: {
+                labels: chartLabels.labels,
+                datasets: datasetForChart
+            },
+            options: optionsBar
+        };*/
+
+        dataTable = getDataTable(type, chartLabels.labels, datasetForChart, optionsBar);
+
+        thisChart = new Chart(canVas, dataTable);
+
+    } else if (type === 'horizontalBar') {
+
+        /*chDataTable = {
+            type: type,
+            data: {
+                labels: chartLabels.labels,
+                datasets: datasetForChart
+            },
+            options: optionsHorizontalBar
+        };*/
+
+        dataTable = getDataTable(type, chartLabels.labels, datasetForChart, optionsHorizontalBar);
+
+        thisChart = new Chart(canVas, dataTable);
+
+        // CSS
+        let countBars = categoryDiv.length * datasetDiv.length;
+        let heightChart = getHeightChart(countBars);
+        document.getElementById('chart_div_' + j).querySelector('.chart-container').style.height = heightChart + 'px';
+    }
+    j++;
+}
+
+function getCountDatasets(datasetValueSel)  {
+
+    let datasetIndexes = [];
+    for (let n = 0; n < datasetValueSel.length; n++) {
+        let id = datasetValueSel[n].getAttribute('id');
+        datasetIndexes.push(id.substr(parseInt(id.indexOf('value_dataset_') + 14), parseInt(id.indexOf('_category')) - parseInt(id.indexOf('value_dataset_') + 14)));
+    }
+
+    return Math.max.apply(Math, datasetIndexes);
+}
+
+function getDataTable(typ, labels, datasets, options)  {
+
+    return {
+        type: typ,
+        data: {
+            labels: labels,
+            datasets: datasets
+        },
+        options: options
+    };
+}
+
+function getOptionsVerticalBar(formatter, title)  {
+
+    let options = {};
+    options = {
+        plugins: {
+            datalabels: {
+                align: 'start',
+                anchor: 'end',
+                backgroundColor: '#ffffff',
+                borderColor: '#000000',
+                borderRadius: 1,
+                borderWidth: 0.5,
+                color: '#000000',
+                font: {
+                    size: 12,
+                    weight: 600
+                },
+                offset: 1,
+                padding: 2,
+                clamp: true,
+                clip: true,
+                display: 'auto',
+                formatter: formatter
+            }
+        },
+        scales: {
+            yAxes: [{
+                ticks: {
+                    beginAtZero: true,
+                    callback: function (value) {
+                        return value.toLocaleString();
+                    }
+                }
+            }]
+        },
+        responsive: true,
+        maintainAspectRatio: false,
+        legend: {
+            display: true,
+            labels: {
+                boxWidth: 5,
+                usePointStyle: true,
+                boxHeight: 1
+            }
+        },
+        title: {
+            display: true,
+            text: title
+        },
+        tooltip: true,
+        tooltips: {
+            mode: 'point'
+        }
+    };
+    return options;
+}
+function getOptionsHorizontalBar(formatter, title)  {
+
+    let options = {};
+    options = {
+        plugins: {
+            datalabels: {
+                align: 'start',
+                anchor: 'end',
+                backgroundColor: '#ffffff',
+                borderColor: '#000000',
+                borderRadius: 1,
+                borderWidth: 0.5,
+                color: '#000000',
+                font: {
+                    size: 12,
+                    weight: 600
+                },
+                offset: 1,
+                padding: 2,
+                clamp: true,
+                clip: true,
+                display: 'auto',
+                formatter: formatter
+            }
+        },
+        scales: {
+            xAxes: [{
+                ticks: {
+                    beginAtZero: true,
+                    callback: function (value) {
+                        return value.toLocaleString();
+                    }
+                }
+            }]
+        },
+        responsive: true,
+        maintainAspectRatio: false,
+        legend: {
+            display: true,
+            labels: {
+                boxWidth: 5,
+                usePointStyle: true,
+                boxHeight: 1
+            }
+        },
+        title: {
+            display: true,
+            text: title
+        },
+        tooltip: true,
+        tooltips: {
+            mode: 'point'
+        }
+    };
+    return options;
+}
+
+function getOptionsPie(formatter, title)  {
+
+    let options = {};
+    options = {
+        plugins: {
+            datalabels: {
+                align: 'end',
+                anchor: 'center',
+                backgroundColor: '#ffffff',
+                borderColor: '#000000',
+                borderRadius: 1,
+                borderWidth: 0.5,
+                color: '#000000',
+                font: {
+                    size: 13,
+                    weight: 600
+                },
+                padding: 2,
+                display: 'auto',
+                formatter: formatter,
+            }
+        },
+        responsive: true,
+        maintainAspectRatio: false,
+        legend: {
+            display: true,
+            labels: {
+                boxWidth: 5,
+                usePointStyle: true,
+                boxHeight: 1
+            }
+        },
+        title: {
+            display: true,
+            text: title
+        },
+        tooltips: {
+            callbacks: {
+                title: function(tooltipItem, data) {
+                    return data['datasets'][tooltipItem[0]['datasetIndex']]['label'];
+                },
+                label: function(tooltipItem, data) {
+                    return parseFloat(data['datasets'][tooltipItem['datasetIndex']]['data'][tooltipItem['index']]).toLocaleString();
+                }
+            },
+        },
+    };
+    return options;
+}
+function getOptionsLine(formatter, title)  {
+
+    let options = {};
+    options = {
+        plugins: {
+            datalabels: {
+                align: 'start',
+                anchor: 'end',
+                backgroundColor: '#ffffff',
+                borderColor: '#000000',
+                borderRadius: 1,
+                borderWidth: 0.5,
+                color: '#000000',
+                font: {
+                    size: 12,
+                    weight: 600
+                },
+                offset: 1,
+                padding: 2,
+                clamp: false,
+                clip: false,
+                display: 'auto',
+                formatter: formatter
+            }
+        },
+        scales: {
+            yAxes: [{
+                ticks: {
+                    beginAtZero: true,
+                    callback: function (value) {
+                        return value.toLocaleString();
+                    }
+                }
+            }]
+        },
         responsive: true,
         maintainAspectRatio: false,
         legend: {
@@ -460,90 +704,7 @@ for (let i = 0; i < divClass.length; i++) {
         },
         tooltip: true
     };
-
-    canVas = document.getElementById(chId).getContext('2d');
-
-    console.log(chartLabels.labels);
-    /**
-     * @todo create diff datasets
-     * @todo only pie backgroundColor: chartDataSet.backgroundColor !!!!
-     *
-     */
-    if (type === 'pie') {
-
-        chDataTable = {
-            type: type,
-            data: {
-                labels: chartLabels.labels/*chartLabels.labels*/,
-                datasets: datasetForChart/*[{
-                    label: chartDataSet.label,
-                    data: chartDataSet.data,
-                    backgroundColor: chartDataSet.backgroundColor,
-                    borderColor: '#000000',
-                    borderWidth: 2
-                },
-                {
-                    label: chartDataSet.label,
-                    data: chartDataSet.data,
-                    backgroundColor: chartDataSet.backgroundColor,
-                    borderColor: '#000000',
-                    borderWidth: 2
-                }]*/
-            },
-            options: optionsPie
-        };
-
-        thisChart = new Chart(canVas, chDataTable);
-
-    }else if (type === 'line'){
-
-        chDataTable = {
-            type: type,
-            data: {
-                labels: chartLabels.labels,
-                datasets: datasetForChart
-            },
-            options: optionsLine
-        };
-
-        thisChart = new Chart(canVas, chDataTable);
-
-    } else if (type === 'bar') {
-
-
-        console.log("LABELS");
-        console.log(chartLabels.labels);
-
-        chDataTable = {
-            type: type,
-            data: {
-                labels: chartLabels.labels,//*chartLabels.datasetsTitle*/,
-                datasets: datasetForChart
-            },
-            options: optionsBar
-        };
-
-        thisChart = new Chart(canVas, chDataTable);
-
-    } else if (type === 'horizontalBar') {
-
-        chDataTable = {
-            type: type,
-            data: {
-                labels: chartLabels.labels,//*chartLabels.datasetsTitle*/,
-                datasets: datasetForChart
-            },
-            options: optionsHorizontalBar
-        };
-
-        thisChart = new Chart(canVas, chDataTable);
-
-        // CSS
-        let countBars = categoryDiv.length * datasetDiv.length;
-        let heightChart = getHeightChart(countBars);//getHeightChart(countBars);
-        document.getElementById('chart_div_' + j).querySelector('.chart-container').style.height = heightChart + 'px';
-    }
-    j++;
+    return options;
 }
 
 function getHeightChart(countBars)  {
