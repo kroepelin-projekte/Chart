@@ -78,21 +78,11 @@ class ToolProvider extends AbstractDynamicToolPluginProvider
 
         $pl = new \ilChartPlugin();
 
-        /*$gui = new \ilChartPluginGUI();
-        $properties = $gui->getProperties();*/
-       /* $gui = new \ilChartPluginGUI();*/
-        //$prop = $gui->getProperties();
-
-        //var_dump($properties);
         $form = new \ilPropertyFormGUI();
-        /*$form->setTitle($pl->txt(self::LANG_CHART));*/
-
-        //$form = new \ilAsyncPropertyFormGUI();
 
         $titleChart = new \ilTextInputGUI($pl->txt(self::LANG_CHART_TITLE), "chart_title_slate");
         $titleChart->setRequired(false);
         $form->addItem($titleChart);
-
 
         $selectChartType = new \ilSelectInputGUI($pl->txt(self::LANG_CHART_TYPE), "chart_type_slate");
         $selectChartType->setRequired(true);
@@ -103,10 +93,12 @@ class ToolProvider extends AbstractDynamicToolPluginProvider
             "4" => $pl->txt(self::LANG_CHART_LINE_CHART)
         ];
         $selectChartType->setOptions($optionsChart);
+        $selectChartType->setValue("1");
         $form->addItem($selectChartType);
 
         // Radio buttons for data format
         $radioGroup = new \ilRadioGroupInputGUI("Format", "data_format_slate");
+        $radioGroup->setValue("1");
         $radioGroup->setRequired(true);
 
         // Radio button for data format number with suditem for currency symbol

@@ -125,17 +125,18 @@ class ilChartPluginGUI extends ilPageComponentPluginGUI
 
         if (!$form->checkInput() || !$this->validate($form)) {
 
-            var_dump($this->validate($form));
-            die;
+            /*var_dump($this->validate($form));
+            die;*/
 
             ilUtil::sendFailure($DIC->language()->txt("form_input_not_valid"), true);
             $form->setValuesByPost();
             $tpl->setContent($form->getHtml());
+
         } else {
 
+            /*var_dump("OK");
             var_dump($this->validate($form));
-            die;
-
+            die;*/
             $properties = [
                 "chart_title" => $form->getInput("chart_title"),
                 "chart_type" => $form->getInput("chart_type"),
@@ -154,18 +155,19 @@ class ilChartPluginGUI extends ilPageComponentPluginGUI
             foreach ($form->getInput("categories") as $key => $value) {
                 foreach ($form->getInput("datasets") as $k => $val) {
                     if(!array_key_exists("value_dataset_" . ($k + 1) . "_category_" . ($key + 1), $properties)) {
-                        $properties["value_dataset_" . ($k + 1) . "_category_" . ($key + 1)] = "";
+                        $properties["value_dataset_" . ($k + 1) . "_category_" . ($key + 1)] = "0";
                     }
                 }
             }
 
-            $extendedColors = $this->getExtendendColors();
+            $shuffleExtendedColors = $this->getShuffleExtendedColors();
+
             // Set default colors for categories
             $j = 0; // Key in $extendedColors array
             for ($i = 0; $i < count($form->getInput("categories")); $i ++) {
-                $color = $extendedColors[$j];
+                $color = $shuffleExtendedColors[$j];
 
-                if ($j === count($extendedColors) - 1) {
+                if ($j === count($shuffleExtendedColors) - 1) {
                     $j = 0;
                 } else {
                     $j += 1;
@@ -173,12 +175,14 @@ class ilChartPluginGUI extends ilPageComponentPluginGUI
                 $properties["color_category_".($i + 1)] = $color;
             }
 
+            $shuffleExtendedColors = $this->getShuffleExtendedColors();
+
             // Set default colors for datasets
             $j = 0; // Key in $extendedColors array
             for ($i = 0; $i < count($form->getInput("datasets")); $i ++) {
-                $color = $extendedColors[$j];
+                $color = $shuffleExtendedColors[$j];
 
-                if ($j === count($extendedColors) - 1) {
+                if ($j === count($shuffleExtendedColors) - 1) {
                     $j = 0;
                 } else {
                     $j += 1;
@@ -187,10 +191,19 @@ class ilChartPluginGUI extends ilPageComponentPluginGUI
             }
 
             if ($this->createElement($properties)) {
+
+                var_dump($properties);
                 ilUtil::sendSuccess($DIC->language()->txt(self::LANG_OBJ_MODIFIED), true);
-                $this->returnToParent();
+                //$this->returnToParent();
             }
         }
+    }
+
+    private function getShuffleExtendedColors()
+    {
+        $extendedColors = $this->getExtendendColors();
+        shuffle($extendedColors);
+        return $extendedColors;
     }
 
     /**
@@ -244,6 +257,7 @@ class ilChartPluginGUI extends ilPageComponentPluginGUI
         $form = $this->initFormChart(self::ACTION_EDIT);
 
         if (!$form->checkInput() || !$this->validate($form)) {
+
             ilUtil::sendFailure($DIC->language()->txt("form_input_not_valid"), true);
             $DIC->ctrl()->redirectByClass(self::PLUGIN_CLASS_NAME, self::CMD_EDIT);
         } else {
@@ -267,7 +281,16 @@ class ilChartPluginGUI extends ilPageComponentPluginGUI
             $propertiesCategoriesColorsTmp = [];
             
             for ($i = 1; $i <= $countColorsCategories; $i++) {
-                $propertiesCategoriesColorsTmp["color_category_".$i] = $properties["color_category_".$i];
+
+                if(array_key_exists("color_category_" . $i, $properties)) {
+                    $propertiesCategoriesColorsTmp["color_category_" . $i] = $properties["color_category_".$i];
+                }else{
+
+                    $extendedColors = $this->getExtendendColors();
+                    $color = $extendedColors[rand(0, count($extendedColors)-1)];
+                    $propertiesCategoriesColorsTmp["color_category_".$i] = $color;
+                }
+
             }
 
             $countColorsDatasets = count($form->getInput("datasets"));
@@ -307,7 +330,7 @@ class ilChartPluginGUI extends ilPageComponentPluginGUI
 
             if ($this->updateElement($properties)) {
 
-                //var_dump($properties);
+                var_dump($properties);
 
                 ilUtil::sendSuccess($DIC->language()->txt(self::LANG_OBJ_MODIFIED), true);
                 //$DIC->ctrl()->redirectByClass(self::PLUGIN_CLASS_NAME, self::CMD_EDIT);
@@ -401,7 +424,8 @@ class ilChartPluginGUI extends ilPageComponentPluginGUI
         $properties["chart_type"] = $form->getInput("chart_type");
         $properties["data_format"] = $form->getInput("data_format");*/
 
-        if($form->getInput("data_format") === ""){
+
+        if($form->getInput("chart_type") === ""){
             return false;
         }
 
@@ -533,10 +557,7 @@ class ilChartPluginGUI extends ilPageComponentPluginGUI
         // Get Properties
         $prop = $this->getProperties();
 
-        /*$titleChart = new ilTextInputGUI($this->getPlugin()->txt(self::LANG_CHART_TITLE), "chart_title");
-        $titleChart->setRequired(false);
-        $titleChart->setValue($prop["chart_title"]);
-        $form->addItem($titleChart);*/
+
 
         $titleChart = new ilHiddenInputGUI("chart_title");
         $titleChart->setValue($prop["chart_title"]);
@@ -553,46 +574,6 @@ class ilChartPluginGUI extends ilPageComponentPluginGUI
         $titleChart = new ilHiddenInputGUI("currency_symbol");
         $titleChart->setValue($prop["currency_symbol"]);
         $form->addItem($titleChart);
-
-        //var_dump($titleChart->getToolbarHTML());
-
-        /*
-        // Title of chart
-        $titleChart = new ilTextInputGUI($this->getPlugin()->txt(self::LANG_CHART_TITLE), "chart_title");
-        $titleChart->setRequired(false);
-        $titleChart->setValue($prop["chart_title"]);
-        $form->addItem($titleChart);
-
-        // Select kind of chart
-        $selectChartType = new ilSelectInputGUI($this->getPlugin()->txt(self::LANG_CHART_TYPE), "chart_type");
-        $selectChartType->setRequired(true);
-        $optionsChart = [
-            "1" => $this->getPlugin()->txt(self::LANG_CHART_HORIZONTAL_BAR),
-            "2" => $this->getPlugin()->txt(self::LANG_CHART_VERTICAL_BAR),
-            "3" => $this->getPlugin()->txt(self::LANG_CHART_PIE_CHART),
-            "4" => $this->getPlugin()->txt(self::LANG_CHART_LINE_CHART)
-        ];
-        $selectChartType->setOptions($optionsChart);
-        $selectChartType->setValue($prop["chart_type"]);
-        $form->addItem($selectChartType);
-
-        // Radio buttons for data format
-        $radioGroup = new ilRadioGroupInputGUI($this->getPlugin()->txt("data_format"), "data_format");
-        $radioGroup->setRequired(true);
-        $radioGroup->setValue($prop["data_format"]);
-
-        // Radio button for data format number with suditem for currency symbol
-        $radioNumber = new ilRadioOption($this->getPlugin()->txt("number"), "1");
-        $currencySymbol = new ilTextInputGUI($this->getPlugin()->txt("currency_symbol"), "currency_symbol");
-        $currencySymbol->setInfo($this->getPlugin()->txt('add_currency_symbol'));
-        $currencySymbol->setValue($prop["currency_symbol"]);
-        $radioNumber->addSubItem($currencySymbol);
-
-        $radioGroup->addOption($radioNumber);
-
-        $radioPercent = new ilRadioOption($this->getPlugin()->txt("percent"), "2");
-        $radioGroup->addOption($radioPercent);
-        $form->addItem($radioGroup);*/
 
         $header = new ilFormSectionHeaderGUI();
         $header->setTitle($this->lng->txt('categories'));
@@ -645,16 +626,6 @@ class ilChartPluginGUI extends ilPageComponentPluginGUI
         $dataset->setMultiValues($multiDatasets);
 
         $form->addItem($dataset);
-
-        /*var_dump($DIC->ctrl()->getFormAction($this));
-        var_dump("OK");
-
-        $link = $DIC->ctrl()->getLinkTargetByClass(
-            self::class,
-            "testAjax");
-
-
-        var_dump($link);*/
 
         if ($action === self::ACTION_INSERT) {
             $form->addCommandButton(self::CMD_CREATE, $DIC->language()->txt(self::CMD_SAVE));
@@ -806,6 +777,8 @@ class ilChartPluginGUI extends ilPageComponentPluginGUI
         $form->addCommandButton(self::CMD_CANCEL, $DIC->language()->txt(self::CMD_CANCEL));
         // Get Properties
         $prop = $this->getProperties();
+
+        var_dump($prop);
 
         $header = new ilFormSectionHeaderGUI();
         $header->setTitle($this->getPlugin()->txt("categories"));
@@ -978,17 +951,20 @@ class ilChartPluginGUI extends ilPageComponentPluginGUI
 
             $indexDataset = substr($key, strpos($key, "dataset_") + 8);
 
-            foreach($value as $k => $val){
+            if($sumDatasetValues["sum_dataset_" . $indexDataset] > 0) {
 
-                $indexCategory = substr($k, strpos($k, "category_") + 9);
-                $tmpVal = (float) $datasets["dataset_" . $indexDataset]["category_". $indexCategory];
+                foreach ($value as $k => $val) {
 
-                $percentValue = round(($tmpVal * 100/ $sumDatasetValues["sum_dataset_" . $indexDataset]), 2);
+                    $indexCategory = substr($k, strpos($k, "category_") + 9);
+                    $tmpVal = (float)$datasets["dataset_" . $indexDataset]["category_" . $indexCategory];
 
-                $test['dataset_' . $indexDataset . '_category' . $indexCategory] = $percentValue;
+                    $percentValue = round(($tmpVal * 100 / $sumDatasetValues["sum_dataset_" . $indexDataset]), 2);
 
-                $percent .= '<input type="hidden" id="' . $key . "_" . $k . '_percent" value="' . $percentValue . '">';
+                    //$test['dataset_' . $indexDataset . '_category' . $indexCategory] = $percentValue;
 
+                    $percent .= '<input type="hidden" id="' . $key . "_" . $k . '_percent" value="' . $percentValue . '">';
+
+                }
             }
         }
 

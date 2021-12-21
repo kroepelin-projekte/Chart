@@ -2,7 +2,7 @@
     border: 2px solid red;
     position: relative;
     max-width: 60vw;
-    /*height: 80vh;*/
+    height: 80vh;
     margin: auto;
 }
 /*.chart-container {

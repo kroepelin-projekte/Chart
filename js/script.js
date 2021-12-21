@@ -527,10 +527,6 @@ for (let i = 0; i < divClass.length; i++) {
 
     } else if (type === 'horizontalBar') {
 
-
-        console.log("LABELS");
-        console.log(chartLabels.labels);
-
         chDataTable = {
             type: type,
             data: {
