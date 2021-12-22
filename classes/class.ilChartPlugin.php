@@ -105,7 +105,7 @@ class ilChartPlugin extends ilPageComponentPlugin
     }
     
     /**
-     * @param  type  $a_mode
+     * @param  $a_mode
      * @return array
      */
     public function getJavascriptFiles($a_mode): array

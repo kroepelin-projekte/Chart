@@ -1,7 +1,6 @@
 window.onload = function() {
 
     let containers = ['il_prop_cont_chart_title_slate', 'il_prop_cont_chart_type_slate', 'il_prop_cont_data_format_slate', 'il_prop_cont_currency_symbol_slate'];
-    let inputsSlate =  ['chart_title_slate', 'chart_type_slate', 'data_format_slate_1', 'data_format_slate_2', 'currency_symbol_slate'];
 
     for(let i = 0; i < containers.length; i++){
 
@@ -12,10 +11,6 @@ window.onload = function() {
     }
 
     changeClassName(document.getElementById('il_prop_cont_currency_symbol_slate').querySelector('div:nth-child(2)'), 'col-sm-9', 'col-sm-12');
-
-    // TODO eventually to be deleted
-    //document.getElementById('il_prop_cont_chart_title_slate').parentNode.querySelector('input[type="submit"]').setAttribute('name', '');
-
     setValue(document.getElementById('chart_title_slate'), document.getElementById('chart_title'));
 
     if(document.getElementById('chart_type').value === ''){
@@ -35,7 +30,6 @@ window.onload = function() {
     }
 
     let form = document.getElementById('il_prop_cont_chart_title_slate').parentNode.parentNode;
-    let btnSave = form.getElementsByClassName('form-horizontal')[0].getElementsByClassName('ilFormCmds')[0].getElementsByClassName('btn')[0]
 
     document.getElementById("chart_title_slate").addEventListener("keyup", function(){
         document.getElementById('chart_title').value = getValue(document.getElementById("chart_title_slate"));
@@ -57,20 +51,6 @@ window.onload = function() {
         document.getElementById('currency_symbol').value = getValue(document.getElementById('currency_symbol_slate'));
     });
 };
-
-
-// handle asynchronous request (success)
-function asynchSuccess(o){
-    if (ilCOPageQuestionHandler.success_handler != null) {
-        ilCOPageQuestionHandler.success_handler();
-    }
-}
-
-// Success Handler
-function asynchFailure(o)
-{
-}
-
 
 function textAlign(sel, position) {
     sel.style.textAlign = position;

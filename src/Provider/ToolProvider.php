@@ -23,21 +23,12 @@ class ToolProvider extends AbstractDynamicToolPluginProvider
     const LANG_CHART_PIE_CHART = "pie_chart";
     const LANG_CHART_LINE_CHART = 'line_chart';
     const LANG_CHART_TYPE = "chart_type";
-    const LANG_DESCRIPTION = "description";
     const LANG_CHART = "chart";
-    const SHOW_EDITOR = "copg_show_editor";
-    const TPL_FILE = "tpl.editor_slate.html";
-    const PLUGIN_ID = "chrt";
-    const CMD_SAVE = "save";
-    const CMD_UPDATE = "update";
-
 
     public function getToolsForContextStack(CalledContexts $called_contexts) : array
     {
         global $DIC;
         $tools = [];
-        /*$additional_data = $called_contexts->current()->getAdditionalData();*/
-
         $plugin = new \ilChartPlugin();
 
         if(($plugin->getId() === 'chrt' && ($DIC->ctrl()->getCmdClass() === 'ilchartplugingui' || $DIC->ctrl()->getCmdClass() === 'ilpcpluggedgui') && ($DIC->ctrl()->getCmd() === 'edit' || $DIC->ctrl()->getCmd() === 'insert' || $DIC->ctrl()->getCmd() === 'create'))) {
@@ -101,8 +92,6 @@ class ToolProvider extends AbstractDynamicToolPluginProvider
         $currencySymbol = new \ilTextInputGUI("Symbol", "currency_symbol_slate");
         $currencySymbol->setInfo($pl->txt('add_currency_symbol'));
         $radioNumber->addSubItem($currencySymbol);
-
-
         $radioGroup->addOption($radioNumber);
 
         $radioPercent = new \ilRadioOption($pl->txt("percent"), "2");

@@ -92,11 +92,6 @@ class ilChartPluginGUI extends ilPageComponentPluginGUI
         return $this->editorIsActive;
     }
 
-    public function test()
-    {
-
-    }
-
     /**
      * Form for new elements
      */
@@ -120,8 +115,6 @@ class ilChartPluginGUI extends ilPageComponentPluginGUI
         global $DIC, $tpl;
 
         $form = $this->initFormChart(self::ACTION_INSERT);
-
-
 
         if (!$form->checkInput() || !$this->validate($form)) {
             ilUtil::sendFailure($DIC->language()->txt("form_input_not_valid"), true);
@@ -326,11 +319,6 @@ class ilChartPluginGUI extends ilPageComponentPluginGUI
         }
     }
 
-    /*public function updateSlate()
-    {
-        var_dump("OK");
-    }*/
-
     /**
      * Update Style Form
      */
@@ -403,13 +391,6 @@ class ilChartPluginGUI extends ilPageComponentPluginGUI
      */
     private function validate($form)/*: bool*/
     {
-        /*$labels = $form->getInput("categories")["label"];*/
-
-        /*$properties["chart_title"] = $form->getInput("chart_title");
-        $properties["chart_type"] = $form->getInput("chart_type");
-        $properties["data_format"] = $form->getInput("data_format");*/
-
-
         if($form->getInput("chart_type") === ""){
             return false;
         }
@@ -430,40 +411,6 @@ class ilChartPluginGUI extends ilPageComponentPluginGUI
             }
         }
         return true;
-
-        /*$explodeDot = explode(".", $label);
-        $explodeComma = explode(",", $label);
-        if ((count($explodeDot) > 2 || count($explodeComma) > 2) || (count($explodeDot) > 1 && count($explodeComma) > 1) ||
-            (strpos($label, '.') === strlen($label) - 1 || strpos($label, ',') === strlen($label) -1) ||
-            (strpos($label, '.') === 0 || strpos($label, ',') === 0)) {
-            $validate = false;
-        }
-        if (!strpos($label, ".") && substr($label, 0, 1) == "0" && strlen($label) > 1) {
-            $validate = false;
-        }*/
-
-        /*$labels = $form->getInput("categories")["label"];
-        $validate = true;
-        foreach ($labels as $k => $label) {
-            if ($label === "") {
-                $validate = false;
-                break;
-            }
-            if (preg_match('#[^0-9.,]#', $label)) {
-                $validate = false;
-                break;
-            }
-            $explodeDot = explode(".", $label);
-            $explodeComma = explode(",", $label);
-            if ((count($explodeDot) > 2 || count($explodeComma) > 2) || (count($explodeDot) > 1 && count($explodeComma) > 1) ||
-                (strpos($label, '.') === strlen($label) - 1 || strpos($label, ',') === strlen($label) -1) ||
-                (strpos($label, '.') === 0 || strpos($label, ',') === 0)) {
-                $validate = false;
-            }
-            if (!strpos($label, ".") && substr($label, 0, 1) == "0" && strlen($label) > 1) {
-                $validate = false;
-            }
-        }*/
     }
 
     /**
@@ -541,8 +488,6 @@ class ilChartPluginGUI extends ilPageComponentPluginGUI
         $form->setDescription($this->getPlugin()->txt(self::LANG_DESCRIPTION));
         // Get Properties
         $prop = $this->getProperties();
-
-
 
         $titleChart = new ilHiddenInputGUI("chart_title");
         $titleChart->setValue($prop["chart_title"]);
@@ -623,16 +568,6 @@ class ilChartPluginGUI extends ilPageComponentPluginGUI
         return $form;
     }
 
-    /*public function testAjax()
-    {
-        global $DIC;
-
-        $DIC->ctrl()->redirectToUrl($_SERVER['HTTP_REFERER']);
-        var_dump("O");
-        $prop = $this->getProperties();
-        //var_dump($prop);
-    }*/
-
     public function getLink()
     {
         global $DIC;
@@ -643,32 +578,6 @@ class ilChartPluginGUI extends ilPageComponentPluginGUI
         );
 
         return $link;
-    }
-
-    public function buildOrderingTextsInputGui()
-    {
-        //$formDataConverter = $this->buildOrderingTextsFormDataConverter();
-        require_once 'Modules/TestQuestionPool/classes/forms/class.ilAssOrderingFormValuesObjectsConverter.php';
-        $converter = new ilAssOrderingFormValuesObjectsConverter();
-        $converter->setPostVar('test20');
-
-        require_once 'Modules/TestQuestionPool/classes/forms/class.ilAssOrderingTextsInputGUI.php';
-
-        $orderingElementInput = new ilAssOrderingTextsInputGUI(
-            $converter,
-            'test10'
-        );
-
-        $orderingElementInput->setInfo($this->lng->txt('ordering_answer_sequence_info'));
-        $orderingElementInput->setTitle($this->lng->txt('answers'));
-        //$orderingElementInput->setEditElementOccuranceEnabled(true);
-
-        /*require_once 'Modules/TestQuestionPool/classes/forms/class.ilAssOrderingTextsInputGUI.php';
-        $x = new ilAssOrderingElementList();
-        $orderingElementInput->setElementList($x);*/
-
-
-        return $orderingElementInput;
     }
 
     /**
@@ -715,7 +624,6 @@ class ilChartPluginGUI extends ilPageComponentPluginGUI
         $countColorCategory->setValue($countColorsCategory);
         $form->addItem($countColorCategory);
 
-
         $header = new ilFormSectionHeaderGUI();
         $header->setTitle($this->getPlugin()->txt("datasets"));
         $header->setInfo($this->getPlugin()->txt(self::LANG_DESCRIPTION_STYLE));
@@ -748,7 +656,6 @@ class ilChartPluginGUI extends ilPageComponentPluginGUI
 
         return $form;
     }
-
 
     public function initFormDatasetsEdit()
     {
@@ -810,6 +717,9 @@ class ilChartPluginGUI extends ilPageComponentPluginGUI
         $this->returnToParent();
     }
 
+    /**
+     * Get count of categories
+     */
     private function getCountCategories(array $properties): int
     {
         $count = 0;
@@ -821,11 +731,9 @@ class ilChartPluginGUI extends ilPageComponentPluginGUI
         }
         return $count;
     }
+
     /**
      * Get Chart Type
-     *
-     * @param string $chart_type
-     * @return string
      */
     private function getChartType(string $chart_type): string
     {
@@ -848,11 +756,7 @@ class ilChartPluginGUI extends ilPageComponentPluginGUI
      */
     private function percentDataFormat(array $a_properties)/*: string*/
     {
-        $summ = 0;
-        $valArray = [];
-        $result = [];
         $percent = "";
-
         $datasets = [];
         $countCategories = $this->getCountCategories($a_properties);
 
@@ -865,40 +769,20 @@ class ilChartPluginGUI extends ilPageComponentPluginGUI
                 foreach ($a_properties as $key => $value) {
 
                     if (strpos($key, "value_dataset") > -1 && strpos($key, "_category_" . ($i+1)) > -1) {
-
                         $indexDataset = substr($key, 14, strpos($key, "_category_") - 14);
-
-                        //$test["category_" . $i]["dataset_" . $indexDataset] = '';
-                        /*$datasetsValueCategory["category_" . $i][""] = $value;*/
                     }
 
                     if (strpos($key, "_category_" . ($i+1)) > -1 && ($key !== "title_category_" . ($i+1)) && ($key !== "color_category_" . ($i+1))) {
 
                         $value = $a_properties["value_dataset_" . $indexDataset ."_category_" .($i+1)];
-
-
                         if (strpos($value, ",") > -1) {
                             $value = str_replace(',', '.', $value);
                         }
                         $datasetsValueCategory["category_" . ($i + 1)]["dataset_". $indexDataset] = $value;
-
-                        //$value = str_replace(',', '.', $value);
-                        /*$valArray[] = floatval($value);
-                        $valInteger = floatval($value);
-
-                        $summ += round($valInteger, 2);
-
-
-                        for ($index = 0; $index < count($valArray); $index++) {
-
-                            $result[$key] = round(($valArray[$index] * 100 / $summ), 2);
-                        }*/
                     }
                 }
-                $summ = 0;
             }
 
-            $sumDataset = [];
             foreach($datasetsValueCategory as $key => $value){
 
                 $indexCategory = substr($key, strpos($key, "category_") + 9);
@@ -913,17 +797,13 @@ class ilChartPluginGUI extends ilPageComponentPluginGUI
         foreach($datasets as $key => $value){
 
             $indexDataset = substr($key, strpos($key, "dataset_") + 8);
-
-
             $sumDataset = 0;
             foreach($value as $k => $val){
 
                 $indexCategory = substr($k, strpos($k, "category_") + 9);
-
                 if(strpos($datasets["dataset_" . $indexDataset]["category_". $indexCategory], ",") > -1){
                     $datasets["dataset_" . $indexDataset]["category_". $indexCategory] = str_replace(',', '.', $value);
                 }
-
                 $tmpVal = (float) $datasets["dataset_" . $indexDataset]["category_". $indexCategory];
                 $sumDataset += $tmpVal;
             }
@@ -933,41 +813,27 @@ class ilChartPluginGUI extends ilPageComponentPluginGUI
         foreach($datasets as $key => $value){
 
             $indexDataset = substr($key, strpos($key, "dataset_") + 8);
-
             if($sumDatasetValues["sum_dataset_" . $indexDataset] > 0) {
 
                 foreach ($value as $k => $val) {
-
                     $indexCategory = substr($k, strpos($k, "category_") + 9);
                     $tmpVal = (float)$datasets["dataset_" . $indexDataset]["category_" . $indexCategory];
-
                     $percentValue = round(($tmpVal * 100 / $sumDatasetValues["sum_dataset_" . $indexDataset]), 2);
-
-                    //$test['dataset_' . $indexDataset . '_category' . $indexCategory] = $percentValue;
-
                     $percent .= '<input type="hidden" id="' . $key . "_" . $k . '_percent" value="' . $percentValue . '">';
-
                 }
             }
         }
-
         return $percent;
     }
     
     /**
      * Get key Input Fields
-     *
-     * @param array $a_properties
-     * @return string
      */
     private function titleCategoryInputFields(array $a_properties): string
     {
         $categoryFields = "";
         
         foreach ($a_properties as $key => $value) {
-            /*if (strpos($key, "key") > -1) {
-                $keyFields .= '<input type="hidden" id="'.$key.'" value="'.$value.'">';
-            }*/
             if (strpos($key, "title_category") > -1) {
                 $categoryFields .= '<input type="hidden" id="'.$key.'" value="'.$value.'">';
             }
@@ -1047,14 +913,11 @@ class ilChartPluginGUI extends ilPageComponentPluginGUI
      * Get Element HTML
      *
      * @param $a_mode
-     * @param array $a_properties
      * @param $a_plugin_version
      * @return mixed
      */
     public function getElementHTML($a_mode, array $a_properties, $a_plugin_version)
     {
-        /*var_dump($this->checkIfAllDatasetsNull($a_properties));
-        die;*/
         $pl = $this->getPlugin();
         self::$id_counter += 1;
         $divcanid = self::DIV_CANVAS_ID_PREFIX . self::$id_counter;
@@ -1076,25 +939,6 @@ class ilChartPluginGUI extends ilPageComponentPluginGUI
         $tpl->setVariable("COLOR_CATEGORY", $this->colorCategoryInputField($a_properties));
         $tpl->setVariable("COLOR_DATASET", $this->colorDatasetInputField($a_properties));
         $tpl->setVariable("PERC", $this->percentDataFormat($a_properties));
-
-        /*$tpl = $pl->getTemplate("tpl.content.html");
-
-        $tpl->setVariable("DIV", $divid);
-        $tpl->setVariable("DIV_CANVAS_ID", $divcanid);
-        $tpl->setVariable("CHART_ID", $id);
-        $tpl->setVariable("CHART_TITLE", $a_properties['chart_title']);
-        $tpl->setVariable("CHART_TYPE", $this->getChartType($a_properties['chart_type']));
-        $tpl->setVariable("CHART_DATA_FORMAT", $a_properties['data_format']);
-        $tpl->setVariable("CHART_CURR_SYMBOL", $a_properties['currency_symbol']);
-        $tpl->setVariable("TITLE_CATEGORIES", $this->titleCategoryInputFields($a_properties));
-        $tpl->setVariable("TITLE_DATASETS", $this->titleDatasetInputFields($a_properties));
-        $tpl->setVariable("VALUE_DATASETS", $this->valueDatasetInputFields($a_properties));
-        $tpl->setVariable("COLOR_CATEGORY", $this->colorCategoryInputField($a_properties));
-        $tpl->setVariable("COLOR_DATASET", $this->colorDatasetInputField($a_properties));
-        $tpl->setVariable("PERC", $this->percentDataFormat($a_properties));*/
-
-
-
         $tpl->parseCurrentBlock();
         
         return $tpl->get();

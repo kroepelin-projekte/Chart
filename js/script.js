@@ -4,18 +4,17 @@ let j = 1;
 
 for (let i = 0; i < divClass.length; i++) {
 
-    let title, type, chId, chDataFormat, chCurrencySymbol, categoryDiv, datasetDiv, datasetCount, datasetValueDiv,
-        colorCategoryDiv, colorDatasetDiv, percDiv, chartDataSet, chartLabels, canVas, dataTable, thisChart,
-        optionsPie, optionsHorizontalBar, optionsBar, optionsLine, symbol, countVerticalBars, countHorizontalBarsGroup,
-        object = {};
+    let title, type, chartId, chartDataFormat, chartCurrencySymbol, categoryDiv, datasetDiv, datasetCount, datasetValueDiv,
+        colorCategoryDiv, colorDatasetDiv, percentDiv, chartDataSet, chartLabels, canVas, dataTable, thisChart,
+        optionsPie, optionsHorizontalBar, optionsBar, optionsLine, symbol;
 
     div[i] = document.getElementById('chart_div_' + j).children;
 
     title = div[i].chart_title.value;
     type = div[i].chart_type.value;
-    chId = div[i].chart_id.value;
-    chDataFormat = div[i].chart_data_format.value;
-    chCurrencySymbol = div[i].chart_currency_symbol.value;
+    chartId = div[i].chart_id.value;
+    chartDataFormat = div[i].chart_data_format.value;
+    chartCurrencySymbol = div[i].chart_currency_symbol.value;
 
     // Category title
     categoryDiv = div[i].div_title_category.children;
@@ -28,24 +27,23 @@ for (let i = 0; i < divClass.length; i++) {
     // Dataset color
     colorDatasetDiv = div[i].div_color_dataset.children;
     // Percent
-    percDiv = div[i].div_percent.children;
-
+    percentDiv = div[i].div_percent.children;
 
     chartDataSet = {label: [], data: [], backgroundColor: [], borderColor: []};
     chartLabels = {labels: [], datasetsTitle: []};
 
     // If data format is percent
-    if (chDataFormat === "2") {
+    if (chartDataFormat === "2") {
 
         for (let k = 0; k < categoryDiv.length; k++) {
 
             let tmp = {};
             let index = 0;
-            for (let n = 0; n < percDiv.length; n++) {
+            for (let n = 0; n < percentDiv.length; n++) {
 
-                if (percDiv[n].id.indexOf('category_' + k) > -1) {
+                if (percentDiv[n].id.indexOf('category_' + k) > -1) {
 
-                    tmp[index] = percDiv[n].value;
+                    tmp[index] = percentDiv[n].value;
                 }
                 index += 1;
             }
@@ -60,7 +58,7 @@ for (let i = 0; i < divClass.length; i++) {
 
         symbol = function (value) {
             let parseVal = parseFloat(value);
-            return parseVal.toLocaleString() + ' ' + chCurrencySymbol;
+            return parseVal.toLocaleString() + ' ' + chartCurrencySymbol;
         };
     }
 
@@ -92,7 +90,7 @@ for (let i = 0; i < divClass.length; i++) {
 
         let dataDatasetTmp = [];
 
-        if (chDataFormat === "1") {
+        if (chartDataFormat === "1") {
 
             for (let m = 0; m < datasetValueDiv.length; m++) {
                 if (datasetValueDiv[m].getAttribute('id').indexOf('value_dataset_' + (n + 1)) > -1) {
@@ -102,334 +100,48 @@ for (let i = 0; i < divClass.length; i++) {
 
         } else {
 
-            for (let m = 0; m < percDiv.length; m++) {
-                if (percDiv[m].getAttribute('id').indexOf('dataset_' + (n + 1) + '_category') > -1) {
-                    dataDatasetTmp.push(percDiv[m].value);
+            for (let m = 0; m < percentDiv.length; m++) {
+                if (percentDiv[m].getAttribute('id').indexOf('dataset_' + (n + 1) + '_category') > -1) {
+                    dataDatasetTmp.push(percentDiv[m].value);
                 }
             }
         }
-
         dataDataset[n] = dataDatasetTmp;
 
         if (type === 'horizontalBar') {
-
-            datasetForChart[n] = {
-
-                label: datasetDiv[n].value,
-                data: dataDataset[n],
-                backgroundColor: "#" + colorDatasetDiv[n].value,
-                borderColor: '#000000',
-                borderWidth: 1,
-                barPercentage: 0.8,
-                minBarLength: 25
-            }
-
+            datasetForChart[n] = datasetHorizontalBarChart(datasetDiv[n].value, dataDataset[n], colorDatasetDiv[n].value);
         } else if (type === 'bar') {
-
-            datasetForChart[n] = {
-
-                label: datasetDiv[n].value,
-                data: dataDataset[n],
-                backgroundColor: "#" + colorDatasetDiv[n].value,
-                borderColor: '#000000',
-                borderWidth: 1,
-                barPercentage: 0.8,
-                minBarLength: 25
-            }
-
+            datasetForChart[n] = datasetVerticalBarChart(datasetDiv[n].value, dataDataset[n], colorDatasetDiv[n].value);
         } else if (type === 'pie') {
-
-            datasetForChart[n] = {
-
-                label: datasetDiv[n].value,
-                data: dataDataset[n],
-                backgroundColor: categoriesColors,
-                borderColor: '#000000',
-                borderWidth: 1
-            }
-
+            datasetForChart[n] = datasetPieChart(datasetDiv[n].value, dataDataset[n], categoriesColors)
         } else if (type === 'line') {
-
-            datasetForChart[n] = {
-
-                label: datasetDiv[n].value,
-                data: dataDataset[n],
-                backgroundColor: "#" + colorDatasetDiv[n].value,
-                borderColor: "#" + colorDatasetDiv[n].value,
-                borderWidth: 2,
-                fill: false,
-                tension: 0.0,
-            }
+            datasetForChart[n] = datasetLineChart(datasetDiv[n].value, dataDataset[n], colorDatasetDiv[n].value);
         }
-
     }
 
-    optionsPie = getOptionsPie(symbol, title);
-    /*optionsPie = {
-        plugins: {
-            datalabels: {
-                align: 'end',
-                anchor: 'center',
-                backgroundColor: '#ffffff',
-                borderColor: '#000000',
-                borderRadius: 1,
-                borderWidth: 0.5,
-                color: '#000000',
-                font: {
-                    size: 13,
-                    weight: 600
-                },
-                padding: 2,
-                display: 'auto',
-                formatter: symbol,
-            }
-        },
-        responsive: true,
-        maintainAspectRatio: false,
-        legend: {
-            display: true,
-            labels: {
-                boxWidth: 5,
-                usePointStyle: true,
-                boxHeight: 1
-            }
-        },
-        title: {
-            display: true,
-            text: title
-        },
-        tooltips: {
-            callbacks: {
-                title: function(tooltipItem, data) {
-                    return data['datasets'][tooltipItem[0]['datasetIndex']]['label'];
-                },
-                label: function(tooltipItem, data) {
-                    return parseFloat(data['datasets'][tooltipItem['datasetIndex']]['data'][tooltipItem['index']]).toLocaleString();
-                }
-            },
-        },
-    };*/
-
-    optionsHorizontalBar = getOptionsHorizontalBar(symbol, title)
-    /*optionsHorizontalBar = {
-        plugins: {
-            datalabels: {
-                align: 'start',
-                anchor: 'end',
-                backgroundColor: '#ffffff',
-                borderColor: '#000000',
-                borderRadius: 1,
-                borderWidth: 0.5,
-                color: '#000000',
-                font: {
-                    size: 12,
-                    weight: 600
-                },
-                offset: 1,
-                padding: 2,
-                clamp: true,
-                clip: true,
-                display: 'auto',
-                formatter: symbol
-            }
-        },
-        scales: {
-            xAxes: [{
-                ticks: {
-                    beginAtZero: true,
-                    callback: function (value) {
-                        return value.toLocaleString();
-                    }
-                }
-            }]
-        },
-        responsive: true,
-        maintainAspectRatio: false,
-        legend: {
-            display: true,
-            labels: {
-                boxWidth: 5,
-                usePointStyle: true,
-                boxHeight: 1
-            }
-        },
-        title: {
-            display: true,
-            text: title
-        },
-        tooltip: true,
-        tooltips: {
-            mode: 'point'
-        }
-    };*/
-
-    optionsBar = getOptionsVerticalBar(symbol, title);
-    /*optionsBar = {
-        plugins: {
-            datalabels: {
-                align: 'start',
-                anchor: 'end',
-                backgroundColor: '#ffffff',
-                borderColor: '#000000',
-                borderRadius: 1,
-                borderWidth: 0.5,
-                color: '#000000',
-                font: {
-                    size: 12,
-                    weight: 600
-                },
-                offset: 1,
-                padding: 2,
-                clamp: true,
-                clip: true,
-                display: 'auto',
-                formatter: symbol
-            }
-        },
-        scales: {
-            yAxes: [{
-                ticks: {
-                    beginAtZero: true,
-                    callback: function (value) {
-                        return value.toLocaleString();
-                    }
-                }
-            }]
-        },
-        responsive: true,
-        maintainAspectRatio: false,
-        legend: {
-            display: true,
-            labels: {
-                boxWidth: 5,
-                usePointStyle: true,
-                boxHeight: 1
-            }
-        },
-        title: {
-            display: true,
-            text: title
-        },
-        tooltip: true,
-        tooltips: {
-            mode: 'point'
-        }
-    };*/
-
-    optionsLine = getOptionsLine(symbol, title);
-
-    /*optionsLine = {
-        plugins: {
-            datalabels: {
-                align: 'start',
-                anchor: 'end',
-                backgroundColor: '#ffffff',
-                borderColor: '#000000',
-                borderRadius: 1,
-                borderWidth: 0.5,
-                color: '#000000',
-                font: {
-                    size: 12,
-                    weight: 600
-                },
-                offset: 1,
-                padding: 2,
-                clamp: false,
-                clip: false,
-                display: 'auto',
-                formatter: symbol
-            }
-        },
-        scales: {
-            yAxes: [{
-                ticks: {
-                    beginAtZero: true,
-                    callback: function (value) {
-                        return value.toLocaleString();
-                    }
-                }
-            }]
-        },
-        responsive: true,
-        maintainAspectRatio: false,
-        legend: {
-            display: true,
-            labels:{
-                boxWidth: 5,
-                usePointStyle: true,
-                boxHeight: 1
-            }
-        },
-        title: {
-            display: true,
-            text: title
-        },
-        tooltip: true
-    };*/
-
-    canVas = document.getElementById(chId).getContext('2d');
-
+    canVas = document.getElementById(chartId).getContext('2d');
     if (type === 'pie') {
 
-        /*chDataTable = {
-            type: type,
-            data: {
-                labels: chartLabels.labels,
-                datasets: datasetForChart
-            },
-            options: optionsPie
-        };*/
-
+        optionsPie = getOptionsPie(symbol, title);
         dataTable = getDataTable(type, chartLabels.labels, datasetForChart, optionsPie);
-
-        console.log('DataTable');
-        console.log(dataTable);
-
         thisChart = new Chart(canVas, dataTable);
 
     }else if (type === 'line'){
 
-        /*chDataTable = {
-            type: type,
-            data: {
-                labels: chartLabels.labels,
-                datasets: datasetForChart
-            },
-            options: optionsLine
-        };*/
-
+        optionsLine = getOptionsLine(symbol, title);
         dataTable = getDataTable(type, chartLabels.labels, datasetForChart, optionsLine);
-
         thisChart = new Chart(canVas, dataTable);
 
     } else if (type === 'bar') {
 
-        /*chDataTable = {
-            type: type,
-            data: {
-                labels: chartLabels.labels,
-                datasets: datasetForChart
-            },
-            options: optionsBar
-        };*/
-
+        optionsBar = getOptionsVerticalBar(symbol, title);
         dataTable = getDataTable(type, chartLabels.labels, datasetForChart, optionsBar);
-
         thisChart = new Chart(canVas, dataTable);
 
     } else if (type === 'horizontalBar') {
 
-        /*chDataTable = {
-            type: type,
-            data: {
-                labels: chartLabels.labels,
-                datasets: datasetForChart
-            },
-            options: optionsHorizontalBar
-        };*/
-
+        optionsHorizontalBar = getOptionsHorizontalBar(symbol, title);
         dataTable = getDataTable(type, chartLabels.labels, datasetForChart, optionsHorizontalBar);
-
         thisChart = new Chart(canVas, dataTable);
 
         // CSS
@@ -450,8 +162,57 @@ function getCountDatasets(datasetValueSel)  {
         let id = datasetValueSel[n].getAttribute('id');
         datasetIndexes.push(id.substr(parseInt(id.indexOf('value_dataset_') + 14), parseInt(id.indexOf('_category')) - parseInt(id.indexOf('value_dataset_') + 14)));
     }
-
     return Math.max.apply(Math, datasetIndexes);
+}
+
+function datasetHorizontalBarChart(datasetTitle, datasetValue, datasetColor)  {
+
+    return {
+        label: datasetTitle,
+        data: datasetValue,
+        backgroundColor: "#" + datasetColor,
+        borderColor: '#000000',
+        borderWidth: 1,
+        barPercentage: 0.8,
+        minBarLength: 25
+    }
+}
+
+function datasetVerticalBarChart(datasetTitle, datasetValue, datasetColor)  {
+
+    return {
+        label: datasetTitle,
+        data: datasetValue,
+        backgroundColor: "#" + datasetColor,
+        borderColor: '#000000',
+        borderWidth: 1,
+        barPercentage: 0.8,
+        minBarLength: 25
+    }
+}
+
+function datasetPieChart(datasetTitle, datasetValue, categoriesColors)  {
+
+    return {
+        label: datasetTitle,
+        data: datasetValue,
+        backgroundColor: categoriesColors,
+        borderColor: '#000000',
+        borderWidth: 1
+    }
+}
+
+function datasetLineChart(datasetTitle, datasetValue, datasetColors)  {
+
+    return {
+        label: datasetTitle,
+        data: datasetValue,
+        backgroundColor: "#" + datasetColors,
+        borderColor: "#" + datasetColors,
+        borderWidth: 2,
+        fill: false,
+        tension: 0.0,
+    }
 }
 
 function getDataTable(typ, labels, datasets, options)  {
@@ -468,8 +229,7 @@ function getDataTable(typ, labels, datasets, options)  {
 
 function getOptionsVerticalBar(formatter, title)  {
 
-    let options = {};
-    options = {
+    return {
         plugins: {
             datalabels: {
                 align: 'start',
@@ -528,13 +288,11 @@ function getOptionsVerticalBar(formatter, title)  {
             },
         }
     };
-    return options;
 }
 
 function getOptionsHorizontalBar(formatter, title)  {
 
-    let options = {};
-    options = {
+    return {
         plugins: {
             datalabels: {
                 align: 'start',
@@ -593,13 +351,11 @@ function getOptionsHorizontalBar(formatter, title)  {
             },
         },
     };
-    return options;
 }
 
 function getOptionsPie(formatter, title)  {
 
-    let options = {};
-    options = {
+    return {
         plugins: {
             datalabels: {
                 align: 'end',
@@ -643,12 +399,11 @@ function getOptionsPie(formatter, title)  {
             }
         },
     };
-    return options;
 }
+
 function getOptionsLine(formatter, title)  {
 
-    let options = {};
-    options = {
+    return {
         plugins: {
             datalabels: {
                 align: 'start',
@@ -706,7 +461,6 @@ function getOptionsLine(formatter, title)  {
             },
         },
     };
-    return options;
 }
 
 function getHeightChart(countBars)  {
