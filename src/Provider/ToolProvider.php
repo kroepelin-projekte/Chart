@@ -31,9 +31,13 @@ class ToolProvider extends AbstractDynamicToolPluginProvider
         $tools = [];
         $plugin = new \ilChartPlugin();
 
+        var_dump($plugin->getId());
+        var_dump($DIC->ctrl()->getCmdClass());
+        var_dump($DIC->ctrl()->getCmd());
+
         if(($plugin->getId() === 'chrt' && ($DIC->ctrl()->getCmdClass() === 'ilchartplugingui' || $DIC->ctrl()->getCmdClass() === 'ilpcpluggedgui') && ($DIC->ctrl()->getCmd() === 'edit' || $DIC->ctrl()->getCmd() === 'insert' || $DIC->ctrl()->getCmd() === 'create'))) {
 
-            $title = $this->dic->language()->txt('editor');
+            /*$title = $this->dic->language()->txt('editor');
             $icon = $this->dic->ui()->factory()->symbol()->icon()->custom(\ilUtil::getImagePath("outlined/icon_edtr.svg"), $title);
             $iff = function () {
                 return $this->identification_provider->contextAwareIdentifier('chrt');
@@ -46,8 +50,33 @@ class ToolProvider extends AbstractDynamicToolPluginProvider
                 ->withTitle($title)
                 ->withContent($l($this->getContent()));
 
-            return $tools;
+            return $tools;*/
+
+            //return $tools;
         }
+
+        $tools = [];
+        if(($plugin->getId() === 'chrt' && ($DIC->ctrl()->getCmdClass() === 'ilchartplugingui' || $DIC->ctrl()->getCmdClass() === 'ilpcpluggedgui') && ($DIC->ctrl()->getCmd() === 'edit' || $DIC->ctrl()->getCmd() === 'insert' || $DIC->ctrl()->getCmd() === 'create'))) {
+
+
+            $iff = function ($id) {
+                return $this->identification_provider->contextAwareIdentifier($id);
+            };
+            $l = function (string $content) {
+                return $this->dic->ui()->factory()->legacy($content);
+            };
+
+            $additional_data = $called_contexts->getLast()->getAdditionalData();
+
+            if ($additional_data->exists('copg_show_editor') && $additional_data->get('copg_show_editor') === true) {
+
+
+                $tools[] = $this->factory->tool($iff("tree"))
+                    ->withTitle("Chart")
+                    ->withContent($l($this->getContent()));
+            }
+        }
+
         return $tools;
     }
 

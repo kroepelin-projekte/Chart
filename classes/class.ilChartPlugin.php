@@ -38,6 +38,12 @@ class ilChartPlugin extends ilPageComponentPlugin
         parent::__construct();
         $this->includePluginClasses();
         $this->config = new ilChartConfig($this->getSlotId().'_'.$this->getId());
+
+        $DIC->globalScreen()->tool()->context();
+        /*var_dump($this->getId());
+        var_dump($DIC->ctrl()->getCmdClass());
+        var_dump($DIC->ctrl()->getCmd());*/
+
         $this->provider_collection->setToolProvider(new ToolProvider($DIC, $this));
     }
 
