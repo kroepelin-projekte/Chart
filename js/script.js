@@ -17,25 +17,24 @@ for (let i = 0; i < divClass.length; i++) {
     chDataFormat = div[i].chart_data_format.value;
     chCurrencySymbol = div[i].chart_currency_symbol.value;
 
-    // Category (1)
+    // Category title
     categoryDiv = div[i].div_title_category.children;
-    // Dataset
+    // Dataset title
     datasetDiv = div[i].div_dataset.children;
-    // Dataset value (n<5)
+    // Dataset value
     datasetValueDiv = div[i].div_value_dataset.children;
+    // Category Color
     colorCategoryDiv = div[i].div_color_category.children;
+    // Dataset color
     colorDatasetDiv = div[i].div_color_dataset.children;
+    // Percent
     percDiv = div[i].div_percent.children;
 
-    /**
-     * @todo multi Datasets
-     */
-    chartDataSet = {label: [], data: [], backgroundColor: [], borderColor: []};
 
-    // category
+    chartDataSet = {label: [], data: [], backgroundColor: [], borderColor: []};
     chartLabels = {labels: [], datasetsTitle: []};
 
-    // Percent(2)/Currency
+    // If data format is percent
     if (chDataFormat === "2") {
 
         for (let k = 0; k < categoryDiv.length; k++) {
@@ -84,11 +83,9 @@ for (let i = 0; i < divClass.length; i++) {
         categoriesColors.push('#' + colorCategoryDiv[k].value);
     }
 
-    // Find count of datasets
+    // Count of datasets
     datasetCount = getCountDatasets(datasetValueDiv);
 
-
-    /* S T A R T  I O A N N A */
     let datasetForChart = [];
     let dataDataset = [];
     for (let n = 0; n < datasetCount; n++) {
@@ -98,9 +95,7 @@ for (let i = 0; i < divClass.length; i++) {
         if (chDataFormat === "1") {
 
             for (let m = 0; m < datasetValueDiv.length; m++) {
-
                 if (datasetValueDiv[m].getAttribute('id').indexOf('value_dataset_' + (n + 1)) > -1) {
-
                     dataDatasetTmp.push(datasetValueDiv[m].value);
                 }
             }
@@ -108,12 +103,10 @@ for (let i = 0; i < divClass.length; i++) {
         } else {
 
             for (let m = 0; m < percDiv.length; m++) {
-
                 if (percDiv[m].getAttribute('id').indexOf('dataset_' + (n + 1) + '_category') > -1) {
                     dataDatasetTmp.push(percDiv[m].value);
                 }
             }
-
         }
 
         dataDataset[n] = dataDatasetTmp;
@@ -171,7 +164,6 @@ for (let i = 0; i < divClass.length; i++) {
 
     }
 
-    /* E N D  I O A N N A */
     optionsPie = getOptionsPie(symbol, title);
     /*optionsPie = {
         plugins: {

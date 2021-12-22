@@ -36,16 +36,11 @@ class ToolProvider extends AbstractDynamicToolPluginProvider
     {
         global $DIC;
         $tools = [];
-        $additional_data = $called_contexts->current()->getAdditionalData();
+        /*$additional_data = $called_contexts->current()->getAdditionalData();*/
 
         $plugin = new \ilChartPlugin();
 
-
-        var_dump($plugin->getId());
-        var_dump($DIC->ctrl()->getCmd());
-        var_dump($DIC->ctrl()->getCmdClass());
-
-        if(($plugin->getId() === 'chrt' && ($DIC->ctrl()->getCmd() === 'edit' || $DIC->ctrl()->getCmd() === 'insert' || $DIC->ctrl()->getCmd() === 'create') || $DIC->ctrl()->getCmd() === 'ilchartplugingui')/* && $DIC->ctrl()->getCmdClass() !== "ilcontentpagepagegui"*//* && $DIC->ctrl()->getCmdClass() === 'ilpcpluggedgui'*/) {
+        if(($plugin->getId() === 'chrt' && ($DIC->ctrl()->getCmdClass() === 'ilchartplugingui' || $DIC->ctrl()->getCmdClass() === 'ilpcpluggedgui') && ($DIC->ctrl()->getCmd() === 'edit' || $DIC->ctrl()->getCmd() === 'insert' || $DIC->ctrl()->getCmd() === 'create'))) {
 
             $title = $this->dic->language()->txt('editor');
             $icon = $this->dic->ui()->factory()->symbol()->icon()->custom(\ilUtil::getImagePath("outlined/icon_edtr.svg"), $title);

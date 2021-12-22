@@ -124,19 +124,12 @@ class ilChartPluginGUI extends ilPageComponentPluginGUI
 
 
         if (!$form->checkInput() || !$this->validate($form)) {
-
-            /*var_dump($this->validate($form));
-            die;*/
-
             ilUtil::sendFailure($DIC->language()->txt("form_input_not_valid"), true);
             $form->setValuesByPost();
             $tpl->setContent($form->getHtml());
 
         } else {
 
-            /*var_dump("OK");
-            var_dump($this->validate($form));
-            die;*/
             $properties = [
                 "chart_title" => $form->getInput("chart_title"),
                 "chart_type" => $form->getInput("chart_type"),
@@ -191,10 +184,8 @@ class ilChartPluginGUI extends ilPageComponentPluginGUI
             }
 
             if ($this->createElement($properties)) {
-
-                var_dump($properties);
                 ilUtil::sendSuccess($DIC->language()->txt(self::LANG_OBJ_MODIFIED), true);
-                //$this->returnToParent();
+                $this->returnToParent();
             }
         }
     }
@@ -329,19 +320,16 @@ class ilChartPluginGUI extends ilPageComponentPluginGUI
             }
 
             if ($this->updateElement($properties)) {
-
-                var_dump($properties);
-
                 ilUtil::sendSuccess($DIC->language()->txt(self::LANG_OBJ_MODIFIED), true);
-                //$DIC->ctrl()->redirectByClass(self::PLUGIN_CLASS_NAME, self::CMD_EDIT);
+                $DIC->ctrl()->redirectByClass(self::PLUGIN_CLASS_NAME, self::CMD_EDIT);
             }
         }
     }
 
-    public function updateSlate()
+    /*public function updateSlate()
     {
         var_dump("OK");
-    }
+    }*/
 
     /**
      * Update Style Form
@@ -389,11 +377,8 @@ class ilChartPluginGUI extends ilPageComponentPluginGUI
             }
 
             if ($this->updateElement($properties)) {
-
-                var_dump($properties);
-
                 ilUtil::sendSuccess($DIC->language()->txt(self::LANG_OBJ_MODIFIED), true);
-                //$DIC->ctrl()->redirect($this, self::CMD_EDIT_DATASETS);
+                $DIC->ctrl()->redirect($this, self::CMD_EDIT_DATASETS);
             }
         }
     }
@@ -638,15 +623,15 @@ class ilChartPluginGUI extends ilPageComponentPluginGUI
         return $form;
     }
 
-    public function testAjax()
+    /*public function testAjax()
     {
-        /*global $DIC;
+        global $DIC;
 
         $DIC->ctrl()->redirectToUrl($_SERVER['HTTP_REFERER']);
         var_dump("O");
-        $prop = $this->getProperties();*/
+        $prop = $this->getProperties();
         //var_dump($prop);
-    }
+    }*/
 
     public function getLink()
     {
@@ -771,17 +756,15 @@ class ilChartPluginGUI extends ilPageComponentPluginGUI
 
         include_once("Services/Form/classes/class.ilPropertyFormGUI.php");
 
-
         $form = new ilPropertyFormGUI();
-        $form->addCommandButton(self::CMD_UPDATE_DATASETS, $DIC->language()->txt(self::CMD_SAVE));
-        $form->addCommandButton(self::CMD_CANCEL, $DIC->language()->txt(self::CMD_CANCEL));
+
+        // Add Title
+        $form->setTitle($this->getPlugin()->txt("edit_datasets"));
         // Get Properties
         $prop = $this->getProperties();
 
-        var_dump($prop);
-
         $header = new ilFormSectionHeaderGUI();
-        $header->setTitle($this->getPlugin()->txt("categories"));
+        $header->setTitle($this->getPlugin()->txt("datasets"));
         $form->addItem($header);
 
         $countCategories = 0;
@@ -797,7 +780,7 @@ class ilChartPluginGUI extends ilPageComponentPluginGUI
             }
         }
 
-        $radioGroup = new ilRadioGroupInputGUI($this->getPlugin()->txt("datasets"), "dataset_values");
+        $radioGroup = new ilRadioGroupInputGUI(""/*$this->getPlugin()->txt("datasets")*/, "dataset_values");
         for($i = 0; $i < $countCategories; $i++){
 
             $radioNumber = new ilRadioOption($prop["title_category_".($i+1)], "dataset". ($i+1));
@@ -1070,16 +1053,15 @@ class ilChartPluginGUI extends ilPageComponentPluginGUI
      */
     public function getElementHTML($a_mode, array $a_properties, $a_plugin_version)
     {
+        /*var_dump($this->checkIfAllDatasetsNull($a_properties));
+        die;*/
         $pl = $this->getPlugin();
-        $tpl = $pl->getTemplate("tpl.content.html");
-
-        //var_dump($a_properties);
-        //var_dump($this->keyInputField($a_properties));
-        
         self::$id_counter += 1;
         $divcanid = self::DIV_CANVAS_ID_PREFIX . self::$id_counter;
         $divid = self::DIV_ID_PREFIX . self::$id_counter;
         $id = self::CANVAS_ID_PREFIX . self::$id_counter;
+
+        $tpl = $pl->getTemplate("tpl.content.html");
 
         $tpl->setVariable("DIV", $divid);
         $tpl->setVariable("DIV_CANVAS_ID", $divcanid);
@@ -1094,6 +1076,25 @@ class ilChartPluginGUI extends ilPageComponentPluginGUI
         $tpl->setVariable("COLOR_CATEGORY", $this->colorCategoryInputField($a_properties));
         $tpl->setVariable("COLOR_DATASET", $this->colorDatasetInputField($a_properties));
         $tpl->setVariable("PERC", $this->percentDataFormat($a_properties));
+
+        /*$tpl = $pl->getTemplate("tpl.content.html");
+
+        $tpl->setVariable("DIV", $divid);
+        $tpl->setVariable("DIV_CANVAS_ID", $divcanid);
+        $tpl->setVariable("CHART_ID", $id);
+        $tpl->setVariable("CHART_TITLE", $a_properties['chart_title']);
+        $tpl->setVariable("CHART_TYPE", $this->getChartType($a_properties['chart_type']));
+        $tpl->setVariable("CHART_DATA_FORMAT", $a_properties['data_format']);
+        $tpl->setVariable("CHART_CURR_SYMBOL", $a_properties['currency_symbol']);
+        $tpl->setVariable("TITLE_CATEGORIES", $this->titleCategoryInputFields($a_properties));
+        $tpl->setVariable("TITLE_DATASETS", $this->titleDatasetInputFields($a_properties));
+        $tpl->setVariable("VALUE_DATASETS", $this->valueDatasetInputFields($a_properties));
+        $tpl->setVariable("COLOR_CATEGORY", $this->colorCategoryInputField($a_properties));
+        $tpl->setVariable("COLOR_DATASET", $this->colorDatasetInputField($a_properties));
+        $tpl->setVariable("PERC", $this->percentDataFormat($a_properties));*/
+
+
+
         $tpl->parseCurrentBlock();
         
         return $tpl->get();

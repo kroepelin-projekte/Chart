@@ -10,6 +10,7 @@ description#:#Geben Sie den Diagrammtitel, den Diagrammtyp und das Datenformat e
 description_style#:#Sie können die Farben der Balken in HEX Farben definieren zB CA3E3E
 edit_chart#:#Diagramm Bearbeiten
 edit_style#:#Style Bearbeiten
+edit_datasets#:#Datasets Bearbeiten
 horizontal_bar_chart#:#Balkendiagramm
 vertical_bar_chart#:#Säulendiagramm
 line_chart#:#Liniediagramm
