@@ -3,24 +3,34 @@ cmd_insert#:#Insert Chart
 chart#:#Chart
 chart_style#:#Style
 categories#:#Categories
+categories_names#:#Categories Names
 chart_datasets#:#Datasets
 datasets#:#Datasets
+datasets_names#:#Datasets Names
 dataset#:#Dataset
-description#:#Enter the title, type and data format of the chart. After inserting, you have the option of selecting colors.
-description_style#:#You can define the colors of the bars in HEX colors. Example: CA3E3E
+description#:#Insert the title, type, data format and max value of the chart. If you have selected "Percent" as the data format, the calculation of the values will be displayed in percent. After inserting, you have the option of selecting colors
+description_datasets#:#Insert the values of datasets for every category
+description_categories#:#Insert the names of categories and and datasets
+description_style_categories#:#You can define the colors of the categories in HEX colors. Example: CA3E3E
+description_style_datasets#:#You can define the colors of the datasets in HEX colors. Example: CA3E3E
 edit_chart#:#Edit Chart
-edit_style#:#Edit Style
+edit#:#Edit
+edit_style#:#Edit the Style of chart
+edit_datasets#:#Edit Datasets
 horizontal_bar_chart#:#Horizontal Bar Chart
 vertical_bar_chart#:#Vertical Bar Chart
 pie_chart#:#Pie Chart
 line_chart#:#Line Chart
-chart_title#:#Title Chart
-chart_type#:#Type Chart
+chart_title#:#Title
+chart_type#:#Type
+max_value_chart#:#Max Value
 key#:#Category
 value#:#Value
+values#:#Value
 number#:#Number
 percent#:#Percent
 data_format#:#Data Format
 currency_symbol#:#Currency Symbol
 add_currency_symbol#:#Add currency symbol
-categories_info#:#If you have selected "Percent" as the data format, the calculation of the values will be displayed in percent.
+categories_info#:#Fill the name of categories
+datasets_info#:#Fill the name of datasets
