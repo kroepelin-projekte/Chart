@@ -44,8 +44,6 @@ class ilChartPluginGUI extends ilPageComponentPluginGUI
     const DIV_ID_PREFIX = "chart_div_";
     const MAX_VALUE_CHART = "max_value_chart";
 
-    private $editorIsActive = false;
-
     /**
      * @var ilChartPlugin
      */
@@ -88,18 +86,12 @@ class ilChartPluginGUI extends ilPageComponentPluginGUI
         }
     }
 
-    public function editorIsActive()
-    {
-        return $this->editorIsActive;
-    }
-
     /**
      * Form for new elements
      */
     public function insert()
     {
         global $tpl;
-        $this->editorIsActive = true;
 
         $this->setTabs(self::TAB_CHART, false);
         $form = $this->initFormChart(self::ACTION_INSERT);
@@ -217,6 +209,9 @@ class ilChartPluginGUI extends ilPageComponentPluginGUI
         $tpl->setContent($form->getHTML());
     }
 
+    /**
+     * Edit Datasets
+     */
     public function editDatasets()
     {
         global $tpl;
@@ -229,8 +224,7 @@ class ilChartPluginGUI extends ilPageComponentPluginGUI
     /**
      * Update Chart Form
      *
-     * @param
-     * @return
+     * @throws ilCtrlException
      */
     private function update()
     {
@@ -375,6 +369,13 @@ class ilChartPluginGUI extends ilPageComponentPluginGUI
         }
     }
 
+    /**
+     * Get count properties by type
+     *
+     * @param array $properties
+     * @param string $searchString
+     * @return int
+     */
     private function getCountPropertiesByType(array $properties, string $searchString): int
     {
         $count = 0;
@@ -603,6 +604,7 @@ class ilChartPluginGUI extends ilPageComponentPluginGUI
      * Style Form
      *
      * @return ilPropertyFormGUI
+     * @throws ilCtrlException
      */
     public function initFormStyleEdit()
     {
@@ -708,7 +710,7 @@ class ilChartPluginGUI extends ilPageComponentPluginGUI
             }
         }
 
-        $radioGroup = new ilRadioGroupInputGUI(""/*$this->getPlugin()->txt("datasets")*/, "dataset_values");
+        $radioGroup = new ilRadioGroupInputGUI("", "dataset_values");
         for($i = 0; $i < $countCategories; $i++){
 
             $radioNumber = new ilRadioOption($prop["title_category_".($i+1)], "dataset". ($i+1));
@@ -775,7 +777,7 @@ class ilChartPluginGUI extends ilPageComponentPluginGUI
      * @param array $a_properties
      * @return string
      */
-    private function percentDataFormat(array $a_properties)/*: string*/
+    private function percentDataFormat(array $a_properties): string
     {
         $percent = "";
         $datasets = [];
@@ -918,6 +920,12 @@ class ilChartPluginGUI extends ilPageComponentPluginGUI
         return $colorFields;
     }
 
+    /**
+     * Get color dataset in input fields
+     *
+     * @param array $a_properties
+     * @return string
+     */
     private function colorDatasetInputField(array $a_properties): string
     {
         $colorFields = "";
@@ -965,12 +973,13 @@ class ilChartPluginGUI extends ilPageComponentPluginGUI
         
         return $tpl->get();
     }
-    
+
     /**
      * Set tabs in forms
      *
      * @param $a_active
      * @param $tabStyleVisible
+     * @throws ilCtrlException
      */
     private function setTabs($a_active, $tabStyleVisible)
     {
