@@ -957,6 +957,19 @@ class ilChartPluginGUI extends ilPageComponentPluginGUI
      */
     public function getElementHTML($a_mode, array $a_properties, $a_plugin_version)
     {
+        global $DIC;
+
+
+
+
+        /*$y = new ilSystemStyleLessFile($lessFile);
+        $z = $y->getItemById('@brand-primary');
+
+        var_dump($z);*/
+
+
+
+
         $pl = $this->getPlugin();
         self::$id_counter += 1;
         $divcanid = self::DIV_CANVAS_ID_PREFIX . self::$id_counter;
@@ -1030,8 +1043,12 @@ class ilChartPluginGUI extends ilPageComponentPluginGUI
      */
     private function getTranformedProperties($a_properties): array
     {
+        global $DIC;
+
+
+
         $tranformedProperties = [];
-        $unchangeableKeys = ['chart_title', 'chart_type', 'data_format', 'currency_symbol'];
+        $unchangeableKeys = ["chart_title", "chart_type", "data_format", "currency_symbol"];
 
         foreach($a_properties as $key => $value){
 
@@ -1039,24 +1056,24 @@ class ilChartPluginGUI extends ilPageComponentPluginGUI
                 $tranformedProperties[$key] = $value;
             }else{
 
-                if(strpos($key, 'key') > -1){
+                if(strpos($key, "key") > -1){
 
                     $indexCategory = substr($key, 3);
-                    $tranformedProperties['title_category_' . $indexCategory] = $value;
-                    $tranformedProperties['value_dataset_1_category_' . $indexCategory] = $a_properties['value' . $indexCategory];
+                    $tranformedProperties["title_category_" . $indexCategory] = $value;
+                    $tranformedProperties["value_dataset_1_category_" . $indexCategory] = $a_properties["value" . $indexCategory];
 
-                }else if(strpos($key, 'color') > -1){
+                }else if(strpos($key, "color") > -1){
 
                     $indexCategory = substr($key, 5);
-                    $tranformedProperties['color_category_' . $indexCategory] = $a_properties['color' . $indexCategory];
+                    $tranformedProperties["color_category_" . $indexCategory] = $a_properties["color" . $indexCategory];
                 }
             }
 
         }
 
-        $tranformedProperties['title_dataset_1'] = 'Dataset';
-        $tranformedProperties['color_dataset_1'] = $tranformedProperties['color_category_1'];
-        $tranformedProperties['chart_max_value'] = '';
+        $tranformedProperties["title_dataset_1"] = "Dataset";
+        $tranformedProperties["color_dataset_1"] = $tranformedProperties["color_category_1"];
+        $tranformedProperties["chart_max_value"] = '';
 
         unset($a_properties["color1"]);
         unset($a_properties["color2"]);
@@ -1077,7 +1094,7 @@ class ilChartPluginGUI extends ilPageComponentPluginGUI
     private function checkIfChartFromLastVersion($properties): bool
     {
         foreach($properties as $key => $value){
-            if(strpos($key, 'key') > -1){
+            if(strpos($key, "key") > -1){
                 return true;
             }
         }
