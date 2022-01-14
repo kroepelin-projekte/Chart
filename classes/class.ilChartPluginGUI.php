@@ -706,10 +706,6 @@ class ilChartPluginGUI extends ilPageComponentPluginGUI
         if($this->checkIfChartFromLastVersion($prop)) {
             $prop = $this->getTranformedProperties($this->getProperties());
         }
-        $header = new ilFormSectionHeaderGUI();
-        $header->setTitle($this->getPlugin()->txt("values"));
-        $header->setInfo($this->getPlugin()->txt(self::LANG_DESCRIPTION_DATASETS));
-        $form->addItem($header);
 
         $countCategories = 0;
         $countDatasets = 0;
