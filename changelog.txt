@@ -1,0 +1,9 @@
+2.0
+- Initial release
+3.0
+- Add line chart
+- Add datasets pro category (display multiple data in chart)
+- Add colors for datasets
+- Currency symbol after the number
+- Improvement responsive design of charts
+- Maximal value for yAxes oder xAxes

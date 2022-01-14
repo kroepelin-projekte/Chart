@@ -74,7 +74,7 @@ class ilChartPluginGUI extends ilPageComponentPluginGUI
         global $DIC;
 
         $next_class = $DIC->ctrl()->getNextClass();
-        
+
         switch ($next_class) {
             default:
                 // Perform valid commands
@@ -240,6 +240,10 @@ class ilChartPluginGUI extends ilPageComponentPluginGUI
 
             $properties = $this->getProperties();
 
+            if($this->checkIfChartFromLastVersion($properties)) {
+                $properties = $this->getTranformedProperties($properties);
+            }
+
             $datasetValues = [];
 
             foreach ($form->getInput("categories") as $key => $value) {
@@ -255,7 +259,7 @@ class ilChartPluginGUI extends ilPageComponentPluginGUI
 
             $countColorsCategories = count($form->getInput("categories"));
             $propertiesCategoriesColorsTmp = [];
-            
+
             for ($i = 1; $i <= $countColorsCategories; $i++) {
 
                 if(array_key_exists("color_category_" . $i, $properties)) {
@@ -321,6 +325,7 @@ class ilChartPluginGUI extends ilPageComponentPluginGUI
         $form = $this->initFormStyleEdit();
         if ($form->checkInput()) {
             $properties = $this->getProperties();
+
             $countColorsCategories = $form->getInput("count_colors_categories");
             $countColorsDatasets = $form->getInput("count_colors_datasets");
 
@@ -498,6 +503,9 @@ class ilChartPluginGUI extends ilPageComponentPluginGUI
         // Get Properties
         $prop = $this->getProperties();
 
+        if($this->checkIfChartFromLastVersion($prop)) {
+            $prop = $this->getTranformedProperties($this->getProperties());
+        }
         $titleChart = new ilTextInputGUI($this->getPlugin()->txt(self::LANG_CHART_TITLE), "chart_title");
         $titleChart->setRequired(false);
         $titleChart->setValue($prop["chart_title"]);
@@ -619,6 +627,9 @@ class ilChartPluginGUI extends ilPageComponentPluginGUI
         // Get Properties
         $prop = $this->getProperties();
 
+        if($this->checkIfChartFromLastVersion($prop)) {
+            $prop = $this->getTranformedProperties($this->getProperties());
+        }
         $header = new ilFormSectionHeaderGUI();
         $header->setTitle($this->getPlugin()->txt("categories"));
         $header->setInfo($this->getPlugin()->txt("description_style_categories"));
@@ -692,6 +703,9 @@ class ilChartPluginGUI extends ilPageComponentPluginGUI
         // Get Properties
         $prop = $this->getProperties();
 
+        if($this->checkIfChartFromLastVersion($prop)) {
+            $prop = $this->getTranformedProperties($this->getProperties());
+        }
         $header = new ilFormSectionHeaderGUI();
         $header->setTitle($this->getPlugin()->txt("values"));
         $header->setInfo($this->getPlugin()->txt(self::LANG_DESCRIPTION_DATASETS));
@@ -770,7 +784,7 @@ class ilChartPluginGUI extends ilPageComponentPluginGUI
             return 'line';
         }
     }
-    
+
     /**
      * Get percent Data Format
      *
@@ -848,14 +862,14 @@ class ilChartPluginGUI extends ilPageComponentPluginGUI
         }
         return $percent;
     }
-    
+
     /**
      * Get key Input Fields
      */
     private function titleCategoryInputFields(array $a_properties): string
     {
         $categoryFields = "";
-        
+
         foreach ($a_properties as $key => $value) {
             if (strpos($key, "title_category") > -1) {
                 $categoryFields .= '<input type="hidden" id="'.$key.'" value="'.$value.'">';
@@ -881,7 +895,7 @@ class ilChartPluginGUI extends ilPageComponentPluginGUI
         }
         return $datasetFields;
     }
-    
+
     /**
      * Get value Input Fields
      *
@@ -891,7 +905,7 @@ class ilChartPluginGUI extends ilPageComponentPluginGUI
     private function valueDatasetInputFields(array $a_properties): string
     {
         $valueFields = "";
-        
+
         foreach ($a_properties as $key => $value) {
 
             if (strpos($key, "value_dataset") > -1) {
@@ -901,7 +915,7 @@ class ilChartPluginGUI extends ilPageComponentPluginGUI
         }
         return $valueFields;
     }
-    
+
     /**
      * Get color Input Fields
      *
@@ -911,7 +925,7 @@ class ilChartPluginGUI extends ilPageComponentPluginGUI
     private function colorCategoryInputField(array $a_properties): string
     {
         $colorFields = "";
-        
+
         foreach ($a_properties as $key => $value) {
             if (strpos($key, "color_category") > -1) {
                 $colorFields .= '<input type="hidden" id="'.$key.'" value="'.$value.'">';
@@ -937,7 +951,7 @@ class ilChartPluginGUI extends ilPageComponentPluginGUI
         }
         return $colorFields;
     }
-    
+
     /**
      * Get Element HTML
      *
@@ -955,22 +969,27 @@ class ilChartPluginGUI extends ilPageComponentPluginGUI
 
         $tpl = $pl->getTemplate("tpl.content.html");
 
+        $properties = $a_properties;
+        if($this->checkIfChartFromLastVersion($a_properties)) {
+            $properties = $this->getTranformedProperties($a_properties);
+        }
         $tpl->setVariable("DIV", $divid);
         $tpl->setVariable("DIV_CANVAS_ID", $divcanid);
         $tpl->setVariable("CHART_ID", $id);
-        $tpl->setVariable("CHART_TITLE", $a_properties['chart_title']);
-        $tpl->setVariable("CHART_TYPE", $this->getChartType($a_properties['chart_type']));
-        $tpl->setVariable("CHART_MAX_VALUE", $a_properties['chart_max_value']);
-        $tpl->setVariable("CHART_DATA_FORMAT", $a_properties['data_format']);
-        $tpl->setVariable("CHART_CURR_SYMBOL", $a_properties['currency_symbol']);
-        $tpl->setVariable("TITLE_CATEGORIES", $this->titleCategoryInputFields($a_properties));
-        $tpl->setVariable("TITLE_DATASETS", $this->titleDatasetInputFields($a_properties));
-        $tpl->setVariable("VALUE_DATASETS", $this->valueDatasetInputFields($a_properties));
-        $tpl->setVariable("COLOR_CATEGORY", $this->colorCategoryInputField($a_properties));
-        $tpl->setVariable("COLOR_DATASET", $this->colorDatasetInputField($a_properties));
-        $tpl->setVariable("PERC", $this->percentDataFormat($a_properties));
+        $tpl->setVariable("CHART_TITLE", $properties['chart_title']);
+        $tpl->setVariable("CHART_TYPE", $this->getChartType($properties['chart_type']));
+        $tpl->setVariable("CHART_MAX_VALUE", $properties['chart_max_value']);
+        $tpl->setVariable("CHART_DATA_FORMAT", $properties['data_format']);
+        $tpl->setVariable("CHART_CURR_SYMBOL", $properties['currency_symbol']);
+        $tpl->setVariable("TITLE_CATEGORIES", $this->titleCategoryInputFields($properties));
+        $tpl->setVariable("TITLE_DATASETS", $this->titleDatasetInputFields($properties));
+        $tpl->setVariable("VALUE_DATASETS", $this->valueDatasetInputFields($properties));
+        $tpl->setVariable("COLOR_CATEGORY", $this->colorCategoryInputField($properties));
+        $tpl->setVariable("COLOR_DATASET", $this->colorDatasetInputField($properties));
+        $tpl->setVariable("PERC", $this->percentDataFormat($properties));
+
         $tpl->parseCurrentBlock();
-        
+
         return $tpl->get();
     }
 
@@ -1005,5 +1024,68 @@ class ilChartPluginGUI extends ilPageComponentPluginGUI
         } elseif ($a_active === "datasets") {
             $DIC->tabs()->activateTab(self::TAB_DATASETS);
         }
+    }
+
+    /**
+     * Get properties, after tranformation (this is only for charts, which existed since earlier version)
+     *
+     * @param $a_properties
+     * @return array
+     */
+    private function getTranformedProperties($a_properties): array
+    {
+        $tranformedProperties = [];
+        $unchangeableKeys = ['chart_title', 'chart_type', 'data_format', 'currency_symbol'];
+
+        foreach($a_properties as $key => $value){
+
+            if(in_array($key, $unchangeableKeys)){
+                $tranformedProperties[$key] = $value;
+            }else{
+
+                if(strpos($key, 'key') > -1){
+
+                    $indexCategory = substr($key, 3);
+                    $tranformedProperties['title_category_' . $indexCategory] = $value;
+                    $tranformedProperties['value_dataset_1_category_' . $indexCategory] = $a_properties['value' . $indexCategory];
+
+                }else if(strpos($key, 'color') > -1){
+
+                    $indexCategory = substr($key, 5);
+                    $tranformedProperties['color_category_' . $indexCategory] = $a_properties['color' . $indexCategory];
+                }
+            }
+
+        }
+
+        $extendedColors = $this->getExtendendColors();
+        $tranformedProperties['title_dataset_1'] = 'Dataset';
+        $tranformedProperties['color_dataset_1'] = $extendedColors[0];
+        $tranformedProperties['chart_max_value'] = '';
+
+        unset($a_properties["color1"]);
+        unset($a_properties["color2"]);
+        unset($a_properties["key1"]);
+        unset($a_properties["key2"]);
+        unset($a_properties["value1"]);
+        unset($a_properties["value2"]);
+
+        return $tranformedProperties;
+    }
+
+    /**
+     * Check if chart is from last version of chart plugin
+     *
+     * @param $properties
+     * @return bool
+     */
+    private function checkIfChartFromLastVersion($properties): bool
+    {
+        foreach($properties as $key => $value){
+            if(strpos($key, 'key') > -1){
+                return true;
+            }
+        }
+        return false;
     }
 }

@@ -289,10 +289,10 @@ function getOptionsVerticalBar(formatter, title, maxValue)  {
             mode: 'point',
             callbacks: {
                 title: function(tooltipItem, data) {
-                    return data['datasets'][tooltipItem[0]['datasetIndex']]['label'];
+                    return tooltipItem[0]['label'];
                 },
                 label: function(tooltipItem, data) {
-                    return tooltipItem['label'] + ' ' + parseFloat(data['datasets'][tooltipItem['datasetIndex']]['data'][tooltipItem['index']]).toLocaleString();
+                    return data['datasets'][tooltipItem['datasetIndex']]['label'] + ' ' + parseFloat(data['datasets'][tooltipItem['datasetIndex']]['data'][tooltipItem['index']]).toLocaleString();
                 }
             },
         }
@@ -353,10 +353,10 @@ function getOptionsHorizontalBar(formatter, title, maxValue)  {
             mode: 'point',
             callbacks: {
                 title: function(tooltipItem, data) {
-                    return data['datasets'][tooltipItem[0]['datasetIndex']]['label'];
+                    return tooltipItem[0]['label'];
                 },
                 label: function(tooltipItem, data) {
-                    return tooltipItem['label'] + ' ' + parseFloat(data['datasets'][tooltipItem['datasetIndex']]['data'][tooltipItem['index']]).toLocaleString();
+                    return data['datasets'][tooltipItem['datasetIndex']]['label'] + ' ' + parseFloat(data['datasets'][tooltipItem['datasetIndex']]['data'][tooltipItem['index']]).toLocaleString();
                 }
             },
         },
@@ -464,10 +464,10 @@ function getOptionsLine(formatter, title, maxValue)  {
         tooltips: {
             callbacks: {
                 title: function(tooltipItem, data) {
-                    return data['datasets'][tooltipItem[0]['datasetIndex']]['label'];
+                    return tooltipItem[0]['label'];
                 },
                 label: function(tooltipItem, data) {
-                    return tooltipItem['label'] + ' ' + parseFloat(data['datasets'][tooltipItem['datasetIndex']]['data'][tooltipItem['index']]).toLocaleString();
+                    return data['datasets'][tooltipItem['datasetIndex']]['label'] + ' ' + parseFloat(data['datasets'][tooltipItem['datasetIndex']]['data'][tooltipItem['index']]).toLocaleString();
                 }
             },
         },
