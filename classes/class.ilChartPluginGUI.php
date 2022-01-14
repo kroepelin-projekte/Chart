@@ -1054,9 +1054,8 @@ class ilChartPluginGUI extends ilPageComponentPluginGUI
 
         }
 
-        $extendedColors = $this->getExtendendColors();
         $tranformedProperties['title_dataset_1'] = 'Dataset';
-        $tranformedProperties['color_dataset_1'] = $extendedColors[0];
+        $tranformedProperties['color_dataset_1'] = $tranformedProperties['color_category_1'];
         $tranformedProperties['chart_max_value'] = '';
 
         unset($a_properties["color1"]);
