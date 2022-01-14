@@ -957,19 +957,6 @@ class ilChartPluginGUI extends ilPageComponentPluginGUI
      */
     public function getElementHTML($a_mode, array $a_properties, $a_plugin_version)
     {
-        global $DIC;
-
-
-
-
-        /*$y = new ilSystemStyleLessFile($lessFile);
-        $z = $y->getItemById('@brand-primary');
-
-        var_dump($z);*/
-
-
-
-
         $pl = $this->getPlugin();
         self::$id_counter += 1;
         $divcanid = self::DIV_CANVAS_ID_PREFIX . self::$id_counter;
