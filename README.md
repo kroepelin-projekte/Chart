@@ -2,7 +2,7 @@
 This Plugin was developed by Kröpelin Projekt GmbH (https://www.kroepelin-projekte.de)
 
 ## Documentation
-See [doc/DOCUMENTATION.pdf](./doc/DOCUMENTATION.pdf)
+See [docu/DOCUMENTATION.pdf](./docu/DOCUMENTATION.pdf)
 
 ## Requirements
 * ILIAS 6 or 7
