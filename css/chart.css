@@ -1,36 +1,6 @@
 .chart-container {
-    position: relative; 
-    margin: auto; 
-    padding: 10px;
-    max-width: 700px;
-}
-
-@media screen and (max-width: 1200px) {
-    .chart-container {
-        max-width: 600px;
-    }
-}
-
-@media screen and (max-width: 768px) {
-    .chart-container {
-        max-width: 500px;
-    }
-}
-
-@media screen and (max-width: 648px) {
-    .chart-container {
-        max-width: 400px;
-    }
-}
-
-@media screen and (max-width: 450px) {
-    .chart-container {
-        max-width: 300px;
-    }
-}
-
-@media screen and (max-width: 300px) {
-    .chart-container {
-        max-width: 275px;
-    }
+    position: relative;
+    max-width: 60vw;
+    height: 80vh;
+    margin: auto;
 }

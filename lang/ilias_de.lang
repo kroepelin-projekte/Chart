@@ -2,21 +2,36 @@ insert_chart#:#Diagramm einfügen
 cmd_insert#:#Diagramm einfügen
 chart#:#Diagramm
 chart_style#:#Style
+chart_datasets#:#Datasets
 categories#:#Kategorien
-description#:#Geben Sie den Diagrammtitel, den Diagrammtyp und das Datenformat ein. Nach dem Einfügen haben Sie die Möglichkeit, Farben auszuwählen.
-description_style#:#Sie können die Farben der Balken in HEX Farben definieren zB CA3E3E
+categories_names#:#Kategorienamen
+datasets#:#Datasets
+datasets_names#:#Datasetsnamen
+dataset#:#Dataset
+description#:#Geben Sie den Diagrammtitel, den Diagrammtyp, das Datenformat und die Max Wert ein. Sollten Sie als Datenformat "Prozent" ausgewählt haben, wird die Berechnung der Werte in Prozent ausgegeben. Nach dem Einfügen haben Sie die Möglichkeit, die Datensets Werte auszufüllen und die Farben auszuwählen
+description_categories#:#Geben Sie die Kategorienamen udn die Datasetsnamen
+description_datasets#:#Füllen Sie die Datasets Werte für jede Kategorie aus
+description_style_categories#:#Sie können die Farben der Kategorien in HEX Farben definieren zB CA3E3E
+description_style_datasets#:#Sie können die Farben der Datasets in HEX Farben definieren zB CA3E3E
 edit_chart#:#Diagramm Bearbeiten
 edit_style#:#Style Bearbeiten
+edit_datasets#:#Datasets Bearbeiten
+edit#:#Bearbeiten
+edit_style#:#Bearbeiten Sie das Style des Diagramms
 horizontal_bar_chart#:#Balkendiagramm
 vertical_bar_chart#:#Säulendiagramm
+line_chart#:#Liniendiagramm
 pie_chart#:#Tortendiagramm
-chart_title#:#Diagrammtitel
-chart_type#:#Diagrammtyp
-key#:#Kategorie
-value#:#Value
+chart_title#:#Titel
+chart_type#:#Typ
+max_value_chart#:#Max Wert
+key#:#Value
+value#:#Wert
+values#:#Werte
 number#:#Zahl
 percent#:#Prozent
 data_format#:#Datenformat
 currency_symbol#:#Währungssymbol
 add_currency_symbol#:#Fügen Sie die Währungsymbol hinzu
-categories_info#:#Sollten Sie als Datenformat "Prozent" ausgewählt haben, wird die Berechnung der Werte in Prozent ausgegeben.
+categories_info#:#Füllen Sie die Kategorienamen aus
+datasets_info#:#Füllen Sie die Datasetsnamen aus
