@@ -121,6 +121,11 @@ for (let i = 0; i < divClass.length; i++) {
         }
     }
 
+
+    let max = Math.max.apply(null, dataDataset[0]);
+    let min = Math.min.apply(null, dataDataset[0]);
+    let substractMaxMinValue = max - min;
+
     canVas = document.getElementById(chartId).getContext('2d');
 
     if (type === 'pie') {
