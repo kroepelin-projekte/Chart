@@ -324,8 +324,12 @@ class ilChartPluginGUI extends ilPageComponentPluginGUI
 
         $form = $this->initFormStyleEdit();
         if ($form->checkInput()) {
+
             $properties = $this->getProperties();
 
+            if($this->checkIfChartFromLastVersion($properties)) {
+                $properties = $this->getTranformedProperties($properties);
+            }
             $countColorsCategories = $form->getInput("count_colors_categories");
             $countColorsDatasets = $form->getInput("count_colors_datasets");
 
@@ -353,6 +357,10 @@ class ilChartPluginGUI extends ilPageComponentPluginGUI
         if ($form->checkInput()) {
 
             $properties = $this->getProperties();
+
+            if($this->checkIfChartFromLastVersion($properties)) {
+                $properties = $this->getTranformedProperties($properties);
+            }
             $countDatasets = $this->getCountPropertiesByType($properties, "title_dataset");
             $countCategory = $this->getCountPropertiesByType($properties, "title_category");
 
@@ -1030,10 +1038,6 @@ class ilChartPluginGUI extends ilPageComponentPluginGUI
      */
     private function getTranformedProperties($a_properties): array
     {
-        global $DIC;
-
-
-
         $tranformedProperties = [];
         $unchangeableKeys = ["chart_title", "chart_type", "data_format", "currency_symbol"];
 

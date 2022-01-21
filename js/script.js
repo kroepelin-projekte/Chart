@@ -122,6 +122,7 @@ for (let i = 0; i < divClass.length; i++) {
     }
 
     canVas = document.getElementById(chartId).getContext('2d');
+
     if (type === 'pie') {
 
         optionsPie = getOptionsPie(symbol, title);
@@ -153,6 +154,7 @@ for (let i = 0; i < divClass.length; i++) {
     }
     j++;
 }
+
 
 
 /**
