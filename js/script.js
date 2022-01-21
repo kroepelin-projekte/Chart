@@ -141,6 +141,9 @@ for (let i = 0; i < divClass.length; i++) {
         dataTable = getDataTable(type, chartLabels.labels, datasetForChart, optionsBar);
         thisChart = new Chart(canVas, dataTable);
 
+        let heightChart = getHeightBarChart();
+        document.getElementById('chart_div_' + j).querySelector('.chart-container').style.height = heightChart + 'px';
+
     } else if (type === 'horizontalBar') {
 
         optionsHorizontalBar = getOptionsHorizontalBar(symbol, title, chartMaxValue);
@@ -149,7 +152,7 @@ for (let i = 0; i < divClass.length; i++) {
 
         // CSS
         let countBars = categoryDiv.length * datasetDiv.length;
-        let heightChart = getHeightChart(countBars);
+        let heightChart = getHeightHorizontalChart(countBars);
         document.getElementById('chart_div_' + j).querySelector('.chart-container').style.height = heightChart + 'px';
     }
     j++;
@@ -261,10 +264,10 @@ function getOptionsVerticalBar(formatter, title, maxValue)  {
                 ticks: {
                     beginAtZero: true,
                     suggestedMax: parseInt(maxValue) ? maxValue : 0,
-                    callback: function (value) {
+                    callback: function (value, index, values) {
                         return value.toLocaleString();
                     }
-                }
+                },
             }],
             xAxes: [{
                 ticks: {
@@ -476,7 +479,11 @@ function getOptionsLine(formatter, title, maxValue)  {
     };
 }
 
-function getHeightChart(countBars)  {
+function getHeightBarChart()  {
+    return 400;
+}
+
+function getHeightHorizontalChart(countBars)  {
 
     let heightChart = 0;
 
