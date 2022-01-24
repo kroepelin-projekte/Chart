@@ -141,9 +141,6 @@ for (let i = 0; i < divClass.length; i++) {
         dataTable = getDataTable(type, chartLabels.labels, datasetForChart, optionsBar);
         thisChart = new Chart(canVas, dataTable);
 
-        let heightChart = getHeightBarChart();
-        document.getElementById('chart_div_' + j).querySelector('.chart-container').style.height = heightChart + 'px';
-
     } else if (type === 'horizontalBar') {
 
         optionsHorizontalBar = getOptionsHorizontalBar(symbol, title, chartMaxValue);
@@ -157,8 +154,6 @@ for (let i = 0; i < divClass.length; i++) {
     }
     j++;
 }
-
-
 
 /**
  * Find count of datasets
@@ -326,7 +321,7 @@ function getOptionsHorizontalBar(formatter, title, maxValue)  {
                 clip: true,
                 display: 'auto',
                 formatter: formatter
-            }
+            },
         },
         scales: {
             xAxes: [{
@@ -387,7 +382,7 @@ function getOptionsPie(formatter, title)  {
                 padding: 2,
                 display: 'auto',
                 formatter: formatter,
-            }
+            },
         },
         responsive: true,
         maintainAspectRatio: false,
@@ -397,7 +392,7 @@ function getOptionsPie(formatter, title)  {
                 boxWidth: 5,
                 usePointStyle: true,
                 boxHeight: 1
-            }
+            },
         },
         title: {
             display: true,
@@ -477,10 +472,6 @@ function getOptionsLine(formatter, title, maxValue)  {
             },
         },
     };
-}
-
-function getHeightBarChart()  {
-    return 400;
 }
 
 function getHeightHorizontalChart(countBars)  {
