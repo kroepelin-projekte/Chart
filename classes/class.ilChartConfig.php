@@ -1,59 +1,46 @@
 <?php
-/* Copyright (c) 1998-2015 ILIAS open source, Extended GPL, see LICENSE */
 
 /**
-* Class ilChartConfig
-*
-* @author KPG <dev@kroepelin-projekte.de>
-*/
+ * This file is part of ILIAS, a powerful learning management system
+ * published by ILIAS open source e-Learning e.V.
+ *
+ * ILIAS is licensed with the GPL-3.0,
+ * see https://www.gnu.org/licenses/gpl-3.0.en.html
+ * You should have received a copy of said license along with the
+ * source code, too.
+ *
+ * If this is not the case or you just want to try ILIAS, you'll find
+ * us at:
+ * https://www.ilias.de
+ * https://github.com/ILIAS-eLearning
+ *
+ *********************************************************************/
+
+/**
+ * Class ilChartConfig
+ *
+ * @author KPG <support@kroepelin-projekte.de>
+ */
 class ilChartConfig
 {
-    /**
-    * @var ilSetting
-    */
-    protected $settings;
-
-    /**
-    * ilChartConfig constructor.
-    * @param string $settingsId
-    */
-    public function __construct($settingsId)
+    protected ilSetting $settings;
+    public function __construct(string $settingsId)
     {
         $this->settings = new ilSetting($settingsId);
     }
-
-    /**
-     * @param $check
-     * @return string
-     */
-    public function getOption($check)
+    public function getOption(string $check): string
     {
         return $this->settings->get($check, 0);
     }
-
-    /**
-     * @param $check
-     * @param $checked
-     */
-    public function setOption($check, $checked)
+    public function setOption(string $check, string $checked): void
     {
         $this->settings->set($check, $checked);
     }
-
-    /**
-     * @param $value
-     * @return string
-     */
-    public function getValue($value)
+    public function getValue(string $value): string
     {
         return $this->settings->get($value, 0);
     }
-
-    /**
-     * @param $value
-     * @param $_value
-     */
-    public function setValue($value, $_value)
+    public function setValue(string $value, string $_value): void
     {
         $this->settings->set($value, $_value);
     }

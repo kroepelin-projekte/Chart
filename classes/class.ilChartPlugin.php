@@ -1,109 +1,57 @@
 <?php
-/* Copyright (c) 1998-2015 ILIAS open source, Extended GPL, see LICENSE */
 
-include_once "./Services/COPage/classes/class.ilPageComponentPlugin.php";
+/**
+ * This file is part of ILIAS, a powerful learning management system
+ * published by ILIAS open source e-Learning e.V.
+ *
+ * ILIAS is licensed with the GPL-3.0,
+ * see https://www.gnu.org/licenses/gpl-3.0.en.html
+ * You should have received a copy of said license along with the
+ * source code, too.
+ *
+ * If this is not the case, or you just want to try ILIAS, you'll find
+ * us at:
+ * https://www.ilias.de
+ * https://github.com/ILIAS-eLearning
+ *
+ *********************************************************************/
 
 /**
  * Class ilChartPlugin
- *
- * @author KPG <dev@kroepelin-projekte.de>
+ * @author KPG <support@kroepelin-projekte.de>
  */
 class ilChartPlugin extends ilPageComponentPlugin
 {
-    const PLUGIN_ID = "chrt";
     const PLUGIN_NAME = "Chart";
-    const PLUGIN_CLASS_NAME = self::class;
-
-    /**
-     * @var ilChartConfig
-     */
-    protected $config;
-
-    /**
-     * @var null
-     */
-    protected static $instance = null;
-
-    /**
-     * Constructor ilChartPlugin
-     */
-    public function __construct()
-    {
-        parent::__construct();
-        $this->includePluginClasses();
-        $this->config = new ilChartConfig($this->getSlotId().'_'.$this->getId());
-    }
-
-    /**
-     * @return string
-     */
-    public function getPluginName()
+    public function getPluginName(): string
     {
         return self::PLUGIN_NAME;
     }
-
-    /**
-     * @param string $a_type
-     * @return bool
-     */
-    public function isValidParentType($a_type)
+    public function isValidParentType(string $a_type): bool
     {
-        // Allow in all parent types
         return true;
     }
+//    public function onDelete(array $a_properties, string $a_plugin_version, bool $move_operation = false): void
+//    {
+//    }
+//    public function onClone(array &$a_properties, string $a_plugin_version): void
+//    {
+//    }
+//    public function afterRepositoryCopy(
+//        array &$a_properties,
+//        array $mapping,
+//        int $source_ref_id,
+//        string $a_plugin_version
+//    ): void {
+//    }
 
-    /**
-     * Include classes in plugin
-     */
-    public function includePluginClasses()
+    public function getCssFiles(string $a_mode): array
     {
-        $this->includeClass('class.ilChartConfig.php');
+        return ["/css/chart.css"];
     }
 
-    /**
-     * @return ilChartConfig
-     */
-    public function getConfig()
+    public function getJavascriptFiles(string $a_mode) : array
     {
-        return $this->config;
-    }
-
-    /**
-     * @param array  $properties
-     * @param string $plugin_version
-     */
-    public function onDelete($properties, $plugin_version)
-    {
-        global $ilCtrl;
-        
-        if ($ilCtrl->getCmd() !== "moveAfter") {
-        }
-    }
-
-    /**
-     * @param array  $properties
-     * @param string $plugin_version
-     */
-    public function onClone(&$properties, $plugin_version)
-    {
-    }
-
-    /**
-     * @param $a_mode
-     * @return array
-     */
-    public function getCssFiles($a_mode): array
-    {
-        return ["css/chart.css"];
-    }
-    
-    /**
-     * @param  $a_mode
-     * @return array
-     */
-    public function getJavascriptFiles($a_mode): array
-    {
-        $js = ["js/Chart.min.js", "js/chartjs-plugin-datalabels.min.js"];
-        return $js;
+        return ["/js/Chart.min.js", "/js/chartjs-plugin-datalabels.min.js"];
     }
 }
