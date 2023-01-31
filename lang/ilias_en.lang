@@ -13,6 +13,7 @@ description_datasets#:#Insert the values of datasets for every category
 description_categories#:#Insert the names of categories and and datasets
 description_style_categories#:#You can define the colors of the categories in HEX colors. Example: CA3E3E
 description_style_datasets#:#You can define the colors of the datasets in HEX colors. Example: CA3E3E
+description_edit_style#:#Edit the category and dataset colors
 edit_chart#:#Edit Chart
 edit#:#Edit
 edit_style#:#Edit the Style of chart
@@ -23,7 +24,7 @@ pie_chart#:#Pie Chart
 line_chart#:#Line Chart
 chart_title#:#Title
 chart_type#:#Type
-max_value_chart#:#Max Value
+chart_max_value#:#Max Value
 key#:#Category
 value#:#Value
 values#:#Value

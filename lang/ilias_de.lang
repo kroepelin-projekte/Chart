@@ -9,10 +9,11 @@ datasets#:#Datasets
 datasets_names#:#Datasetsnamen
 dataset#:#Dataset
 description#:#Geben Sie den Diagrammtitel, den Diagrammtyp, das Datenformat und die Max Wert ein. Sollten Sie als Datenformat "Prozent" ausgewählt haben, wird die Berechnung der Werte in Prozent ausgegeben. Nach dem Einfügen haben Sie die Möglichkeit, die Datensets Werte auszufüllen und die Farben auszuwählen
-description_categories#:#Geben Sie die Kategorienamen udn die Datasetsnamen
+description_categories#:#Geben Sie die Kategorienamen udn die Datasetnamen
 description_datasets#:#Füllen Sie die Datasets Werte für jede Kategorie aus
 description_style_categories#:#Sie können die Farben der Kategorien in HEX Farben definieren zB CA3E3E
 description_style_datasets#:#Sie können die Farben der Datasets in HEX Farben definieren zB CA3E3E
+description_edit_style#:#Kategorie-/Dataset Farben definieren
 edit_chart#:#Diagramm Bearbeiten
 edit_style#:#Style Bearbeiten
 edit_datasets#:#Datasets Bearbeiten
@@ -24,7 +25,7 @@ line_chart#:#Liniendiagramm
 pie_chart#:#Tortendiagramm
 chart_title#:#Titel
 chart_type#:#Typ
-max_value_chart#:#Max Wert
+chart_max_value#:#Max Wert
 key#:#Value
 value#:#Wert
 values#:#Werte

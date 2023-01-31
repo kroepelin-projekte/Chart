@@ -37,8 +37,8 @@ class ilChartPluginGUI extends ilPageComponentPluginGUI
     const CMD_UPDATE_DATASETS = "updateDatasets";
     const TAB_STYLE = "style";
     const LANG_CHART_STYLE = "chart_style";
-    const LANG_CHART_DATASETS = "chart_datasets";
     const LANG_DESCRIPTION = "description";
+    const LANG_CHART_DATASETS = "chart_datasets";
     const LANG_DESCRIPTION_DATASETS = "description_datasets";
     const LANG_CHART = "chart";
     const LANG_CHART_HORIZONTAL_BAR = "horizontal_bar_chart";
@@ -57,6 +57,7 @@ class ilChartPluginGUI extends ilPageComponentPluginGUI
     const CHART_MAX_VALUE = "chart_max_value";
     const CATEGORIES = "categories";
     const DATASETS = "datasets";
+    const DESCRIPTION_EDIT_STYLE = "description_edit_style";
     private mixed $dic;
     protected ilGlobalTemplateInterface $tpl;
     protected static int $id_counter = 0;
@@ -557,7 +558,7 @@ class ilChartPluginGUI extends ilPageComponentPluginGUI
     {
         $form = new ilPropertyFormGUI();
         $form->setTitle($this->getPlugin()->txt(self::CMD_EDIT));
-        $form->setDescription($this->getPlugin()->txt(self::CMD_EDIT_STYLE));
+        $form->setDescription($this->getPlugin()->txt(self::DESCRIPTION_EDIT_STYLE));
         $prop = $this->getProperties();
         if($this->checkIfChartFromLastVersion($prop)) {
             $prop = $this->getTranformedProperties($this->getProperties());

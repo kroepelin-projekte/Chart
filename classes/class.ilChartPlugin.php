@@ -22,28 +22,14 @@
  */
 class ilChartPlugin extends ilPageComponentPlugin
 {
-    const PLUGIN_NAME = "Chart";
     public function getPluginName(): string
     {
-        return self::PLUGIN_NAME;
+        return "Chart";
     }
     public function isValidParentType(string $a_type): bool
     {
         return true;
     }
-//    public function onDelete(array $a_properties, string $a_plugin_version, bool $move_operation = false): void
-//    {
-//    }
-//    public function onClone(array &$a_properties, string $a_plugin_version): void
-//    {
-//    }
-//    public function afterRepositoryCopy(
-//        array &$a_properties,
-//        array $mapping,
-//        int $source_ref_id,
-//        string $a_plugin_version
-//    ): void {
-//    }
 
     public function getCssFiles(string $a_mode): array
     {
