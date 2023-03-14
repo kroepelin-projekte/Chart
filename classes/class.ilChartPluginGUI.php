@@ -255,9 +255,9 @@ class ilChartPluginGUI extends ilPageComponentPluginGUI
             $propertiesDatasetsColorsTmp = [];
 
             for ($i = 1; $i <= $countColorsDatasets; $i++) {
-                $propertiesDatasetsColorsTmp["color_dataset_".$i] = $properties["color_dataset_".$i];
 
                 if(array_key_exists("color_dataset_".$i, $properties)) {
+                    $propertiesDatasetsColorsTmp["color_dataset_".$i] = $properties["color_dataset_".$i];
                     $datasetValues["color_dataset_".$i] = $properties["color_dataset_".$i];
                 }else{
 
