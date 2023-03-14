@@ -160,7 +160,7 @@ class ilChartPluginGUI extends ilPageComponentPluginGUI
                 $properties["color_dataset_".($i + 1)] = $color;
             }
             if ($this->createElement($properties)) {
-                $this->tpl->setOnScreenMessage("success", $this->dic->language()->txt(self::MESSAGE_SUCCESS));
+                $this->tpl->setOnScreenMessage("success", $this->dic->language()->txt(self::MESSAGE_SUCCESS), true);
                 $this->returnToParent();
             }
         }
@@ -212,8 +212,7 @@ class ilChartPluginGUI extends ilPageComponentPluginGUI
         $form = $this->initFormChart(self::CMD_EDIT);
 
         if (!$form->checkInput() || !$this->validate($form)) {
-            $this->tpl->setOnScreenMessage("failure", $this->dic->language()->txt(self::MESSAGE_FAILURE));
-//            ilUtil::sendFailure($DIC->language()->txt("form_input_not_valid"), true);
+            $this->tpl->setOnScreenMessage("failure", $this->dic->language()->txt(self::MESSAGE_FAILURE), true);
             $this->dic->ctrl()->redirectByClass(self::PLUGIN_CLASS_NAME, self::CMD_EDIT);
         } else {
 
@@ -288,7 +287,7 @@ class ilChartPluginGUI extends ilPageComponentPluginGUI
             }
 
             if ($this->updateElement($properties)) {
-                $this->tpl->setOnScreenMessage("success", $this->dic->language()->txt(self::MESSAGE_SUCCESS));
+                $this->tpl->setOnScreenMessage("success", $this->dic->language()->txt(self::MESSAGE_SUCCESS), true);
                 $this->dic->ctrl()->redirectByClass(self::PLUGIN_CLASS_NAME, self::CMD_EDIT);
             }
         }
@@ -319,7 +318,7 @@ class ilChartPluginGUI extends ilPageComponentPluginGUI
             }
 
             if ($this->updateElement($properties)) {
-                $this->tpl->setOnScreenMessage("success", $this->dic->language()->txt(self::MESSAGE_SUCCESS));
+                $this->tpl->setOnScreenMessage("success", $this->dic->language()->txt(self::MESSAGE_SUCCESS), true);
                 $this->dic->ctrl()->redirect($this, self::CMD_EDIT_STYLE);
             }
         }
@@ -341,14 +340,14 @@ class ilChartPluginGUI extends ilPageComponentPluginGUI
             for ($i = 0; $i < $countCategory; $i++) {
                 for ($j = 0; $j < $countDatasets; $j++) {
                     if($form->getInput("dataset_" . ($j+1). "_category_".($i+1)) === '' || !is_numeric($form->getInput("dataset_" . ($j+1). "_category_".($i+1)))){
-                        $this->tpl->setOnScreenMessage("failure", $this->dic->language()->txt(self::MESSAGE_FAILURE));
+                        $this->tpl->setOnScreenMessage("failure", $this->dic->language()->txt(self::MESSAGE_FAILURE), true);
                         $this->dic->ctrl()->redirect($this, self::CMD_EDIT_DATASETS);
                     }
                     $properties["value_dataset_" . ($j+1). "_category_".($i+1)] = $form->getInput("dataset_" . ($j+1). "_category_".($i+1));
                 }
             }
             if ($this->updateElement($properties)) {
-                $this->tpl->setOnScreenMessage("success", $this->dic->language()->txt(self::MESSAGE_SUCCESS));
+                $this->tpl->setOnScreenMessage("success", $this->dic->language()->txt(self::MESSAGE_SUCCESS), true);
                 $this->dic->ctrl()->redirect($this, self::CMD_EDIT_DATASETS);
             }
         }
