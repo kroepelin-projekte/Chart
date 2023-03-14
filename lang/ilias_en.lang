@@ -35,3 +35,5 @@ currency_symbol#:#Currency Symbol
 add_currency_symbol#:#Add currency symbol
 categories_info#:#Fill the name of categories
 datasets_info#:#Fill the name of datasets
+datasets_names_unique#:#Datasets Names must be unique
+category_names_unique#:#Categories Names must be unique

@@ -128,11 +128,26 @@ class ilChartPluginGUI extends ilPageComponentPluginGUI
             }
             foreach ($form->getInput(self::CATEGORIES) as $key => $value) {
                 foreach ($form->getInput(self::DATASETS) as $k => $val) {
-                    if(!array_key_exists("value_dataset_" . ($k + 1) . "_category_" . ($key + 1), $properties)) {
+                      if(!array_key_exists("value_dataset_" . ($k + 1) . "_category_" . ($key + 1), $properties)) {
                         $properties["value_dataset_" . ($k + 1) . "_category_" . ($key + 1)] = "0";
                     }
                 }
             }
+
+
+            if (count($form->getInput(self::CATEGORIES)) !== count(array_unique($form->getInput(self::CATEGORIES)))) {
+                $this->tpl->setOnScreenMessage("failure", $this->plugin->txt('category_names_unique'));
+                $form->setValuesByPost();
+                $this->tpl->setContent($form->getHtml());
+                return;
+            }
+            if (count($form->getInput(self::DATASETS)) !== count(array_unique($form->getInput(self::DATASETS)))) {
+                $this->tpl->setOnScreenMessage("failure", $this->plugin->txt('datasets_names_unique'));
+                $form->setValuesByPost();
+                $this->tpl->setContent($form->getHtml());
+                return;
+            }
+
             $shuffleExtendedColors = $this->getShuffleExtendedColors();
             // Set default colors for categories
             $j = 0; // Key in $extendedColors array
@@ -211,12 +226,12 @@ class ilChartPluginGUI extends ilPageComponentPluginGUI
     {
         $form = $this->initFormChart(self::CMD_EDIT);
 
+        $properties = $this->getProperties();
         if (!$form->checkInput() || !$this->validate($form)) {
             $this->tpl->setOnScreenMessage("failure", $this->dic->language()->txt(self::MESSAGE_FAILURE), true);
             $this->dic->ctrl()->redirectByClass(self::PLUGIN_CLASS_NAME, self::CMD_EDIT);
         } else {
 
-            $properties = $this->getProperties();
 
             if($this->checkIfChartFromLastVersion($properties)) {
                 $properties = $this->getTranformedProperties($properties);
@@ -233,6 +248,15 @@ class ilChartPluginGUI extends ilPageComponentPluginGUI
                         $datasetValues["value_dataset_" . ($k + 1) . "_category_" . ($key + 1)] = "0";
                     }
                 }
+            }
+
+            if (count($form->getInput(self::CATEGORIES)) !== count(array_unique($form->getInput(self::CATEGORIES)))) {
+                $this->tpl->setOnScreenMessage("failure", $this->plugin->txt('category_names_unique'), true);
+                $this->dic->ctrl()->redirectByClass(self::PLUGIN_CLASS_NAME, self::CMD_EDIT);
+            }
+            if (count($form->getInput(self::DATASETS)) !== count(array_unique($form->getInput(self::DATASETS)))) {
+                $this->tpl->setOnScreenMessage("failure", $this->plugin->txt('datasets_names_unique'), true);
+                $this->dic->ctrl()->redirectByClass(self::PLUGIN_CLASS_NAME, self::CMD_EDIT);
             }
 
             $countColorsCategories = count($form->getInput(self::CATEGORIES));
@@ -259,10 +283,10 @@ class ilChartPluginGUI extends ilPageComponentPluginGUI
                     $propertiesDatasetsColorsTmp["color_dataset_".$i] = $properties["color_dataset_".$i];
                     $datasetValues["color_dataset_".$i] = $properties["color_dataset_".$i];
                 }else{
-
                     $extendedColors = $this->getExtendendColors();
                     $color = $extendedColors[rand(0, count($extendedColors)-1)];
 
+                    $propertiesDatasetsColorsTmp["color_dataset_".$i] = $color;
                     $datasetValues["color_dataset_".$i] = $color;
                 }
             }
@@ -399,10 +423,12 @@ class ilChartPluginGUI extends ilPageComponentPluginGUI
         $parentId = $this->getPlugin()->getParentId();
 
         if ($parentType === "copa") {  // Case: parent is content page
-            $parentRefId = $_GET["ref_id"];
-            $objStylesheet = new ilObjContentPage($parentRefId);
-            #$styleId = $objStylesheet->getStyleSheetId();
-            $styleId = 0;
+
+            $styles_settings = new ilContentStyleSettings();
+            $styles_settings->read();
+            $styles = $styles_settings->getStyles();
+            $styleId = array_pop($styles)['id'];
+
         } else {
             $objStylesheet = new ilObjStyleSheet();
             $styleId = $objStylesheet->lookupObjectStyle($parentId);
