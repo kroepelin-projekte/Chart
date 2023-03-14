@@ -402,7 +402,8 @@ class ilChartPluginGUI extends ilPageComponentPluginGUI
         if ($parentType === "copa") {  // Case: parent is content page
             $parentRefId = $_GET["ref_id"];
             $objStylesheet = new ilObjContentPage($parentRefId);
-            $styleId = $objStylesheet->getStyleSheetId();
+            #$styleId = $objStylesheet->getStyleSheetId();
+            $styleId = 0;
         } else {
             $objStylesheet = new ilObjStyleSheet();
             $styleId = $objStylesheet->lookupObjectStyle($parentId);

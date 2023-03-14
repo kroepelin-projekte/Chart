@@ -1,18 +1,33 @@
-document.addEventListener("DOMContentLoaded", function (event) {
+(function() {
     let divClass = document.getElementsByClassName('chdiv');
     let div = [];
-    let j = 1;
+
+    const chart_divs = Array(document.querySelectorAll('[id^="chart_div_"]'))[0];
+    let min = chart_divs[0].id.split('_')[2];
+    chart_divs.forEach(div => {
+        if (div.id.split('_')[2] < min) {
+            min = div.id.split('_')[2];
+        }
+    });
+    let j = min;
+
+
+
 
     for (let i = 0; i < divClass.length; i++) {
 
         let title, type, chartId, chartMaxValue, chartDataFormat, chartCurrencySymbol, categoryDiv, datasetDiv,
-          datasetCount, datasetValueDiv,
-          colorCategoryDiv, colorDatasetDiv, percentDiv, chartDataSet, chartLabels, canVas, dataTable, thisChart,
-          optionsPie, optionsHorizontalBar, optionsBar, optionsLine, symbol;
+            datasetCount, datasetValueDiv,
+            colorCategoryDiv, colorDatasetDiv, percentDiv, chartDataSet, chartLabels, canVas, dataTable, thisChart,
+            optionsPie, optionsHorizontalBar, optionsBar, optionsLine, symbol;
+
 
         div[i] = document.getElementById('chart_div_' + j).children;
-
         title = div[i].chart_title.value;
+
+
+
+
         type = div[i].chart_type.value;
         chartId = div[i].chart_id.value;
         chartMaxValue = div[i].chart_max_value.value;
@@ -484,8 +499,8 @@ document.addEventListener("DOMContentLoaded", function (event) {
         }else if(countBars >= 2){
             heightChart = countBars * 80;
         }else{
-            heightChart = countBars * 100;
+            heightChart = countBars * 150;
         }
         return heightChart;
     }
-});
+})();
