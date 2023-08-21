@@ -58,7 +58,7 @@ class ilChartPluginGUI extends ilPageComponentPluginGUI
     const CATEGORIES = "categories";
     const DATASETS = "datasets";
     const DESCRIPTION_EDIT_STYLE = "description_edit_style";
-    private mixed $dic;
+    private Container $dic;
     protected ilGlobalTemplateInterface $tpl;
     protected static int $id_counter = 0;
     public function __construct()
