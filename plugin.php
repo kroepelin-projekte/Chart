@@ -1,7 +1,7 @@
 <?php
 
 $id = "chrt";
-$version = "4.0";
+$version = "4.1";
 $ilias_min_version = "8";
 $ilias_max_version = "8.999";
 $responsible = "KPG";
