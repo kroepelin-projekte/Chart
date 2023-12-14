@@ -226,159 +226,189 @@ class ilChartPluginGUI extends ilPageComponentPluginGUI
      *
      * @throws ilCtrlException
      */
-    private function update()
+    private function update(): void
     {
-        global $DIC;
+        global $DIC, $tpl;
 
         $form = $this->initFormChart(self::ACTION_EDIT);
 
         if (!$form->checkInput() || !$this->validate($form)) {
 
-            ilUtil::sendFailure($DIC->language()->txt("form_input_not_valid"), true);
+            ilUtil::sendFailure($DIC->language()->txt("form_input_not_valid"));
+            $form->setValuesByPost();
+            $tpl->setContent($form->getHtml());
+            return;
+        }
+
+        $properties = $this->getProperties();
+
+        if ($this->checkIfChartFromLastVersion($properties)) {
+            $properties = $this->getTranformedProperties($properties);
+        }
+
+        $datasetValues = [];
+
+        foreach ($form->getInput("categories") as $key => $value) {
+            foreach ($form->getInput("datasets") as $k => $val) {
+
+                if(array_key_exists("value_dataset_" . ($k + 1) . "_category_" . ($key + 1), $properties)) {
+                    $datasetValues["value_dataset_" . ($k + 1) . "_category_" . ($key + 1)] = $properties["value_dataset_" . ($k + 1) . "_category_" . ($key + 1)];
+                }else{
+                    $datasetValues["value_dataset_" . ($k + 1) . "_category_" . ($key + 1)] = "0";
+                }
+            }
+        }
+
+        $countColorsCategories = count($form->getInput("categories"));
+        $propertiesCategoriesColorsTmp = [];
+
+        for ($i = 1; $i <= $countColorsCategories; $i++) {
+
+            if (array_key_exists("color_category_" . $i, $properties)) {
+                $propertiesCategoriesColorsTmp["color_category_" . $i] = $properties["color_category_".$i];
+            } else{
+
+                $extendedColors = $this->getExtendendColors();
+                $color = $extendedColors[rand(0, count($extendedColors)-1)];
+                $propertiesCategoriesColorsTmp["color_category_".$i] = $color;
+            }
+        }
+
+        $countColorsDatasets = count($form->getInput("datasets"));
+        $propertiesDatasetsColorsTmp = [];
+
+        for ($i = 1; $i <= $countColorsDatasets; $i++) {
+            $propertiesDatasetsColorsTmp["color_dataset_".$i] = $properties["color_dataset_".$i];
+
+            if (array_key_exists("color_dataset_".$i, $properties)) {
+                $datasetValues["color_dataset_".$i] = $properties["color_dataset_".$i];
+            } else{
+
+                $extendedColors = $this->getExtendendColors();
+                $color = $extendedColors[rand(0, count($extendedColors)-1)];
+
+                $datasetValues["color_dataset_".$i] = $color;
+            }
+        }
+
+        $properties = [];
+        $properties["chart_title"] = $form->getInput("chart_title");
+        $properties["chart_type"] = $form->getInput("chart_type");
+        $properties["chart_max_value"] = $form->getInput("chart_max_value");
+        $properties["data_format"] = $form->getInput("data_format");
+        $properties["currency_symbol"] = $form->getInput("currency_symbol");
+        $properties = array_merge($properties, $propertiesCategoriesColorsTmp);
+        $properties = array_merge($properties, $propertiesDatasetsColorsTmp);
+        $properties = array_merge($properties, $datasetValues);
+
+        foreach ($form->getInput("categories") as $key => $value) {
+            $properties["title_category_".($key+1)] = $value;
+        }
+
+        $datasets = $form->getInput("datasets");
+        foreach ($datasets as $key => $value) {
+            $properties["title_dataset_".($key+1)] = $value;
+        }
+
+        if ($this->updateElement($properties)) {
+            ilUtil::sendSuccess($DIC->language()->txt(self::LANG_OBJ_MODIFIED), true);
             $DIC->ctrl()->redirectByClass(self::PLUGIN_CLASS_NAME, self::CMD_EDIT);
-        } else {
-
-            $properties = $this->getProperties();
-
-            if($this->checkIfChartFromLastVersion($properties)) {
-                $properties = $this->getTranformedProperties($properties);
-            }
-
-            $datasetValues = [];
-
-            foreach ($form->getInput("categories") as $key => $value) {
-                foreach ($form->getInput("datasets") as $k => $val) {
-
-                    if(array_key_exists("value_dataset_" . ($k + 1) . "_category_" . ($key + 1), $properties)) {
-                        $datasetValues["value_dataset_" . ($k + 1) . "_category_" . ($key + 1)] = $properties["value_dataset_" . ($k + 1) . "_category_" . ($key + 1)];
-                    }else{
-                        $datasetValues["value_dataset_" . ($k + 1) . "_category_" . ($key + 1)] = "0";
-                    }
-                }
-            }
-
-            $countColorsCategories = count($form->getInput("categories"));
-            $propertiesCategoriesColorsTmp = [];
-
-            for ($i = 1; $i <= $countColorsCategories; $i++) {
-
-                if(array_key_exists("color_category_" . $i, $properties)) {
-                    $propertiesCategoriesColorsTmp["color_category_" . $i] = $properties["color_category_".$i];
-                }else{
-
-                    $extendedColors = $this->getExtendendColors();
-                    $color = $extendedColors[rand(0, count($extendedColors)-1)];
-                    $propertiesCategoriesColorsTmp["color_category_".$i] = $color;
-                }
-            }
-
-            $countColorsDatasets = count($form->getInput("datasets"));
-            $propertiesDatasetsColorsTmp = [];
-
-            for ($i = 1; $i <= $countColorsDatasets; $i++) {
-                $propertiesDatasetsColorsTmp["color_dataset_".$i] = $properties["color_dataset_".$i];
-
-                if(array_key_exists("color_dataset_".$i, $properties)) {
-                    $datasetValues["color_dataset_".$i] = $properties["color_dataset_".$i];
-                }else{
-
-                    $extendedColors = $this->getExtendendColors();
-                    $color = $extendedColors[rand(0, count($extendedColors)-1)];
-
-                    $datasetValues["color_dataset_".$i] = $color;
-                }
-            }
-
-            $properties = [];
-            $properties["chart_title"] = $form->getInput("chart_title");
-            $properties["chart_type"] = $form->getInput("chart_type");
-            $properties["chart_max_value"] = $form->getInput("chart_max_value");
-            $properties["data_format"] = $form->getInput("data_format");
-            $properties["currency_symbol"] = $form->getInput("currency_symbol");
-            $properties = array_merge($properties, $propertiesCategoriesColorsTmp);
-            $properties = array_merge($properties, $propertiesDatasetsColorsTmp);
-            $properties = array_merge($properties, $datasetValues);
-
-            foreach ($form->getInput("categories") as $key => $value) {
-                $properties["title_category_".($key+1)] = $value;
-            }
-
-            $datasets = $form->getInput("datasets");
-            foreach ($datasets as $key => $value) {
-                $properties["title_dataset_".($key+1)] = $value;
-            }
-
-            if ($this->updateElement($properties)) {
-                ilUtil::sendSuccess($DIC->language()->txt(self::LANG_OBJ_MODIFIED), true);
-                $DIC->ctrl()->redirectByClass(self::PLUGIN_CLASS_NAME, self::CMD_EDIT);
-            }
         }
     }
 
     /**
      * Update Style Form
+     * @throws ilCtrlException
      */
-    private function updateStyle()
+    private function updateStyle(): void
     {
-        global $DIC;
+        global $DIC, $tpl;
 
         $form = $this->initFormStyleEdit();
-        if ($form->checkInput()) {
 
-            $properties = $this->getProperties();
+        if (! $form->checkInput()) {
+            $this->setTabs(self::TAB_STYLE, true);
+            $form->setValuesByPost();
+            $tpl->setContent($form->getHTML());
+            return;
+        }
 
-            if($this->checkIfChartFromLastVersion($properties)) {
-                $properties = $this->getTranformedProperties($properties);
-            }
-            $countColorsCategories = $form->getInput("count_colors_categories");
-            $countColorsDatasets = $form->getInput("count_colors_datasets");
+        $properties = $this->getProperties();
 
-            for ($i = 0; $i < $countColorsCategories; $i++) {
-                $properties["color_category_".($i+1)] = $form->getInput("color_category_".($i+1));
-            }
+        if ($this->checkIfChartFromLastVersion($properties)) {
+            $properties = $this->getTranformedProperties($properties);
+        }
 
-            for ($i = 0; $i < $countColorsDatasets; $i++) {
-                $properties["color_dataset_".($i+1)] = $form->getInput("color_dataset_".($i+1));
-            }
+        $countColorsCategories = $form->getInput("count_colors_categories");
+        $countColorsDatasets = $form->getInput("count_colors_datasets");
 
-            if ($this->updateElement($properties)) {
-                ilUtil::sendSuccess($DIC->language()->txt(self::LANG_OBJ_MODIFIED), true);
-                $DIC->ctrl()->redirect($this, self::CMD_EDIT_STYLE);
-            }
+        for ($i = 0; $i < $countColorsCategories; $i++) {
+            $properties["color_category_".($i+1)] = $form->getInput("color_category_".($i+1));
+        }
+
+        for ($i = 0; $i < $countColorsDatasets; $i++) {
+            $properties["color_dataset_".($i+1)] = $form->getInput("color_dataset_".($i+1));
+        }
+
+        if ($this->updateElement($properties)) {
+            ilUtil::sendSuccess($DIC->language()->txt(self::LANG_OBJ_MODIFIED), true);
+            $DIC->ctrl()->redirect($this, self::CMD_EDIT_STYLE);
         }
     }
 
-    private function updateDatasets()
+    /**
+     * @return void
+     */
+    private function updateDatasets(): void
     {
-        global $DIC;
+        global $DIC, $tpl;
 
         $form = $this->initFormDatasetsEdit();
 
-        if ($form->checkInput()) {
+        if (! $form->checkInput()) {
+            $this->setTabs(self::TAB_DATASETS, true);
+            $form->setValuesByPost();
+            $tpl->setContent($form->getHTML());
+            return;
+        }
 
-            $properties = $this->getProperties();
+        $properties = $this->getProperties();
 
-            if($this->checkIfChartFromLastVersion($properties)) {
-                $properties = $this->getTranformedProperties($properties);
-            }
-            $countDatasets = $this->getCountPropertiesByType($properties, "title_dataset");
-            $countCategory = $this->getCountPropertiesByType($properties, "title_category");
+        if ($this->checkIfChartFromLastVersion($properties)) {
+            $properties = $this->getTranformedProperties($properties);
+        }
+        $countDatasets = $this->getCountPropertiesByType($properties, "title_dataset");
+        $countCategory = $this->getCountPropertiesByType($properties, "title_category");
 
-            for ($i = 0; $i < $countCategory; $i++) {
-                for ($j = 0; $j < $countDatasets; $j++) {
+        $err = 0;
+        for ($i = 0; $i < $countCategory; $i++) {
+            for ($j = 0; $j < $countDatasets; $j++) {
 
-                    if($form->getInput("dataset_" . ($j+1). "_category_".($i+1)) === '' || !is_numeric($form->getInput("dataset_" . ($j+1). "_category_".($i+1)))){
-                        ilUtil::sendFailure($DIC->language()->txt("form_input_not_valid"), true);
-                        $DIC->ctrl()->redirect($this, self::CMD_EDIT_DATASETS);
-                    }
-                    $properties["value_dataset_" . ($j+1). "_category_".($i+1)] = $form->getInput("dataset_" . ($j+1). "_category_".($i+1));
+                $input = trim($form->getInput("dataset_" . ($j+1). "_category_".($i+1)));
+
+                if($input === '') {
+                    $input = '0';
+                }
+
+                if(! is_numeric($input)){
+                    $err++;
+                } else {
+                    $properties["value_dataset_" . ($j+1). "_category_".($i+1)] = $input;
                 }
             }
+        }
 
-            if ($this->updateElement($properties)) {
-                ilUtil::sendSuccess($DIC->language()->txt(self::LANG_OBJ_MODIFIED), true);
-                $DIC->ctrl()->redirect($this, self::CMD_EDIT_DATASETS);
-            }
+        if ($err !== 0) {
+            ilUtil::sendFailure($DIC->language()->txt("form_input_not_valid"));
+            $this->setTabs(self::TAB_DATASETS, true);
+            $form->setValuesByPost();
+            $tpl->setContent($form->getHTML());
+            return;
+        }
+
+        if ($this->updateElement($properties)) {
+            ilUtil::sendSuccess($DIC->language()->txt(self::LANG_OBJ_MODIFIED), true);
+            $DIC->ctrl()->redirect($this, self::CMD_EDIT_DATASETS);
         }
     }
 
@@ -392,12 +422,13 @@ class ilChartPluginGUI extends ilPageComponentPluginGUI
     private function getCountPropertiesByType(array $properties, string $searchString): int
     {
         $count = 0;
-        foreach($properties as $key => $value){
+        foreach ($properties as $key => $value){
 
             if (strpos($key, $searchString) > -1) {
                 $count += 1;
             }
         }
+
         return $count;
     }
 
