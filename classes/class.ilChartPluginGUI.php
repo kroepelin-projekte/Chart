@@ -233,8 +233,8 @@ class ilChartPluginGUI extends ilPageComponentPluginGUI
         $form = $this->initFormChart(self::ACTION_EDIT);
 
         if (!$form->checkInput() || !$this->validate($form)) {
-
             ilUtil::sendFailure($DIC->language()->txt("form_input_not_valid"));
+            $this->setTabs(self::TAB_CHART, true);
             $form->setValuesByPost();
             $tpl->setContent($form->getHtml());
             return;
