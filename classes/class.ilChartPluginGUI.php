@@ -16,6 +16,8 @@
  *
  *********************************************************************/
 
+use ILIAS\DI\Container;
+
 /**
  * Class ilChartPluginGUI
  *
@@ -228,92 +230,99 @@ class ilChartPluginGUI extends ilPageComponentPluginGUI
 
         $properties = $this->getProperties();
         if (!$form->checkInput() || !$this->validate($form)) {
-            $this->tpl->setOnScreenMessage("failure", $this->dic->language()->txt(self::MESSAGE_FAILURE), true);
+            $this->tpl->setOnScreenMessage("failure", $this->dic->language()->txt(self::MESSAGE_FAILURE));
+            $this->setTabs(self::LANG_CHART, true);
+            $form->setValuesByPost();
+            $this->tpl->setContent($form->getHtml());
+            return;
+        }
+
+        if($this->checkIfChartFromLastVersion($properties)) {
+            $properties = $this->getTranformedProperties($properties);
+        }
+
+        $datasetValues = [];
+
+        foreach ($form->getInput(self::CATEGORIES) as $key => $value) {
+            foreach ($form->getInput(self::DATASETS) as $k => $val) {
+
+                if(array_key_exists("value_dataset_" . ($k + 1) . "_category_" . ($key + 1), $properties)) {
+                    $datasetValues["value_dataset_" . ($k + 1) . "_category_" . ($key + 1)] = $properties["value_dataset_" . ($k + 1) . "_category_" . ($key + 1)];
+                }else{
+                    $datasetValues["value_dataset_" . ($k + 1) . "_category_" . ($key + 1)] = "0";
+                }
+            }
+        }
+
+        if (count($form->getInput(self::CATEGORIES)) !== count(array_unique($form->getInput(self::CATEGORIES)))) {
+            $this->tpl->setOnScreenMessage("failure", $this->plugin->txt('category_names_unique'));
+            $this->setTabs(self::LANG_CHART, true);
+            $form->setValuesByPost();
+            $this->tpl->setContent($form->getHtml());
+            return;
+        }
+        if (count($form->getInput(self::DATASETS)) !== count(array_unique($form->getInput(self::DATASETS)))) {
+            $this->tpl->setOnScreenMessage("failure", $this->plugin->txt('datasets_names_unique'));
+            $this->setTabs(self::LANG_CHART, true);
+            $form->setValuesByPost();
+            $this->tpl->setContent($form->getHtml());
+            return;
+        }
+
+        $countColorsCategories = count($form->getInput(self::CATEGORIES));
+        $propertiesCategoriesColorsTmp = [];
+
+        for ($i = 1; $i <= $countColorsCategories; $i++) {
+
+            if(array_key_exists("color_category_" . $i, $properties)) {
+                $propertiesCategoriesColorsTmp["color_category_" . $i] = $properties["color_category_".$i];
+            }else{
+
+                $extendedColors = $this->getExtendendColors();
+                $color = $extendedColors[rand(0, count($extendedColors)-1)];
+                $propertiesCategoriesColorsTmp["color_category_".$i] = $color;
+            }
+        }
+
+        $countColorsDatasets = count($form->getInput(self::DATASETS));
+        $propertiesDatasetsColorsTmp = [];
+
+        for ($i = 1; $i <= $countColorsDatasets; $i++) {
+
+            if(array_key_exists("color_dataset_".$i, $properties)) {
+                $propertiesDatasetsColorsTmp["color_dataset_".$i] = $properties["color_dataset_".$i];
+                $datasetValues["color_dataset_".$i] = $properties["color_dataset_".$i];
+            }else{
+                $extendedColors = $this->getExtendendColors();
+                $color = $extendedColors[rand(0, count($extendedColors)-1)];
+
+                $propertiesDatasetsColorsTmp["color_dataset_".$i] = $color;
+                $datasetValues["color_dataset_".$i] = $color;
+            }
+        }
+
+        $properties = [];
+        $properties[self::CHART_TITLE] = $form->getInput(self::CHART_TITLE);
+        $properties[self::CHART_TYPE] = $form->getInput(self::CHART_TYPE);
+        $properties[self::CHART_MAX_VALUE] = $form->getInput(self::CHART_MAX_VALUE);
+        $properties[self::DATA_FORMAT] = $form->getInput(self::DATA_FORMAT);
+        $properties[self::CURRENCY_SYMBOL] = $form->getInput(self::CURRENCY_SYMBOL);
+        $properties = array_merge($properties, $propertiesCategoriesColorsTmp);
+        $properties = array_merge($properties, $propertiesDatasetsColorsTmp);
+        $properties = array_merge($properties, $datasetValues);
+
+        foreach ($form->getInput(self::CATEGORIES) as $key => $value) {
+            $properties["title_category_".($key+1)] = $value;
+        }
+
+        $datasets = $form->getInput(self::DATASETS);
+        foreach ($datasets as $key => $value) {
+            $properties["title_dataset_".($key+1)] = $value;
+        }
+
+        if ($this->updateElement($properties)) {
+            $this->tpl->setOnScreenMessage("success", $this->dic->language()->txt(self::MESSAGE_SUCCESS), true);
             $this->dic->ctrl()->redirectByClass(self::PLUGIN_CLASS_NAME, self::CMD_EDIT);
-        } else {
-
-
-            if($this->checkIfChartFromLastVersion($properties)) {
-                $properties = $this->getTranformedProperties($properties);
-            }
-
-            $datasetValues = [];
-
-            foreach ($form->getInput(self::CATEGORIES) as $key => $value) {
-                foreach ($form->getInput(self::DATASETS) as $k => $val) {
-
-                    if(array_key_exists("value_dataset_" . ($k + 1) . "_category_" . ($key + 1), $properties)) {
-                        $datasetValues["value_dataset_" . ($k + 1) . "_category_" . ($key + 1)] = $properties["value_dataset_" . ($k + 1) . "_category_" . ($key + 1)];
-                    }else{
-                        $datasetValues["value_dataset_" . ($k + 1) . "_category_" . ($key + 1)] = "0";
-                    }
-                }
-            }
-
-            if (count($form->getInput(self::CATEGORIES)) !== count(array_unique($form->getInput(self::CATEGORIES)))) {
-                $this->tpl->setOnScreenMessage("failure", $this->plugin->txt('category_names_unique'), true);
-                $this->dic->ctrl()->redirectByClass(self::PLUGIN_CLASS_NAME, self::CMD_EDIT);
-            }
-            if (count($form->getInput(self::DATASETS)) !== count(array_unique($form->getInput(self::DATASETS)))) {
-                $this->tpl->setOnScreenMessage("failure", $this->plugin->txt('datasets_names_unique'), true);
-                $this->dic->ctrl()->redirectByClass(self::PLUGIN_CLASS_NAME, self::CMD_EDIT);
-            }
-
-            $countColorsCategories = count($form->getInput(self::CATEGORIES));
-            $propertiesCategoriesColorsTmp = [];
-
-            for ($i = 1; $i <= $countColorsCategories; $i++) {
-
-                if(array_key_exists("color_category_" . $i, $properties)) {
-                    $propertiesCategoriesColorsTmp["color_category_" . $i] = $properties["color_category_".$i];
-                }else{
-
-                    $extendedColors = $this->getExtendendColors();
-                    $color = $extendedColors[rand(0, count($extendedColors)-1)];
-                    $propertiesCategoriesColorsTmp["color_category_".$i] = $color;
-                }
-            }
-
-            $countColorsDatasets = count($form->getInput(self::DATASETS));
-            $propertiesDatasetsColorsTmp = [];
-
-            for ($i = 1; $i <= $countColorsDatasets; $i++) {
-
-                if(array_key_exists("color_dataset_".$i, $properties)) {
-                    $propertiesDatasetsColorsTmp["color_dataset_".$i] = $properties["color_dataset_".$i];
-                    $datasetValues["color_dataset_".$i] = $properties["color_dataset_".$i];
-                }else{
-                    $extendedColors = $this->getExtendendColors();
-                    $color = $extendedColors[rand(0, count($extendedColors)-1)];
-
-                    $propertiesDatasetsColorsTmp["color_dataset_".$i] = $color;
-                    $datasetValues["color_dataset_".$i] = $color;
-                }
-            }
-
-            $properties = [];
-            $properties[self::CHART_TITLE] = $form->getInput(self::CHART_TITLE);
-            $properties[self::CHART_TYPE] = $form->getInput(self::CHART_TYPE);
-            $properties[self::CHART_MAX_VALUE] = $form->getInput(self::CHART_MAX_VALUE);
-            $properties[self::DATA_FORMAT] = $form->getInput(self::DATA_FORMAT);
-            $properties[self::CURRENCY_SYMBOL] = $form->getInput(self::CURRENCY_SYMBOL);
-            $properties = array_merge($properties, $propertiesCategoriesColorsTmp);
-            $properties = array_merge($properties, $propertiesDatasetsColorsTmp);
-            $properties = array_merge($properties, $datasetValues);
-
-            foreach ($form->getInput(self::CATEGORIES) as $key => $value) {
-                $properties["title_category_".($key+1)] = $value;
-            }
-
-            $datasets = $form->getInput(self::DATASETS);
-            foreach ($datasets as $key => $value) {
-                $properties["title_dataset_".($key+1)] = $value;
-            }
-
-            if ($this->updateElement($properties)) {
-                $this->tpl->setOnScreenMessage("success", $this->dic->language()->txt(self::MESSAGE_SUCCESS), true);
-                $this->dic->ctrl()->redirectByClass(self::PLUGIN_CLASS_NAME, self::CMD_EDIT);
-            }
         }
     }
 
@@ -323,28 +332,34 @@ class ilChartPluginGUI extends ilPageComponentPluginGUI
     private function updateStyle(): void
     {
         $form = $this->initFormStyleEdit();
-        if ($form->checkInput()) {
 
-            $properties = $this->getProperties();
+        if (! $form->checkInput()) {
+            $this->tpl->setOnScreenMessage("failure", $this->dic->language()->txt(self::MESSAGE_FAILURE));
+            $this->setTabs(self::TAB_STYLE, true);
+            $form->setValuesByPost();
+            $this->tpl->setContent($form->getHTML());
+            return;
+        }
 
-            if($this->checkIfChartFromLastVersion($properties)) {
-                $properties = $this->getTranformedProperties($properties);
-            }
-            $countColorsCategories = $form->getInput("count_colors_categories");
-            $countColorsDatasets = $form->getInput("count_colors_datasets");
+        $properties = $this->getProperties();
 
-            for ($i = 0; $i < $countColorsCategories; $i++) {
-                $properties["color_category_".($i+1)] = $form->getInput("color_category_".($i+1));
-            }
+        if($this->checkIfChartFromLastVersion($properties)) {
+            $properties = $this->getTranformedProperties($properties);
+        }
+        $countColorsCategories = $form->getInput("count_colors_categories");
+        $countColorsDatasets = $form->getInput("count_colors_datasets");
 
-            for ($i = 0; $i < $countColorsDatasets; $i++) {
-                $properties["color_dataset_".($i+1)] = $form->getInput("color_dataset_".($i+1));
-            }
+        for ($i = 0; $i < $countColorsCategories; $i++) {
+            $properties["color_category_".($i+1)] = $form->getInput("color_category_".($i+1));
+        }
 
-            if ($this->updateElement($properties)) {
-                $this->tpl->setOnScreenMessage("success", $this->dic->language()->txt(self::MESSAGE_SUCCESS), true);
-                $this->dic->ctrl()->redirect($this, self::CMD_EDIT_STYLE);
-            }
+        for ($i = 0; $i < $countColorsDatasets; $i++) {
+            $properties["color_dataset_".($i+1)] = $form->getInput("color_dataset_".($i+1));
+        }
+
+        if ($this->updateElement($properties)) {
+            $this->tpl->setOnScreenMessage("success", $this->dic->language()->txt(self::MESSAGE_SUCCESS), true);
+            $this->dic->ctrl()->redirect($this, self::CMD_EDIT_STYLE);
         }
     }
 
@@ -354,26 +369,51 @@ class ilChartPluginGUI extends ilPageComponentPluginGUI
     private function updateDatasets(): void
     {
         $form = $this->initFormDatasetsEdit();
-        if ($form->checkInput()) {
-            $properties = $this->getProperties();
-            if($this->checkIfChartFromLastVersion($properties)) {
-                $properties = $this->getTranformedProperties($properties);
-            }
-            $countDatasets = $this->getCountPropertiesByType($properties, "title_dataset");
-            $countCategory = $this->getCountPropertiesByType($properties, "title_category");
-            for ($i = 0; $i < $countCategory; $i++) {
-                for ($j = 0; $j < $countDatasets; $j++) {
-                    if($form->getInput("dataset_" . ($j+1). "_category_".($i+1)) === '' || !is_numeric($form->getInput("dataset_" . ($j+1). "_category_".($i+1)))){
-                        $this->tpl->setOnScreenMessage("failure", $this->dic->language()->txt(self::MESSAGE_FAILURE), true);
-                        $this->dic->ctrl()->redirect($this, self::CMD_EDIT_DATASETS);
-                    }
-                    $properties["value_dataset_" . ($j+1). "_category_".($i+1)] = $form->getInput("dataset_" . ($j+1). "_category_".($i+1));
+
+        if (! $form->checkInput()) {
+            $this->tpl->setOnScreenMessage("failure", $this->dic->language()->txt(self::MESSAGE_FAILURE));
+            $this->setTabs(self::DATASETS, true);
+            $form->setValuesByPost();
+            $this->tpl->setContent($form->getHTML());
+            return;
+        }
+
+        $properties = $this->getProperties();
+        if($this->checkIfChartFromLastVersion($properties)) {
+            $properties = $this->getTranformedProperties($properties);
+        }
+        $countDatasets = $this->getCountPropertiesByType($properties, "title_dataset");
+        $countCategory = $this->getCountPropertiesByType($properties, "title_category");
+
+        $err = 0;
+        for ($i = 0; $i < $countCategory; $i++) {
+            for ($j = 0; $j < $countDatasets; $j++) {
+
+                $input = trim($form->getInput("dataset_" . ($j+1). "_category_".($i+1)));
+
+                if($input === '') {
+                    $input = '0';
+                }
+
+                if(! is_numeric($input)){
+                    $err++;
+                } else {
+                    $properties["value_dataset_" . ($j+1). "_category_".($i+1)] = $input;
                 }
             }
-            if ($this->updateElement($properties)) {
-                $this->tpl->setOnScreenMessage("success", $this->dic->language()->txt(self::MESSAGE_SUCCESS), true);
-                $this->dic->ctrl()->redirect($this, self::CMD_EDIT_DATASETS);
-            }
+        }
+
+        if ($err !== 0) {
+            $this->tpl->setOnScreenMessage("failure", $this->dic->language()->txt(self::MESSAGE_FAILURE));
+            $this->setTabs(self::DATASETS, true);
+            $form->setValuesByPost();
+            $this->tpl->setContent($form->getHTML());
+            return;
+        }
+
+        if ($this->updateElement($properties)) {
+            $this->tpl->setOnScreenMessage("success", $this->dic->language()->txt(self::MESSAGE_SUCCESS), true);
+            $this->dic->ctrl()->redirect($this, self::CMD_EDIT_DATASETS);
         }
     }
 
