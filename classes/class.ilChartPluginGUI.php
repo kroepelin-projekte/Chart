@@ -956,20 +956,18 @@ class ilChartPluginGUI extends ilPageComponentPluginGUI
         $tranformedProperties = [];
         $unchangeableKeys = [self::CHART_TITLE, self::CHART_TYPE, self::DATA_FORMAT, self::CURRENCY_SYMBOL];
         foreach($a_properties as $key => $value) {
-            if(in_array($key, $unchangeableKeys)) {
+            if (in_array($key, $unchangeableKeys)) {
                 $tranformedProperties[$key] = $value;
-            } else {
-                if(strpos($key, "key") > -1) {
-                    $indexCategory = substr($key, 3);
-                    $tranformedProperties["title_category_" . $indexCategory] = $value;
-                    $tranformedProperties["value_dataset_1_category_" . $indexCategory] = $a_properties["value" . $indexCategory];
-                } elseif(strpos($key, "color") > -1) {
-                    $indexCategory = substr($key, 5);
-                    $tranformedProperties["color_category_" . $indexCategory] = $a_properties["color" . $indexCategory];
-                }
+            } elseif (strpos($key, "key") > -1) {
+                $indexCategory = substr($key, 3);
+                $tranformedProperties["title_category_" . $indexCategory] = $value;
+                $tranformedProperties["value_dataset_1_category_" . $indexCategory] = $a_properties["value" . $indexCategory];
+            } elseif (strpos($key, "color") > -1) {
+                $indexCategory = substr($key, 5);
+                $tranformedProperties["color_category_" . $indexCategory] = $a_properties["color" . $indexCategory];
             }
-
         }
+
         $tranformedProperties["title_dataset_1"] = "Dataset";
         $tranformedProperties["color_dataset_1"] = $tranformedProperties["color_category_1"];
         $tranformedProperties[self::CHART_MAX_VALUE] = '';
