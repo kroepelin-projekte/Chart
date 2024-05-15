@@ -1,9 +1,13 @@
 (function() {
     let divClass = document.getElementsByClassName('chdiv');
     let div = [];
+    let min = "";
 
     const chart_divs = Array(document.querySelectorAll('[id^="chart_div_"]'))[0];
-    let min = chart_divs[0].id.split('_')[2];
+
+    if (chart_divs.length > 0) {
+        min = chart_divs[0].id.split('_')[2];
+    }
     chart_divs.forEach(div => {
         if (div.id.split('_')[2] < min) {
             min = div.id.split('_')[2];

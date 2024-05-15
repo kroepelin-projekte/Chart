@@ -10,3 +10,5 @@
 4.0
 -Refactor Code PHP8.0 ready
 -Refactor Code ILIAS8 ready
+5.0
+-Refactor Code ILIAS9 ready

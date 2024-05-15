@@ -35,9 +35,4 @@ class ilChartPlugin extends ilPageComponentPlugin
     {
         return ["/css/chart.css"];
     }
-
-    public function getJavascriptFiles(string $a_mode) : array
-    {
-        return ["/js/Chart.min.js", "/js/chartjs-plugin-datalabels.min.js", "js/script.js"];
-    }
 }

@@ -6,7 +6,9 @@ See [docu/DOCUMENTATION.pdf](./docu/DOCUMENTATION.pdf)
 
 ## Requirements
 * ILIAS 8
-* PHP >= 7.4
+  * PHP >= 7.4
+* ILIAS 9
+  * PHP >= 8.1
 
 ## Installation and Update
 Start at your ILIAS root directory.
