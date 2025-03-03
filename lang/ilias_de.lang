@@ -33,7 +33,7 @@ number#:#Zahl
 percent#:#Prozent
 data_format#:#Datenformat
 currency_symbol#:#Währungssymbol
-add_currency_symbol#:#Fügen Sie die Währungsymbol hinzu
+add_currency_symbol#:#Fügen Sie ein Währungssymbol hinzu
 categories_info#:#Füllen Sie die Kategorienamen aus
 datasets_info#:#Füllen Sie die Datasetsnamen aus
 datasets_names_unique#:#Datasetsnamen müssen einzigartig sein
