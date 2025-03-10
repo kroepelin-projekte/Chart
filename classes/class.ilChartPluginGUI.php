@@ -459,20 +459,9 @@ class ilChartPluginGUI extends ilPageComponentPluginGUI
 
     private function getExtendendColors(): array
     {
-        $parentType = $this->getPlugin()->getParentType();
         $parentId = $this->getPlugin()->getParentId();
-
-        if ($parentType === "copa") {  // Case: parent is content page
-
-            $styles_settings = new ilContentStyleSettings();
-            $styles_settings->read();
-            $styles = $styles_settings->getStyles();
-            $styleId = array_pop($styles)['id'];
-
-        } else {
-            $objStylesheet = new ilObjStyleSheet();
-            $styleId = $objStylesheet->lookupObjectStyle($parentId);
-        }
+        $objStylesheet = new ilObjStyleSheet();
+        $styleId = $objStylesheet->lookupObjectStyle($parentId);
 
         $extendedColorsCode = [];
         if ($styleId === 0) {
@@ -485,6 +474,11 @@ class ilChartPluginGUI extends ilPageComponentPluginGUI
                 if (strpos($color["name"], "extendedcolor") > -1) {
                     $extendedColorsCode[] = $color["code"];
                 }
+            }
+
+            // If the extended colors in the selected custom content style don't exist
+            if (empty($extendedColorsCode)) {
+                $extendedColorsCode = $this->getExtendedColorsDefaultILIAS();
             }
         }
         return $extendedColorsCode;
