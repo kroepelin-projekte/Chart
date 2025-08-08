@@ -30,9 +30,4 @@ class ilChartPlugin extends ilPageComponentPlugin
     {
         return true;
     }
-
-    public function getCssFiles(string $a_mode): array
-    {
-        return ["/css/chart.css"];
-    }
 }

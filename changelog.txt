@@ -14,3 +14,5 @@
 -Refactor Code ILIAS9 ready
 5.1
 -Fix bugs in colors
+6.0
+- Refactor Code ILIAS10

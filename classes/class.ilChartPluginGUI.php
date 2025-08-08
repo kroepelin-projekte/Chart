@@ -26,6 +26,8 @@ use ILIAS\DI\Container;
  */
 class ilChartPluginGUI extends ilPageComponentPluginGUI
 {
+    private const PLUGIN_DIRECTORY = '/Customizing/global/plugins/Services/COPage/PageComponent/Chart';
+
     private const PLUGIN_CLASS_NAME = self::class;
     private const CMD_CANCEL = "cancel";
     private const CMD_CREATE = "create";
@@ -883,16 +885,33 @@ class ilChartPluginGUI extends ilPageComponentPluginGUI
      */
     public function getElementHTML(string $a_mode, array $a_properties, string $plugin_version): string
     {
-        $pl = $this->getPlugin();
+        global $DIC;
+
         self::$id_counter += 1;
         $divcanid = self::DIV_CANVAS_ID_PREFIX . self::$id_counter;
         $divid = self::DIV_ID_PREFIX . self::$id_counter;
         $id = self::CANVAS_ID_PREFIX . self::$id_counter;
-        $tpl = $pl->getTemplate("tpl.content.html");
+
+        $template = $DIC->ui()->mainTemplate();
+        $template->addCss('Customizing/global/plugins/Services/COPage/PageComponent/Chart/css/style.css');
+        $template->addJavaScript('Customizing/global/plugins/Services/COPage/PageComponent/Chart/js/Chart.min.js');
+        $template->addJavaScript('Customizing/global/plugins/Services/COPage/PageComponent/Chart/js/chartjs-plugin-datalabels.min.js');
+        $template->addJavaScript('Customizing/global/plugins/Services/COPage/PageComponent/Chart/js/script.js');
+
+        $tpl = new ilTemplate(
+            'tpl.content.html',
+            true,
+            true,
+            'public/Customizing/global/plugins/Services/COPage/PageComponent/Chart/',
+            ilGlobalTemplateInterface::DEFAULT_BLOCK,
+            true
+        );
+
         $properties = $a_properties;
         if($this->checkIfChartFromLastVersion($a_properties)) {
             $properties = $this->getTranformedProperties($a_properties);
         }
+
         $tpl->setVariable("DIV", $divid);
         $tpl->setVariable("DIV_CANVAS_ID", $divcanid);
         $tpl->setVariable("CHART_ID", $id);
