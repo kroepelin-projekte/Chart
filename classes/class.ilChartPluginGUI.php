@@ -893,7 +893,7 @@ class ilChartPluginGUI extends ilPageComponentPluginGUI
         $id = self::CANVAS_ID_PREFIX . self::$id_counter;
 
         $template = $DIC->ui()->mainTemplate();
-        $template->addCss('Customizing/global/plugins/Services/COPage/PageComponent/Chart/css/style.css');
+        $template->addCss('Customizing/global/plugins/Services/COPage/PageComponent/Chart/css/chart.css');
         $template->addJavaScript('Customizing/global/plugins/Services/COPage/PageComponent/Chart/js/Chart.min.js');
         $template->addJavaScript('Customizing/global/plugins/Services/COPage/PageComponent/Chart/js/chartjs-plugin-datalabels.min.js');
         $template->addJavaScript('Customizing/global/plugins/Services/COPage/PageComponent/Chart/js/script.js');
