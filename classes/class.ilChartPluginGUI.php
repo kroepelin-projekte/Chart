@@ -17,6 +17,7 @@
  *********************************************************************/
 
 use ILIAS\DI\Container;
+use \ILIAS\UI\Component\Input\Container\Form\Standard;
 
 /**
  * Class ilChartPluginGUI
@@ -207,9 +208,15 @@ class ilChartPluginGUI extends ilPageComponentPluginGUI
      */
     public function editStyle(): void
     {
+        global $DIC;
+
+        $renderer = $DIC->ui()->renderer();
+
         $this->setTabs(self::TAB_STYLE, true);
         $form = $this->initFormStyleEdit();
-        $this->tpl->setContent($form->getHTML());
+        /*$this->tpl->setContent($form->getHTML());*/
+
+        $this->tpl->setContent($renderer->render($form));
     }
 
     /**
@@ -614,71 +621,79 @@ class ilChartPluginGUI extends ilPageComponentPluginGUI
     }
 
     /**
+     * @return Standard
      * @throws ilCtrlException
      */
-    public function initFormStyleEdit(): ilPropertyFormGUI
+    public function initFormStyleEdit(): Standard
     {
-        $form = new ilPropertyFormGUI();
-        $form->setTitle($this->getPlugin()->txt(self::CMD_EDIT));
-        $form->setDescription($this->getPlugin()->txt(self::DESCRIPTION_EDIT_STYLE));
+        global $DIC;
+        $ui = $DIC->ui()->factory();
+
         $prop = $this->getProperties();
         if($this->checkIfChartFromLastVersion($prop)) {
             $prop = $this->getTranformedProperties($this->getProperties());
         }
-        $header = new ilFormSectionHeaderGUI();
-        $header->setTitle($this->getPlugin()->txt(self::CATEGORIES));
-        $header->setInfo($this->getPlugin()->txt("description_style_categories"));
-        $form->addItem($header);
 
+        $inputFieldsCategoriesColors = [];
         $countColorsCategory = 0;
         foreach ($prop as $k => $val) {
-            if (strpos($k, "title_category") > -1) {
-                $i = substr($k, strpos($k, "title_category") + 15, strlen($k));
-                $colorInputCategory = new ilColorPickerInputGUI($val, "color_category_".$i);
+            if (strpos($k, 'title_category') > -1) {
+                $i = substr($k, strpos($k, 'title_category') + 15, strlen($k));
 
-                if (!array_key_exists("color_category_" . $i, $prop)) {
-                    $colorInputCategory->setDefaultColor("");
-                }
+                $inputFieldsCategoriesColors['color_category_' . $i] = $ui->input()->field()->text(
+                    $val,
+                    ''
+                )->withValue((string) $prop['color_category_' . $i])->withRequired(true);
 
-                $colorInputCategory->setValue($prop["color_category_" . $i]);
-                $form->addItem($colorInputCategory);
                 $countColorsCategory = $countColorsCategory + 1;
             }
         }
 
-        $countColorCategory = new ilHiddenInputGUI("count_colors_categories");
-        $countColorCategory->setValue($countColorsCategory);
-        $form->addItem($countColorCategory);
-
-        $header = new ilFormSectionHeaderGUI();
-        $header->setTitle($this->getPlugin()->txt(self::DATASETS));
-        $header->setInfo($this->getPlugin()->txt("description_style_datasets"));
-        $form->addItem($header);
-
+        $inputFieldsCategoriesColors['count_colors_categories'] = $ui->input()->field()->hidden()
+                                                                       ->withValue($countColorsCategory)->withRequired(true);
+        $inputFieldsDatasetsColors = [];
         $countColorsDataset = 0;
         foreach ($prop as $k => $val) {
 
-            if (strpos($k, "title_dataset") > -1) {
-                $i = substr($k, strpos($k, "title_dataset") + 14, strlen($k));
-                $colorInputDataset = new ilColorPickerInputGUI($val, "color_dataset_".$i);
+            if (strpos($k, 'title_dataset') > -1) {
+                $i = substr($k, strpos($k, 'title_dataset') + 14, strlen($k));
 
-                if (!array_key_exists("color_dataset_" . $i, $prop)) {
-                    $colorInputDataset->setDefaultColor("");
-                }
+                $inputFieldsDatasetsColors['color_dataset_' . $i] = $ui->input()->field()->text(
+                    $val,
+                    ''
+                )->withValue((string) $prop['color_dataset_' . $i])->withRequired(true);
 
-                $colorInputDataset->setValue($prop["color_dataset_" . $i]);
-                $form->addItem($colorInputDataset);
                 $countColorsDataset = $countColorsDataset + 1;
             }
         }
 
-        $countColorDataset = new ilHiddenInputGUI("count_colors_datasets");
-        $countColorDataset->setValue($countColorsDataset);
-        $form->addItem($countColorDataset);
+        $inputFieldsDatasetsColors['count_colors_datasets'] = $ui->input()->field()->hidden()
+                                                     ->withValue($countColorsDataset)->withRequired(true);
 
-        $form->addCommandButton(self::CMD_UPDATE_STYLE, $this->dic->language()->txt(self::CMD_SAVE));
-        $form->addCommandButton(self::CMD_CANCEL, $this->dic->language()->txt(self::CMD_CANCEL));
-        $form->setFormAction($this->dic->ctrl()->getFormAction($this));
+        $sectionCategories = $ui->input()->field()->section(
+            $inputFieldsCategoriesColors,
+            $this->getPlugin()->txt(self::CATEGORIES),
+            $this->getPlugin()->txt('description_style_categories'),
+        );
+
+        $sectionDatasets = $ui->input()->field()->section(
+            $inputFieldsDatasetsColors,
+            $this->getPlugin()->txt(self::DATASETS),
+            $this->getPlugin()->txt('description_style_datasets'),
+        );
+
+        $formAction = $DIC->ctrl()->getFormActionByClass(
+            self::class,
+            'updateStyle'
+        );
+
+        $form = $ui->input()->container()->form()->standard(
+            $formAction,
+            [
+                'categories' => $sectionCategories,
+                'datasets' => $sectionDatasets
+            ],
+        );
 
         return $form;
     }
