@@ -340,36 +340,32 @@ class ilChartPluginGUI extends ilPageComponentPluginGUI
      */
     private function updateStyle(): void
     {
-        $form = $this->initFormStyleEdit();
+        global $DIC;
 
-        if (! $form->checkInput()) {
-            $this->tpl->setOnScreenMessage("failure", $this->dic->language()->txt(self::MESSAGE_FAILURE));
-            $this->setTabs(self::TAB_STYLE, true);
-            $form->setValuesByPost();
-            $this->tpl->setContent($form->getHTML());
-            return;
+        $request = $DIC->http()->request();
+        $form  = $this->initFormStyleEdit();
+
+        if ($request->getMethod() == "POST") {
+            $form  = $form->withRequest($request);
+            $formData = $form->getData();
+            $properties = $this->getProperties();
+
+            if($this->checkIfChartFromLastVersion($properties)) {
+                $properties = $this->getTranformedProperties($properties);
+            }
+
+            $this->convertColorPickerFieldsToString(
+                $properties,
+                $formData
+            );
+
+            if ($this->updateElement($properties)) {
+                $this->tpl->setOnScreenMessage('success', $this->dic->language()->txt(self::MESSAGE_SUCCESS), true);
+                $this->dic->ctrl()->redirect($this, self::CMD_EDIT_STYLE);
+            }
         }
-
-        $properties = $this->getProperties();
-
-        if($this->checkIfChartFromLastVersion($properties)) {
-            $properties = $this->getTranformedProperties($properties);
-        }
-        $countColorsCategories = $form->getInput("count_colors_categories");
-        $countColorsDatasets = $form->getInput("count_colors_datasets");
-
-        for ($i = 0; $i < $countColorsCategories; $i++) {
-            $properties["color_category_".($i + 1)] = $form->getInput("color_category_".($i + 1));
-        }
-
-        for ($i = 0; $i < $countColorsDatasets; $i++) {
-            $properties["color_dataset_".($i + 1)] = $form->getInput("color_dataset_".($i + 1));
-        }
-
-        if ($this->updateElement($properties)) {
-            $this->tpl->setOnScreenMessage("success", $this->dic->language()->txt(self::MESSAGE_SUCCESS), true);
-            $this->dic->ctrl()->redirect($this, self::CMD_EDIT_STYLE);
-        }
+        $this->tpl->setOnScreenMessage("failure", $this->dic->language()->txt(self::MESSAGE_FAILURE));
+        $this->dic->ctrl()->redirect($this, self::CMD_EDIT_STYLE);
     }
 
     /**
@@ -640,10 +636,10 @@ class ilChartPluginGUI extends ilPageComponentPluginGUI
             if (strpos($k, 'title_category') > -1) {
                 $i = substr($k, strpos($k, 'title_category') + 15, strlen($k));
 
-                $inputFieldsCategoriesColors['color_category_' . $i] = $ui->input()->field()->text(
+                $inputFieldsCategoriesColors['color_category_' . $i] = $ui->input()->field()->colorPicker(
                     $val,
                     ''
-                )->withValue((string) $prop['color_category_' . $i])->withRequired(true);
+                )->withValue('#' . $prop['color_category_' . $i])->withRequired(true);
 
                 $countColorsCategory = $countColorsCategory + 1;
             }
@@ -658,10 +654,10 @@ class ilChartPluginGUI extends ilPageComponentPluginGUI
             if (strpos($k, 'title_dataset') > -1) {
                 $i = substr($k, strpos($k, 'title_dataset') + 14, strlen($k));
 
-                $inputFieldsDatasetsColors['color_dataset_' . $i] = $ui->input()->field()->text(
+                $inputFieldsDatasetsColors['color_dataset_' . $i] = $ui->input()->field()->colorPicker(
                     $val,
                     ''
-                )->withValue((string) $prop['color_dataset_' . $i])->withRequired(true);
+                )->withValue('#' . $prop['color_dataset_' . $i])->withRequired(true);
 
                 $countColorsDataset = $countColorsDataset + 1;
             }
@@ -1018,5 +1014,47 @@ class ilChartPluginGUI extends ilPageComponentPluginGUI
             }
         }
         return false;
+    }
+
+    /**
+     * Convert rgb color to hex
+     *
+     * @param $r
+     * @param $g
+     * @param $b
+     * @return string
+     */
+    private function rgbToHex($r, $g, $b): string
+    {
+        return sprintf("#%02x%02x%02x", $r, $g, $b);
+    }
+
+    /**
+     * @param array $properties
+     * @param array $formData
+     * @return void
+     */
+    private function convertColorPickerFieldsToString(
+        array &$properties,
+        array $formData
+    ): void {
+        $countColorsCategories = $formData['categories']['count_colors_categories'];
+        $countColorsDatasets = $formData['datasets']['count_colors_datasets'];
+
+        for ($i = 0; $i < $countColorsCategories; $i++) {
+            $rgbColor = $formData['categories']['color_category_' . ($i + 1)];
+            $hexColor = $this->rgbToHex($rgbColor->r(), $rgbColor->g(), $rgbColor->b());
+            $hexColor = str_replace('#', '', $hexColor);
+
+            $properties['color_category_' . ($i + 1)] = $hexColor;
+        }
+
+        for ($i = 0; $i < $countColorsDatasets; $i++) {
+            $rgbColor = $formData['datasets']['color_dataset_' . ($i + 1)];
+            $hexColor = $this->rgbToHex($rgbColor->r(), $rgbColor->g(), $rgbColor->b());
+            $hexColor = str_replace('#', '', $hexColor);
+
+            $properties['color_dataset_' . ($i + 1)] = $hexColor;
+        }
     }
 }
