@@ -32,6 +32,8 @@ values#:#Werte
 number#:#Zahl
 percent#:#Prozent
 data_format#:#Datenformat
+symbol#:#Symbol
+format#:#Format
 currency_symbol#:#Währungssymbol
 add_currency_symbol#:#Fügen Sie die Währungsymbol hinzu
 categories_info#:#Füllen Sie die Kategorienamen aus

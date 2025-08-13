@@ -60,6 +60,8 @@ class ilChartPluginGUI extends ilPageComponentPluginGUI
     private const CHART_TITLE = "chart_title";
     private const CHART_TYPE = "chart_type";
     private const DATA_FORMAT = "data_format";
+    private const SYMBOL = "symbol";
+    private const PERCENT = "percent";
     private const CURRENCY_SYMBOL = "currency_symbol";
     private const CHART_MAX_VALUE = "chart_max_value";
     private const CATEGORIES = "categories";
@@ -102,9 +104,19 @@ class ilChartPluginGUI extends ilPageComponentPluginGUI
      */
     public function insert(): void
     {
+        global $DIC;
+
+        $renderer = $DIC->ui()->renderer();
+
         $this->setTabs(self::LANG_CHART, false);
+        /*$form = $this->initFormChart(self::CMD_INSERT);*/
+
         $form = $this->initFormChart(self::CMD_INSERT);
-        $this->tpl->setContent($form->getHTML());
+        //$this->tpl->setContent($form->getHTML());
+
+        $this->tpl->setContent($renderer->render($form));
+
+
     }
 
     /**
@@ -113,7 +125,8 @@ class ilChartPluginGUI extends ilPageComponentPluginGUI
      */
     public function create(): void
     {
-        $form = $this->initFormChart(self::CMD_INSERT);
+       /* $form = $this->initFormChart(self::CMD_INSERT);*/
+        $form = $this->initFormChart();
         if (!$form->checkInput() || !$this->validate($form)) {
             $this->tpl->setOnScreenMessage("failure", $this->dic->language()->txt(self::MESSAGE_FAILURE));
             $form->setValuesByPost();
@@ -436,17 +449,20 @@ class ilChartPluginGUI extends ilPageComponentPluginGUI
         return $count;
     }
 
-    private function validate(ilPropertyFormGUI $form): bool
+    private function validate($data): bool
     {
-        if($form->getInput(self::CHART_TYPE) === "") {
+        if($data['chart']['chart_type'] === "") {
             return false;
         }
 
-        if(!is_numeric($form->getInput(self::CHART_MAX_VALUE)) && $form->getInput(self::CHART_MAX_VALUE) !== '') {
+        if(!is_numeric($data['chart']['chart_max_value']) && $data['chart']['chart_max_value'] !== '') {
             return false;
         }
 
-        $categories = $form->getInput(self::CATEGORIES);
+
+
+
+        /*$categories = $form->getInput(self::CATEGORIES);
         foreach($categories as $value) {
 
             if($value === "") {
@@ -460,7 +476,7 @@ class ilChartPluginGUI extends ilPageComponentPluginGUI
             if($value === "") {
                 return false;
             }
-        }
+        }*/
         return true;
     }
 
@@ -510,8 +526,131 @@ class ilChartPluginGUI extends ilPageComponentPluginGUI
      * @throws ilCtrlException
      * @throws ilFormException
      */
-    public function initFormChart(string $action): ilPropertyFormGUI
+    public function initFormChart()
     {
+        global $DIC;
+        $ui = $DIC->ui()->factory();
+        $renderer = $DIC->ui()->renderer();
+        $df = new \ILIAS\Data\Factory();
+        $refinery = $DIC['refinery'];
+        $request = $DIC->http()->request();
+        $query = $DIC->http()->wrapper()->query();
+
+        $here_uri = $df->uri($request->getUri()->__toString());
+        $urlBuilder = new URLBuilder($here_uri);
+        $namespace = ['input', 'switchable_group'];
+        list($urlBuilder, $chart) = $urlBuilder->acquireParameters($namespace, 'chart');
+        $urlBuilder = $urlBuilder->withParameter($chart, 'standard');
+
+
+        $prop = $this->getProperties();
+        if($this->checkIfChartFromLastVersion($prop)) {
+            $prop = $this->getTranformedProperties($this->getProperties());
+        }
+
+        $inputFields[self::CHART_TITLE] = $ui->input()->field()->text(
+            $this->getPlugin()->txt(self::CHART_TITLE),
+            ''
+        )->withValue($prop[self::CHART_TITLE] ?? '')->withRequired(true);
+
+        $optionsChart = [
+            '1' => $this->getPlugin()->txt(self::LANG_CHART_HORIZONTAL_BAR),
+            '2' => $this->getPlugin()->txt(self::LANG_CHART_VERTICAL_BAR),
+            '3' => $this->getPlugin()->txt(self::LANG_CHART_PIE_CHART),
+            '4' => $this->getPlugin()->txt(self::LANG_CHART_LINE_CHART)
+        ];
+
+        $inputFields[self::CHART_TYPE] = $ui->input()->field()->select(
+            $this->getPlugin()->txt(self::CHART_TYPE),
+            $optionsChart
+        )->withValue($prop[self::CHART_TYPE] ?? '')->withRequired(true);
+
+        $inputFields[self::CHART_MAX_VALUE] = $ui->input()->field()->text(
+            $this->getPlugin()->txt(self::CHART_MAX_VALUE),
+            ''
+        )->withValue($prop[self::CHART_MAX_VALUE] ?? '')->withRequired(true);
+
+
+
+        /*$inputFields[self::DATA_FORMAT] = $ui->input()->field()->radio($this->getPlugin()->txt(self::DATA_FORMAT), '')
+                    ->withOption('number', $this->getPlugin()->txt('number'))
+                    ->withOption('percent', $this->getPlugin()->txt('percent'));*/
+
+        $group1 = $ui->input()->field()->group(
+            [
+                'symbol' => $ui->input()->field()->text($this->getPlugin()->txt(self::SYMBOL), $this->getPlugin()->txt('add_currency_symbol'))
+                                                 ->withValue($prop[self::CURRENCY_SYMBOL] ?? '')
+            ],
+            $this->getPlugin()->txt('number')
+        );
+
+        $group2 = $ui->input()->field()->group(
+            [],
+            $this->getPlugin()->txt('percent')
+        );
+
+        $inputFields[self::DATA_FORMAT] = $ui->input()->field()->switchableGroup(
+            [
+                '1' => $group1,
+                '2' => $group2
+            ],
+            $this->getPlugin()->txt('format')
+        );
+
+        $sectionChart = $ui->input()->field()->section(
+            $inputFields,
+            $this->getPlugin()->txt(self::CMD_EDIT),
+            $this->getPlugin()->txt(self::LANG_DESCRIPTION),
+        );
+
+        $formAction = $urlBuilder->buildURI()->__toString();
+        $form = $ui->input()->container()->form()->standard(
+            $formAction,
+            [
+                'chart' => $sectionChart,
+            ],
+        );
+
+        if ($query->has($chart->getName())
+            && $query->retrieve($chart->getName(), $refinery->custom()->transformation(fn($v) => $v === 'standard'))
+        ) {
+            $form = $form->withRequest($request);
+            $result = $form->getData();
+
+            // TODO Test it
+            if (!$this->validate($result)) {
+                $this->tpl->setOnScreenMessage('failure', $this->dic->language()->txt(self::MESSAGE_FAILURE));
+                $this->dic->ctrl()->redirectByClass(self::PLUGIN_CLASS_NAME, self::CMD_EDIT);
+            }
+
+            dd("test");
+
+
+
+
+
+
+
+
+
+
+
+
+
+        } else {
+            $result = "No result yet.";
+        }
+
+        return $form;
+
+
+
+
+
+
+
+
+
         $form = new ilPropertyFormGUI();
         $form->setTitle($this->getPlugin()->txt(self::CMD_EDIT));
         $form->setDescription($this->getPlugin()->txt(self::LANG_DESCRIPTION));

@@ -32,6 +32,8 @@ number#:#Number
 percent#:#Percent
 data_format#:#Data Format
 currency_symbol#:#Currency Symbol
+symbol#:#Symbol
+format#:#Format
 add_currency_symbol#:#Add currency symbol
 categories_info#:#Fill the name of categories
 datasets_info#:#Fill the name of datasets
