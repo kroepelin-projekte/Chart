@@ -18,6 +18,8 @@
 
 use ILIAS\DI\Container;
 use \ILIAS\UI\Component\Input\Container\Form\Standard;
+use ILIAS\UI\URLBuilder;
+use ILIAS\Data\Factory;
 
 /**
  * Class ilChartPluginGUI
@@ -214,7 +216,6 @@ class ilChartPluginGUI extends ilPageComponentPluginGUI
 
         $this->setTabs(self::TAB_STYLE, true);
         $form = $this->initFormStyleEdit();
-        /*$this->tpl->setContent($form->getHTML());*/
 
         $this->tpl->setContent($renderer->render($form));
     }
@@ -224,9 +225,13 @@ class ilChartPluginGUI extends ilPageComponentPluginGUI
      */
     public function editDatasets(): void
     {
+        global $DIC;
+
+        $renderer = $DIC->ui()->renderer();
+
         $this->setTabs(self::DATASETS, true);
         $form = $this->initFormDatasetsEdit();
-        $this->tpl->setContent($form->getHTML());
+        $this->tpl->setContent($renderer->render($form));
     }
 
     /**
@@ -345,7 +350,7 @@ class ilChartPluginGUI extends ilPageComponentPluginGUI
         $request = $DIC->http()->request();
         $form  = $this->initFormStyleEdit();
 
-        if ($request->getMethod() == "POST") {
+        if ($request->getMethod() == 'POST') {
             $form  = $form->withRequest($request);
             $formData = $form->getData();
             $properties = $this->getProperties();
@@ -364,60 +369,57 @@ class ilChartPluginGUI extends ilPageComponentPluginGUI
                 $this->dic->ctrl()->redirect($this, self::CMD_EDIT_STYLE);
             }
         }
-        $this->tpl->setOnScreenMessage("failure", $this->dic->language()->txt(self::MESSAGE_FAILURE));
+        $this->tpl->setOnScreenMessage('failure', $this->dic->language()->txt(self::MESSAGE_FAILURE));
         $this->dic->ctrl()->redirect($this, self::CMD_EDIT_STYLE);
     }
 
     /**
      * @throws ilCtrlException
      */
-    private function updateDatasets(): void
-    {
-        $form = $this->initFormDatasetsEdit();
+    private function updateDatasets(
+        $result,
+        $properties
+    ): void {
+        $countDatasets = $this->getCountPropertiesByType($properties, 'title_dataset');
+        $countCategories = $this->getCountPropertiesByType($properties, 'title_category');
 
-        if (! $form->checkInput()) {
-            $this->tpl->setOnScreenMessage("failure", $this->dic->language()->txt(self::MESSAGE_FAILURE));
-            $this->setTabs(self::DATASETS, true);
-            $form->setValuesByPost();
-            $this->tpl->setContent($form->getHTML());
-            return;
-        }
+        for ($i = 0; $i < $countCategories; $i++) {
+            if (empty($result['group_category_' . ($i + 1)][1])) {
 
-        $properties = $this->getProperties();
-        if($this->checkIfChartFromLastVersion($properties)) {
-            $properties = $this->getTranformedProperties($properties);
-        }
-        $countDatasets = $this->getCountPropertiesByType($properties, "title_dataset");
-        $countCategory = $this->getCountPropertiesByType($properties, "title_category");
+                for($j = 0; $j < $countDatasets; $j++) {
+                    $value = trim($result['hidden_dataset_' . ($j + 1) . '_category_' . ($i + 1)]);
 
-        $err = 0;
-        for ($i = 0; $i < $countCategory; $i++) {
-            for ($j = 0; $j < $countDatasets; $j++) {
+                    // TODO Fix display screen message
+                    if(! is_numeric($value) || str_starts_with($value, '0')) {
+                        $this->tpl->setOnScreenMessage('failure', $this->dic->language()->txt(self::MESSAGE_FAILURE));
+                        $this->dic->ctrl()->redirect($this, self::CMD_EDIT_DATASETS);
+                    }
 
-                $input = trim($form->getInput("dataset_" . ($j + 1). "_category_".($i + 1)));
-
-                if($input === '') {
-                    $input = '0';
+                    if ($value === '') {
+                        $value = 0;
+                    }
+                    $properties['value_dataset_' . ($j + 1). '_category_' . ($i + 1)] = $value;
                 }
+            } else {
+                for($j = 0; $j < $countDatasets; $j++) {
+                    $value = trim($result['group_category_' . ($i + 1)][1]['dataset_' . ($j + 1) . '_category_' . ($i + 1)]);
 
-                if(! is_numeric($input)) {
-                    $err++;
-                } else {
-                    $properties["value_dataset_" . ($j + 1). "_category_".($i + 1)] = $input;
+                    // TODO Fix display screen message
+                    if(! is_numeric($value) || str_starts_with($value, '0')) {
+                        $this->tpl->setOnScreenMessage('failure', $this->dic->language()->txt(self::MESSAGE_FAILURE));
+                        $this->dic->ctrl()->redirect($this, self::CMD_EDIT_DATASETS);
+                    }
+
+                    if ($value === '') {
+                        $value = 0;
+                    }
+                    $properties['value_dataset_' . ($j + 1). '_category_' . ($i + 1)] = $value;
                 }
             }
         }
 
-        if ($err !== 0) {
-            $this->tpl->setOnScreenMessage("failure", $this->dic->language()->txt(self::MESSAGE_FAILURE));
-            $this->setTabs(self::DATASETS, true);
-            $form->setValuesByPost();
-            $this->tpl->setContent($form->getHTML());
-            return;
-        }
-
         if ($this->updateElement($properties)) {
-            $this->tpl->setOnScreenMessage("success", $this->dic->language()->txt(self::MESSAGE_SUCCESS), true);
+            $this->tpl->setOnScreenMessage('success', $this->dic->language()->txt(self::MESSAGE_SUCCESS), true);
             $this->dic->ctrl()->redirect($this, self::CMD_EDIT_DATASETS);
         }
     }
@@ -697,41 +699,84 @@ class ilChartPluginGUI extends ilPageComponentPluginGUI
     /**
      * @throws ilCtrlException
      */
-    public function initFormDatasetsEdit(): ilPropertyFormGUI
+    public function initFormDatasetsEdit()
     {
-        $form = new ilPropertyFormGUI();
-        $form->setDescription($this->getPlugin()->txt(self::LANG_DESCRIPTION_DATASETS));
-        $form->setTitle($this->getPlugin()->txt(self::CMD_EDIT));
+        global $DIC;
+
+        $ui = $DIC->ui()->factory();
+        $factory = new Factory();
+        $refinery = $DIC['refinery'];
+        $request = $DIC->http()->request();
+        $query = $DIC->http()->wrapper()->query();
+
+        $uri = $factory->uri($request->getUri()->__toString());
+        $urlBuilder = new URLBuilder($uri);
+        $namespace = ['datasets'];
+        list($urlBuilder, $chrt) = $urlBuilder->acquireParameters($namespace, 'chrt');
+        $urlBuilder = $urlBuilder->withParameter($chrt, 'standard');
+
         $prop = $this->getProperties();
         if($this->checkIfChartFromLastVersion($prop)) {
             $prop = $this->getTranformedProperties($this->getProperties());
         }
+
         $countCategories = 0;
         $countDatasets = 0;
         foreach($prop as $key => $value) {
-            if(strpos($key, "title_category_") > -1) {
+            if(strpos($key, 'title_category_') > -1) {
                 $countCategories += 1;
             }
-            if(strpos($key, "title_dataset_") > -1) {
+            if(strpos($key, 'title_dataset_') > -1) {
                 $countDatasets += 1;
             }
         }
-        $radioGroup = new ilRadioGroupInputGUI("", "dataset_values");
-        for($i = 0; $i < $countCategories; $i++) {
-            $radioNumber = new ilRadioOption($prop["title_category_".($i + 1)], "dataset". ($i + 1));
-            $radioGroup->addOption($radioNumber);
-            $radioGroup->setValue("dataset". ($i + 1));
-            for($j = 0; $j < $countDatasets; $j++) {
-                $dataset = new ilTextInputGUI($prop["title_dataset_".($j + 1)], "dataset_".($j + 1)."_category_".($i + 1));
-                $dataset->setValue($prop["value_dataset_" .($j + 1)."_category_".($i + 1)]);
-                $radioNumber->addSubItem($dataset);
-            }
-        }
-        $form->addItem($radioGroup);
 
-        $form->addCommandButton(self::CMD_UPDATE_DATASETS, $this->dic->language()->txt(self::CMD_SAVE));
-        $form->addCommandButton(self::CMD_CANCEL, $this->dic->language()->txt(self::CMD_CANCEL));
-        $form->setFormAction($this->dic->ctrl()->getFormAction($this));
+        $hiddenInputs = [];
+        $inputs = [];
+        for($i = 0; $i < $countCategories; $i++) {
+            $groupCategories = [];
+            $inputDatasets = [];
+            for($j = 0; $j < $countDatasets; $j++) {
+                $inputDatasets['dataset_' . ($j + 1) . '_category_' . ($i + 1)] = $ui->input()->field()->text($prop['title_dataset_' . ($j + 1)])->withValue($prop['value_dataset_' .($j + 1) . '_category_' . ($i + 1)]);
+                $hiddenInputs['dataset_' . ($j + 1) . '_category_' . ($i + 1)] = $ui->input()->field()->hidden()->withValue($prop['value_dataset_' .($j + 1) . '_category_' . ($i + 1)]);
+            }
+
+            $groupCategories['category_' . ($i + 1)] = $ui->input()->field()->group(
+                $inputDatasets,
+                $prop['title_category_' . ($i + 1)]
+            );
+
+            $switchableGroup = $ui->input()->field()->switchableGroup(
+                $groupCategories,
+                ''
+            );
+
+            $inputs['group_category_' . ($i + 1)] = $switchableGroup;
+        }
+
+
+        foreach ($hiddenInputs as $key => $input) {
+            $inputs['hidden_' . $key] = $input;
+        }
+
+        $formAction = $urlBuilder->buildURI()->__toString();
+
+        $form = $ui->input()->container()->form()->standard(
+            $formAction,
+            $inputs
+        );
+
+        if ($query->has($chrt->getName())
+            && $query->retrieve($chrt->getName(), $refinery->custom()->transformation(fn($v) => $v === 'standard'))
+        ) {
+            $form = $form->withRequest($request);
+            $result = $form->getData();
+
+            $this->updateDatasets(
+                $result,
+                $prop
+            );
+        }
 
         return $form;
     }
