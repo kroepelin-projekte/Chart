@@ -19,15 +19,30 @@
 /**
  * Class ilChartPlugin
  * @author KPG <support@kroepelin-projekte.de>
+ * @ilCtrl_isCalledBy ilChartPluginGUI
  */
 class ilChartPlugin extends ilPageComponentPlugin
 {
+    private static ?ilPlugin $instance = null;
+
     public function getPluginName(): string
     {
         return "Chart";
     }
+
     public function isValidParentType(string $a_type): bool
     {
         return true;
+    }
+
+    public static function getInstance() : ilPlugin
+    {
+        if (is_null(self::$instance)) {
+            global $DIC;
+            self::$instance = new self($DIC->database(), $DIC['component.repository'], 'chrt');
+        }
+
+        return self::$instance;
+
     }
 }
