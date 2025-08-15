@@ -5,10 +5,8 @@ This Plugin was developed by Kröpelin Projekt GmbH (https://www.kroepelin-proje
 See [docu/DOCUMENTATION.pdf](./docu/DOCUMENTATION.pdf)
 
 ## Requirements
-* ILIAS 8
-  * PHP >= 7.4
-* ILIAS 9
-  * PHP >= 8.1
+* ILIAS 10
+    * PHP >= 8.2 <= 8.3
 
 ## Installation and Update
 Start at your ILIAS root directory.
@@ -16,8 +14,8 @@ Start at your ILIAS root directory.
 Run the following commands:
 
 ```bash
-mkdir -p Customizing/global/plugins/Services/COPage/PageComponent
-cd Customizing/global/plugins/Services/COPage/PageComponent
+mkdir -p public/Customizing/global/plugins/Services/COPage/PageComponent
+cd public/Customizing/global/plugins/Services/COPage/PageComponent
 git clone https://github.com/kroepelin-projekte/Chart.git Chart
 ```
 
