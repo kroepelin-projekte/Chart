@@ -27,98 +27,7 @@ use \ILIAS\UI\Component\Input\Container\Form\Standard;
  */
 class ilChartPluginGUI extends ilPageComponentPluginGUI
 {
-    private const PLUGIN_DIRECTORY = "Customizing/global/plugins/Services/COPage/PageComponent/Chart";
-
-    private const PLUGIN_CLASS_NAME = self::class;
-
-    private const CMD_CANCEL = "cancel";
-
-    private const CMD_CREATE = "create";
-
-    private const CMD_CREATE_CATEGORIES_DATASET_NAMES = "createCategoriesDatasetNames";
-
-    private const CMD_UPDATE_CATEGORIES_DATASET_NAMES = "updateCategoriesDatasetNames";
-
-    private const CMD_SAVE = "save";
-
-    private const CMD_INSERT = "insert";
-
-    private const CMD_UPDATE = "update";
-
-    private const CMD_EDIT = "edit";
-
-    private const CMD_EDIT_STYLE = "editStyle";
-
-    private const CMD_UPDATE_STYLE = "updateStyle";
-
-    private const CMD_EDIT_DATASETS = "editDatasets";
-
-    private const CMD_EDIT_CATEGORIES_DATASET_NAMES = "editCategoriesDatasetNames";
-
-    private const CMD_UPDATE_DATASETS = "updateDatasets";
-
-    private const TAB_STYLE = "style";
-
-    private const LANG_CHART_STYLE = "chart_style";
-
-    private const LANG_DESCRIPTION = "description";
-
-    private const LANG_CHART_DATASETS = "chart_datasets";
-
-    private const LANG_DESCRIPTION_DATASETS = "description_datasets";
-
-    private const LANG_CHART = "chart";
-
-    private const LANG_CATEGORIES_DATASETNAMES = "categories_datasetnames";
-
-    private const LANG_CHART_HORIZONTAL_BAR = "horizontal_bar_chart";
-
-    private const LANG_CHART_VERTICAL_BAR = "vertical_bar_chart";
-
-    private const LANG_CHART_PIE_CHART = "pie_chart";
-
-    private const LANG_CHART_LINE_CHART = "line_chart";
-
-    private const CANVAS_ID_PREFIX = "chart_page_component_";
-
-    private const DIV_CANVAS_ID_PREFIX = "div_canvas_";
-
-    private const DIV_ID_PREFIX = "chart_div_";
-
-    private const MESSAGE_SUCCESS = "msg_obj_modified";
-
-    private const MESSAGE_FAILURE = "form_input_not_valid";
-
-    private const CHART_TITLE = "chart_title";
-
-    private const CHART_TYPE = "chart_type";
-
-    private const DATA_FORMAT = "data_format";
-
-    private const SYMBOL = "symbol";
-
-    private const PERCENT = "percent";
-
-    private const CURRENCY_SYMBOL = "currency_symbol";
-
-    private const CHART_MAX_VALUE = "chart_max_value";
-
-    private const CATEGORIES = "categories";
-
-    private const DATASETS = "datasets";
-
-    private const DESCRIPTION_EDIT_STYLE = "description_edit_style";
-
-    private const FORM_CHART = "chart";
-
-    private const FORM_CATEGORIES_DATASETS = "categories-datasets";
-
-    private const FORM_DATASETS = "datasets";
-
-    private const FORM_STYLE = "style";
-
     private Container $dic;
-
 
     protected ilGlobalTemplateInterface $tpl;
 
@@ -149,18 +58,19 @@ class ilChartPluginGUI extends ilPageComponentPluginGUI
     public function executeCommand(): void
     {
         $cmd = $this->dic->ctrl()->getCmd();
-        if (in_array($cmd, array(self::CMD_CREATE,
-                                 self::CMD_SAVE,
-                                 self::CMD_EDIT,
-                                 self::CMD_EDIT_STYLE,
-                                 self::CMD_EDIT_DATASETS,
-                                 self::CMD_EDIT_CATEGORIES_DATASET_NAMES,
-                                 self::CMD_UPDATE,
-                                 self::CMD_UPDATE_CATEGORIES_DATASET_NAMES,
-                                 self::CMD_UPDATE_STYLE,
-                                 self::CMD_UPDATE_DATASETS,
-                                 self::CMD_CANCEL
-        ))) {
+        if (in_array($cmd, [
+            ilChartPluginConstant::CMD_CREATE,
+            ilChartPluginConstant::CMD_SAVE,
+            ilChartPluginConstant::CMD_EDIT,
+            ilChartPluginConstant::CMD_EDIT_STYLE,
+            ilChartPluginConstant::CMD_EDIT_DATASETS,
+            ilChartPluginConstant::CMD_EDIT_CATEGORIES_DATASET_NAMES,
+            ilChartPluginConstant::CMD_UPDATE,
+            ilChartPluginConstant::CMD_UPDATE_CATEGORIES_DATASET_NAMES,
+            ilChartPluginConstant::CMD_UPDATE_STYLE,
+            ilChartPluginConstant::CMD_UPDATE_DATASETS,
+            ilChartPluginConstant::CMD_CANCEL
+        ])) {
             $this->$cmd();
         }
     }
@@ -168,48 +78,45 @@ class ilChartPluginGUI extends ilPageComponentPluginGUI
 
     /**
      * @throws ilCtrlException
-     * @throws ilFormException
      */
     public function insert(): void
     {
         global $DIC;
 
         $renderer = $DIC->ui()->renderer();
-        $this->setTabs(self::LANG_CATEGORIES_DATASETNAMES, false, true /* TODO remove it */);
+        $this->setTabs(ilChartPluginConstant::LANG_CHART, false);
         $form = $this->initFormChart();
         $this->tpl->setContent($renderer->render($form));
-
-
     }
 
     /**
-     * @throws ilFormException
      * @throws ilCtrlException
      */
     public function create(): void
     {
-
         $form = $this->initFormChart();
         $form = $form->withRequest($this->dic->http()->request());
         $result = $form->getData();
 
         // TODO Test it
-        if (!$this->validate($result, self::FORM_CHART)) {
-            $this->tpl->setOnScreenMessage("failure", $this->dic->language()->txt(self::MESSAGE_FAILURE));
-            $this->dic->ctrl()->redirectByClass(self::PLUGIN_CLASS_NAME, self::CMD_EDIT);
+        if (!$this->validate($result, ilChartPluginConstant::FORM_CHART)) {
+            $this->tpl->setOnScreenMessage("failure", $this->dic->language()->txt(ilChartPluginConstant::MESSAGE_FAILURE));
+            $this->dic->ctrl()->redirectByClass(ilChartPluginConstant::PLUGIN_CLASS_NAME_GUI, ilChartPluginConstant::CMD_EDIT);
         }
-
         $this->updateChart($result);
     }
+
+    /**
+     * @return string[]
+     */
     private function getShuffleExtendedColors(): array
     {
-        $extendedColors = $this->getExtendendColors();
+        $extendedColors = $this->getExtendedColors();
         shuffle($extendedColors);
         return $extendedColors;
     }
 
     /**
-     * @throws ilFormException
      * @throws ilCtrlException
      */
     public function edit(): void
@@ -217,7 +124,7 @@ class ilChartPluginGUI extends ilPageComponentPluginGUI
         global $DIC;
 
         $renderer = $DIC->ui()->renderer();
-        $this->setTabs(self::LANG_CHART, true, true);
+        $this->setTabs(ilChartPluginConstant::LANG_CHART, true, true);
         $form = $this->initFormChart(true);
         $this->tpl->setContent($renderer->render($form));
     }
@@ -231,7 +138,7 @@ class ilChartPluginGUI extends ilPageComponentPluginGUI
 
         $renderer = $DIC->ui()->renderer();
 
-        $this->setTabs(self::TAB_STYLE, true, true);
+        $this->setTabs(ilChartPluginConstant::TAB_STYLE, true, true);
         $form = $this->initFormStyleEdit();
 
         $this->tpl->setContent($renderer->render($form));
@@ -246,7 +153,7 @@ class ilChartPluginGUI extends ilPageComponentPluginGUI
 
         $renderer = $DIC->ui()->renderer();
 
-        $this->setTabs(self::DATASETS, true, true);
+        $this->setTabs(ilChartPluginConstant::DATASETS, true, true);
         $form = $this->initFormDatasetsEdit();
         $this->tpl->setContent($renderer->render($form));
     }
@@ -254,46 +161,46 @@ class ilChartPluginGUI extends ilPageComponentPluginGUI
     /**
      * @return void
      * @throws ilCtrlException
+     * @throws ilFormException
      */
-    public function editCategoriesDatasetNames()
+    public function editCategoriesDatasetNames(): void
     {
-        $prop = $this->getProperties();
-        $styleTabIsVisible = false;
-        if ($this->checkIfCategoriesDatasetNamesExist($prop)) {
-            $styleTabIsVisible = true;
-        }
-        $this->setTabs(self::DATASETS, $styleTabIsVisible, true);
-        $form = $this->initFormCategoriesDatasetNames(self::CMD_UPDATE);
+        $this->setTabs(ilChartPluginConstant::LANG_CATEGORIES_DATASETNAMES, true, true);
+        $form = $this->initFormCategoriesDatasetNames(ilChartPluginConstant::CMD_UPDATE);
         $this->tpl->setContent($form->getHTML());
     }
 
-
     /**
+     * @param      $data
+     * @param bool $idUpdate
+     * @return void
      * @throws ilCtrlException
      */
     private function updateChart($data, bool $idUpdate = false): void
     {
         $properties = $this->getProperties();
-        $properties[self::CHART_TITLE] = $data["chart"][self::CHART_TITLE];
-        $properties[self::CHART_TYPE] = $data["chart"][self::CHART_TYPE];
-        $properties[self::CHART_MAX_VALUE] = $data["chart"][self::CHART_MAX_VALUE];
+        $properties[ilChartPluginConstant::CHART_TITLE] = $data["chart"][ilChartPluginConstant::CHART_TITLE];
+        $properties[ilChartPluginConstant::CHART_TYPE] = $data["chart"][ilChartPluginConstant::CHART_TYPE];
+        $properties[ilChartPluginConstant::CHART_MAX_VALUE] = $data["chart"][ilChartPluginConstant::CHART_MAX_VALUE];
 
-        $dataFormat = $data["chart"][self::DATA_FORMAT];
+        $dataFormat = $data["chart"][ilChartPluginConstant::DATA_FORMAT];
         $format = $dataFormat[0];
         if ($dataFormat[0] === "1") {
-            $properties[self::CURRENCY_SYMBOL] = $dataFormat[1]["symbol"];
+            $properties[ilChartPluginConstant::CURRENCY_SYMBOL] = $dataFormat[1]["symbol"];
         }
-        $properties[self::DATA_FORMAT] = $format;
+        $properties[ilChartPluginConstant::DATA_FORMAT] = $format;
 
-        // Set default values
-        $properties['title_category_1'] = 'Kategorie';
-        $properties['title_dataset_1'] = 'Dataset';
-        $properties['value_dataset_1_category_1'] = 0;
+        if (!$this->checkIfCategoriesDatasetNamesExist($properties)) {
+            // Set default values
+            $properties["title_category_1"] = "Kategorie";
+            $properties["title_dataset_1"] = "Dataset";
+            $properties["value_dataset_1_category_1"] = 0;
 
-        $colors = $this->getShuffleExtendedColors();
+            $colors = $this->getShuffleExtendedColors();
 
-        $properties['color_dataset_1'] = $colors[0];
-        $properties['color_category_1'] = $colors[1];
+            $properties["color_dataset_1"] = $colors[0];
+            $properties["color_category_1"] = $colors[1];
+        }
 
         $success = false;
         if ($idUpdate) {
@@ -307,16 +214,35 @@ class ilChartPluginGUI extends ilPageComponentPluginGUI
         }
 
         if ($success) {
-            $this->tpl->setOnScreenMessage("success", $this->dic->language()->txt(self::MESSAGE_SUCCESS), true);
+            $this->tpl->setOnScreenMessage("success", $this->dic->language()->txt(ilChartPluginConstant::MESSAGE_SUCCESS), true);
+
+            if($idUpdate) {
+                $this->dic->ctrl()->redirectByClass(ilChartPluginConstant::PLUGIN_CLASS_NAME_GUI, ilChartPluginConstant::CMD_EDIT);
+            }
             $this->returnToParent();
         }
-        $this->tpl->setOnScreenMessage("failure", $this->dic->language()->txt(self::MESSAGE_FAILURE), true);
+        $this->tpl->setOnScreenMessage("failure", $this->dic->language()->txt(ilChartPluginConstant::MESSAGE_FAILURE), true);
         $this->returnToParent();
     }
 
     /**
+     * @param array $a_properties
+     * @return string
+     */
+    private function checkIfCategoriesDatasetNamesExist(array $a_properties): string
+    {
+        $exist = false;
+        foreach ($a_properties as $key => $value) {
+            if (str_starts_with($key, "title_category") || str_starts_with($key, "title_dataset")) {
+                $exist = true;
+                break;
+            }
+        }
+        return $exist;
+    }
+
+    /**
      * @throws ilCtrlException
-     * @throws ilFormException
      */
     private function update(): void
     {
@@ -327,20 +253,20 @@ class ilChartPluginGUI extends ilPageComponentPluginGUI
 
         if ($request->getMethod() == "POST") {
             // TODO Test it
-            if (!$this->validate($result, self::FORM_CHART)) {
-                $this->tpl->setOnScreenMessage("failure", $this->dic->language()->txt(self::MESSAGE_FAILURE));
-                $this->dic->ctrl()->redirectByClass(self::PLUGIN_CLASS_NAME, self::CMD_EDIT);
+            if (!$this->validate($result, ilChartPluginConstant::FORM_CHART)) {
+                $this->tpl->setOnScreenMessage("failure", $this->dic->language()->txt(ilChartPluginConstant::MESSAGE_FAILURE));
+                $this->dic->ctrl()->redirectByClass(ilChartPluginConstant::PLUGIN_CLASS_NAME_GUI, ilChartPluginConstant::CMD_EDIT);
             }
 
             $this->updateChart($result, true);
         }
-        $this->tpl->setOnScreenMessage("failure", $this->dic->language()->txt(self::MESSAGE_FAILURE));
-        $this->dic->ctrl()->redirect($this, self::CMD_EDIT);
+        $this->tpl->setOnScreenMessage("failure", $this->dic->language()->txt(ilChartPluginConstant::MESSAGE_FAILURE));
+        $this->dic->ctrl()->redirect($this, ilChartPluginConstant::CMD_EDIT);
     }
 
     /**
      * @return void
-     * @throws ilCtrlException
+     * @throws ilCtrlException|ilFormException
      */
     public function updateCategoriesDatasetNames(): void
     {
@@ -350,16 +276,16 @@ class ilChartPluginGUI extends ilPageComponentPluginGUI
 
         // TODO
         if (!$form->checkInput()) {
-            $this->tpl->setOnScreenMessage("failure", $this->dic->language()->txt(self::MESSAGE_FAILURE));
-            $this->setTabs(self::LANG_CATEGORIES_DATASETNAMES, true, true);
+            $this->tpl->setOnScreenMessage("failure", $this->dic->language()->txt(ilChartPluginConstant::MESSAGE_FAILURE));
+            $this->setTabs(ilChartPluginConstant::LANG_CATEGORIES_DATASETNAMES, true, true);
             $form->setValuesByPost();
             $this->tpl->setContent($form->getHtml());
             return;
         }
 
         $datasetValues = [];
-        foreach ($form->getInput(self::CATEGORIES) as $key => $value) {
-            foreach ($form->getInput(self::DATASETS) as $k => $val) {
+        foreach ($form->getInput(ilChartPluginConstant::CATEGORIES) as $key => $value) {
+            foreach ($form->getInput(ilChartPluginConstant::DATASETS) as $k => $val) {
 
                 if(array_key_exists("value_dataset_" . ($k + 1) . "_category_" . ($key + 1), $properties)) {
                     $datasetValues["value_dataset_" . ($k + 1) . "_category_" . ($key + 1)] = $properties["value_dataset_" . ($k + 1) . "_category_" . ($key + 1)];
@@ -369,17 +295,17 @@ class ilChartPluginGUI extends ilPageComponentPluginGUI
             }
         }
 
-        if (count($form->getInput(self::CATEGORIES)) !== count(array_unique($form->getInput(self::CATEGORIES)))) {
+        if (count($form->getInput(ilChartPluginConstant::CATEGORIES)) !== count(array_unique($form->getInput(ilChartPluginConstant::CATEGORIES)))) {
             $this->tpl->setOnScreenMessage("failure", $this->plugin->txt("category_names_unique"));
-            $this->setTabs(self::LANG_CHART, true);
+            $this->setTabs(ilChartPluginConstant::LANG_CHART, true);
             $form->setValuesByPost();
             $this->tpl->setContent($form->getHtml());
             return;
         }
 
-        if (count($form->getInput(self::DATASETS)) !== count(array_unique($form->getInput(self::DATASETS)))) {
+        if (count($form->getInput(ilChartPluginConstant::DATASETS)) !== count(array_unique($form->getInput(ilChartPluginConstant::DATASETS)))) {
             $this->tpl->setOnScreenMessage("failure", $this->plugin->txt("datasets_names_unique"));
-            $this->setTabs(self::LANG_CHART, true);
+            $this->setTabs(ilChartPluginConstant::LANG_CHART, true);
             $form->setValuesByPost();
             $this->tpl->setContent($form->getHtml());
             return;
@@ -388,7 +314,7 @@ class ilChartPluginGUI extends ilPageComponentPluginGUI
         $shuffleExtendedColors = $this->getShuffleExtendedColors();
         // Set default colors for categories
         $j = 0; // Key in $extendedColors array
-        for ($i = 0; $i < count($form->getInput(self::CATEGORIES)); $i++) {
+        for ($i = 0; $i < count($form->getInput(ilChartPluginConstant::CATEGORIES)); $i++) {
             $color = $shuffleExtendedColors[$j];
 
             if ($j === count($shuffleExtendedColors) - 1) {
@@ -402,7 +328,7 @@ class ilChartPluginGUI extends ilPageComponentPluginGUI
         $shuffleExtendedColors = $this->getShuffleExtendedColors();
         // Set default colors for datasets
         $j = 0; // Key in $extendedColors array
-        for ($i = 0; $i < count($form->getInput(self::DATASETS)); $i++) {
+        for ($i = 0; $i < count($form->getInput(ilChartPluginConstant::DATASETS)); $i++) {
             $color = $shuffleExtendedColors[$j];
 
             if ($j === count($shuffleExtendedColors) - 1) {
@@ -415,18 +341,18 @@ class ilChartPluginGUI extends ilPageComponentPluginGUI
 
         $properties = array_merge($properties, $datasetValues);
 
-        foreach ($form->getInput(self::CATEGORIES) as $key => $value) {
+        foreach ($form->getInput(ilChartPluginConstant::CATEGORIES) as $key => $value) {
             $properties["title_category_".($key + 1)] = $value;
         }
 
-        $datasets = $form->getInput(self::DATASETS);
+        $datasets = $form->getInput(ilChartPluginConstant::DATASETS);
         foreach ($datasets as $key => $value) {
             $properties["title_dataset_".($key + 1)] = $value;
         }
 
         if ($this->updateElement($properties)) {
-            $this->tpl->setOnScreenMessage("success", $this->dic->language()->txt(self::MESSAGE_SUCCESS), true);
-            $this->dic->ctrl()->redirectByClass(self::PLUGIN_CLASS_NAME, self::CMD_EDIT_CATEGORIES_DATASET_NAMES);
+            $this->tpl->setOnScreenMessage("success", $this->dic->language()->txt(ilChartPluginConstant::MESSAGE_SUCCESS), true);
+            $this->dic->ctrl()->redirectByClass(ilChartPluginConstant::PLUGIN_CLASS_NAME_GUI, ilChartPluginConstant::CMD_EDIT_CATEGORIES_DATASET_NAMES);
         }
     }
 
@@ -451,15 +377,18 @@ class ilChartPluginGUI extends ilPageComponentPluginGUI
             );
 
             if ($this->updateElement($properties)) {
-                $this->tpl->setOnScreenMessage("success", $this->dic->language()->txt(self::MESSAGE_SUCCESS), true);
-                $this->dic->ctrl()->redirect($this, self::CMD_EDIT_STYLE);
+                $this->tpl->setOnScreenMessage("success", $this->dic->language()->txt(ilChartPluginConstant::MESSAGE_SUCCESS), true);
+                $this->dic->ctrl()->redirect($this, ilChartPluginConstant::CMD_EDIT_STYLE);
             }
         }
-        $this->tpl->setOnScreenMessage("failure", $this->dic->language()->txt(self::MESSAGE_FAILURE));
-        $this->dic->ctrl()->redirect($this, self::CMD_EDIT_STYLE);
+        $this->tpl->setOnScreenMessage("failure", $this->dic->language()->txt(ilChartPluginConstant::MESSAGE_FAILURE));
+        $this->dic->ctrl()->redirect($this, ilChartPluginConstant::CMD_EDIT_STYLE);
     }
 
-    public function updateDatasets()
+    /**
+     * @throws ilCtrlException
+     */
+    public function updateDatasets(): void
     {
         $request = $this->dic->http()->request();
 
@@ -469,8 +398,8 @@ class ilChartPluginGUI extends ilPageComponentPluginGUI
 
         if ($request->getMethod() == "POST") {
             // TODO Test it
-            if (!$this->validate($result, self::DATASETS)) {
-                $this->tpl->setOnScreenMessage("failure", $this->dic->language()->txt(self::MESSAGE_FAILURE));
+            if (!$this->validate($result, ilChartPluginConstant::DATASETS)) {
+                $this->tpl->setOnScreenMessage("failure", $this->dic->language()->txt(ilChartPluginConstant::MESSAGE_FAILURE));
                 $this->returnToParent();
             }
 
@@ -486,9 +415,9 @@ class ilChartPluginGUI extends ilPageComponentPluginGUI
                         // TODO Fix display screen message
                         if (!is_numeric($value) || str_starts_with($value, "0")) {
                             $this->tpl->setOnScreenMessage(
-                                "failure", $this->dic->language()->txt(self::MESSAGE_FAILURE)
+                                "failure", $this->dic->language()->txt(ilChartPluginConstant::MESSAGE_FAILURE)
                             );
-                            $this->dic->ctrl()->redirect($this, self::CMD_EDIT_DATASETS);
+                            $this->dic->ctrl()->redirect($this, ilChartPluginConstant::CMD_EDIT_DATASETS);
                         }
 
                         if ($value === "") {
@@ -505,9 +434,9 @@ class ilChartPluginGUI extends ilPageComponentPluginGUI
                         // TODO Fix display screen message
                         if (!is_numeric($value) || str_starts_with($value, "0")) {
                             $this->tpl->setOnScreenMessage(
-                                "failure", $this->dic->language()->txt(self::MESSAGE_FAILURE)
+                                "failure", $this->dic->language()->txt(ilChartPluginConstant::MESSAGE_FAILURE)
                             );
-                            $this->dic->ctrl()->redirect($this, self::CMD_EDIT_DATASETS);
+                            $this->dic->ctrl()->redirect($this, ilChartPluginConstant::CMD_EDIT_DATASETS);
                         }
 
                         if ($value === "") {
@@ -519,13 +448,12 @@ class ilChartPluginGUI extends ilPageComponentPluginGUI
             }
 
             if ($this->updateElement($properties)) {
-                $this->tpl->setOnScreenMessage("success", $this->dic->language()->txt(self::MESSAGE_SUCCESS), true);
-                $this->dic->ctrl()->redirect($this, self::CMD_EDIT_DATASETS);
+                $this->tpl->setOnScreenMessage("success", $this->dic->language()->txt(ilChartPluginConstant::MESSAGE_SUCCESS), true);
+                $this->dic->ctrl()->redirect($this, ilChartPluginConstant::CMD_EDIT_DATASETS);
             }
         }
-        $this->tpl->setOnScreenMessage("failure", $this->dic->language()->txt(self::MESSAGE_SUCCESS), true);
-        $this->dic->ctrl()->redirect($this, self::CMD_EDIT_DATASETS);
-
+        $this->tpl->setOnScreenMessage("failure", $this->dic->language()->txt(ilChartPluginConstant::MESSAGE_SUCCESS), true);
+        $this->dic->ctrl()->redirect($this, ilChartPluginConstant::CMD_EDIT_DATASETS);
     }
 
     /**
@@ -545,9 +473,14 @@ class ilChartPluginGUI extends ilPageComponentPluginGUI
         return $count;
     }
 
+    /**
+     * @param        $data
+     * @param string $form
+     * @return bool
+     */
     private function validate($data, string $form): bool
     {
-        if ($form === self::FORM_CHART) {
+        if ($form === ilChartPluginConstant::FORM_CHART) {
             if (array_key_exists("chart_type", $data["chart"])
                 && $data["chart"]["chart_type"] === ""
             ) {
@@ -560,12 +493,7 @@ class ilChartPluginGUI extends ilPageComponentPluginGUI
             ) {
                 return false;
             }
-        } elseif ($form === self::FORM_CATEGORIES_DATASETS) {
-
-            dd($data);
-
-
-        } elseif ($form === self::FORM_DATASETS) {
+        } elseif ($form === ilChartPluginConstant::FORM_DATASETS) {
             foreach($data as $key => $value) {
                 if (str_starts_with($key, "hidden_dataset_")) {
                     if(!is_numeric($value) || $value === "") {
@@ -580,7 +508,7 @@ class ilChartPluginGUI extends ilPageComponentPluginGUI
     /**
      * @return array|string[]
      */
-    private function getExtendendColors(): array
+    private function getExtendedColors(): array
     {
         $parentId = $this->getPlugin()->getParentId();
         $objStylesheet = new ilObjStyleSheet();
@@ -607,6 +535,9 @@ class ilChartPluginGUI extends ilPageComponentPluginGUI
         return $extendedColorsCode;
     }
 
+    /**
+     * @return string[]
+     */
     private function getExtendedColorsDefaultILIAS(): array
     {
         return [
@@ -625,39 +556,39 @@ class ilChartPluginGUI extends ilPageComponentPluginGUI
     /**
      * @throws ilCtrlException
      */
-    public function initFormChart(bool $isUpdate = false)
+    public function initFormChart(bool $isUpdate = false): Standard
     {
         global $DIC;
 
         $ui = $DIC->ui()->factory();
         $prop = $this->getProperties();
 
-        $inputFields[self::CHART_TITLE] = $ui->input()->field()->text(
-            $this->getPlugin()->txt(self::CHART_TITLE),
+        $inputFields[ilChartPluginConstant::CHART_TITLE] = $ui->input()->field()->text(
+            $this->getPlugin()->txt(ilChartPluginConstant::CHART_TITLE),
             ""
-        )->withValue($prop[self::CHART_TITLE] ?? "")->withRequired(true);
+        )->withValue($prop[ilChartPluginConstant::CHART_TITLE] ?? "")->withRequired(true);
 
         $optionsChart = [
-            "1" => $this->getPlugin()->txt(self::LANG_CHART_HORIZONTAL_BAR),
-            "2" => $this->getPlugin()->txt(self::LANG_CHART_VERTICAL_BAR),
-            "3" => $this->getPlugin()->txt(self::LANG_CHART_PIE_CHART),
-            "4" => $this->getPlugin()->txt(self::LANG_CHART_LINE_CHART)
+            "1" => $this->getPlugin()->txt(ilChartPluginConstant::LANG_CHART_HORIZONTAL_BAR),
+            "2" => $this->getPlugin()->txt(ilChartPluginConstant::LANG_CHART_VERTICAL_BAR),
+            "3" => $this->getPlugin()->txt(ilChartPluginConstant::LANG_CHART_PIE_CHART),
+            "4" => $this->getPlugin()->txt(ilChartPluginConstant::LANG_CHART_LINE_CHART)
         ];
 
-        $inputFields[self::CHART_TYPE] = $ui->input()->field()->select(
-            $this->getPlugin()->txt(self::CHART_TYPE),
+        $inputFields[ilChartPluginConstant::CHART_TYPE] = $ui->input()->field()->select(
+            $this->getPlugin()->txt(ilChartPluginConstant::CHART_TYPE),
             $optionsChart
-        )->withValue($prop[self::CHART_TYPE] ?? "")->withRequired(true);
+        )->withValue($prop[ilChartPluginConstant::CHART_TYPE] ?? "")->withRequired(true);
 
-        $inputFields[self::CHART_MAX_VALUE] = $ui->input()->field()->text(
-            $this->getPlugin()->txt(self::CHART_MAX_VALUE),
+        $inputFields[ilChartPluginConstant::CHART_MAX_VALUE] = $ui->input()->field()->text(
+            $this->getPlugin()->txt(ilChartPluginConstant::CHART_MAX_VALUE),
             ""
-        )->withValue($prop[self::CHART_MAX_VALUE] ?? "")->withRequired(true);
+        )->withValue($prop[ilChartPluginConstant::CHART_MAX_VALUE] ?? "")->withRequired(true);
 
         $group1 = $ui->input()->field()->group(
             [
-                "symbol" => $ui->input()->field()->text($this->getPlugin()->txt(self::SYMBOL), $this->getPlugin()->txt("add_currency_symbol"))
-                                                 ->withValue($prop[self::CURRENCY_SYMBOL] ?? "")
+                "symbol" => $ui->input()->field()->text($this->getPlugin()->txt(ilChartPluginConstant::SYMBOL), $this->getPlugin()->txt("add_currency_symbol"))
+                                                 ->withValue($prop[ilChartPluginConstant::CURRENCY_SYMBOL] ?? "")
             ],
             $this->getPlugin()->txt("number")
         );
@@ -668,33 +599,31 @@ class ilChartPluginGUI extends ilPageComponentPluginGUI
         );
 
 
-        $inputFields[self::DATA_FORMAT] = $ui->input()->field()->switchableGroup(
+        $inputFields[ilChartPluginConstant::DATA_FORMAT] = $ui->input()->field()->switchableGroup(
             [
                 "1" => $group1,
                 "2" => $group2
             ],
             $this->getPlugin()->txt("format")
-        )->withValue($prop[self::DATA_FORMAT] ?? "1");
+        )->withValue($prop[ilChartPluginConstant::DATA_FORMAT] ?? "1");
 
         $sectionChart = $ui->input()->field()->section(
             $inputFields,
-            $this->getPlugin()->txt(self::CMD_EDIT),
-            $this->getPlugin()->txt(self::LANG_DESCRIPTION),
+            $this->getPlugin()->txt(ilChartPluginConstant::CMD_EDIT),
+            $this->getPlugin()->txt(ilChartPluginConstant::LANG_DESCRIPTION),
         );
 
-        $fallbackCmd = self::CMD_CREATE;
+        $fallbackCmd = ilChartPluginConstant::CMD_CREATE;
         if ($isUpdate) {
-            $fallbackCmd = self::CMD_UPDATE;
+            $fallbackCmd = ilChartPluginConstant::CMD_UPDATE;
         }
 
-        $form = $ui->input()->container()->form()->standard(
+        return $ui->input()->container()->form()->standard(
             $this->dic->ctrl()->getFormAction($this, $fallbackCmd),
             [
                 "chart" => $sectionChart
             ],
         );
-
-        return $form;
     }
 
     /**
@@ -746,30 +675,28 @@ class ilChartPluginGUI extends ilPageComponentPluginGUI
 
         $sectionCategories = $ui->input()->field()->section(
             $inputFieldsCategoriesColors,
-            $this->getPlugin()->txt(self::CATEGORIES),
+            $this->getPlugin()->txt(ilChartPluginConstant::CATEGORIES),
             $this->getPlugin()->txt("description_style_categories"),
         );
 
         $sectionDatasets = $ui->input()->field()->section(
             $inputFieldsDatasetsColors,
-            $this->getPlugin()->txt(self::DATASETS),
+            $this->getPlugin()->txt(ilChartPluginConstant::DATASETS),
             $this->getPlugin()->txt("description_style_datasets"),
         );
 
         $formAction = $DIC->ctrl()->getFormActionByClass(
-            self::class,
-            self::CMD_UPDATE_STYLE
+            ilChartPluginConstant::PLUGIN_CLASS_NAME_GUI,
+            ilChartPluginConstant::CMD_UPDATE_STYLE
         );
 
-        $form = $ui->input()->container()->form()->standard(
+        return $ui->input()->container()->form()->standard(
             $formAction,
             [
                 "categories" => $sectionCategories,
                 "datasets" => $sectionDatasets
             ],
         );
-
-        return $form;
     }
 
     /**
@@ -820,23 +747,21 @@ class ilChartPluginGUI extends ilPageComponentPluginGUI
             $inputs["hidden_" . $key] = $input;
         }
 
-        $form = $ui->input()->container()->form()->standard(
-            $this->dic->ctrl()->getFormAction($this, self::CMD_UPDATE_DATASETS),
+        return $ui->input()->container()->form()->standard(
+            $this->dic->ctrl()->getFormAction($this, ilChartPluginConstant::CMD_UPDATE_DATASETS),
             $inputs
         );
-
-        return $form;
     }
 
     /**
      * @throws ilFormException
      * @throws ilCtrlException
      */
-    public function initFormCategoriesDatasetNames(string $action)
+    public function initFormCategoriesDatasetNames(string $action): ilPropertyFormGUI
     {
         $form = new ilPropertyFormGUI();
-        $form->setTitle($this->getPlugin()->txt(self::CMD_EDIT));
-        $form->setDescription($this->getPlugin()->txt(self::LANG_DESCRIPTION));
+        $form->setTitle($this->getPlugin()->txt(ilChartPluginConstant::CMD_EDIT));
+        $form->setDescription($this->getPlugin()->txt(ilChartPluginConstant::LANG_DESCRIPTION));
         $prop = $this->getProperties();
 
         $header = new ilFormSectionHeaderGUI();
@@ -851,7 +776,7 @@ class ilChartPluginGUI extends ilPageComponentPluginGUI
             $categoriesTitle[] = $prop["title_category_".($i + 1)];
         }
 
-        $category = new ilTextInputGUI($this->lng->txt("title"), self::CATEGORIES);
+        $category = new ilTextInputGUI($this->lng->txt("title"), ilChartPluginConstant::CATEGORIES);
         $category->setRequired(true);
         $category->setMulti(true, true);
 
@@ -876,7 +801,7 @@ class ilChartPluginGUI extends ilPageComponentPluginGUI
             $datasetsTitle[] = $prop["title_dataset_".($i + 1)];
         }
 
-        $dataset = new ilTextInputGUI($this->getPlugin()->txt(self::DATASETS), self::DATASETS);
+        $dataset = new ilTextInputGUI($this->getPlugin()->txt(ilChartPluginConstant::DATASETS), ilChartPluginConstant::DATASETS);
         $dataset->setRequired(true);
         $dataset->setMulti(true, true);
 
@@ -890,24 +815,29 @@ class ilChartPluginGUI extends ilPageComponentPluginGUI
         $dataset->setMultiValues($multiDatasets);
         $form->addItem($dataset);
 
-        if ($action === self::CMD_INSERT) {
-            $form->addCommandButton(self::CMD_CREATE_CATEGORIES_DATASET_NAMES, $this->dic->language()->txt(self::CMD_SAVE));
+        if ($action === ilChartPluginConstant::CMD_INSERT) {
+            $form->addCommandButton(ilChartPluginConstant::CMD_CREATE_CATEGORIES_DATASET_NAMES, $this->dic->language()->txt(ilChartPluginConstant::CMD_SAVE));
         } else {
-            $form->addCommandButton(self::CMD_UPDATE_CATEGORIES_DATASET_NAMES, $this->dic->language()->txt(self::CMD_SAVE));
+            $form->addCommandButton(ilChartPluginConstant::CMD_UPDATE_CATEGORIES_DATASET_NAMES, $this->dic->language()->txt(ilChartPluginConstant::CMD_SAVE));
         }
-        $form->addCommandButton(self::CMD_CANCEL, $this->dic->language()->txt(self::CMD_CANCEL));
+        $form->addCommandButton(ilChartPluginConstant::CMD_CANCEL, $this->dic->language()->txt(ilChartPluginConstant::CMD_CANCEL));
         $form->setFormAction($this->dic->ctrl()->getFormAction($this));
 
         return $form;
     }
 
-
+    /**
+     * @return void
+     */
     public function cancel(): void
     {
         $this->returnToParent();
     }
 
-
+    /**
+     * @param array $properties
+     * @return int
+     */
     private function getCountCategories(array $properties): int
     {
         $count = 0;
@@ -919,7 +849,10 @@ class ilChartPluginGUI extends ilPageComponentPluginGUI
         return $count;
     }
 
-
+    /**
+     * @param string $chart_type
+     * @return string
+     */
     private function getChartType(string $chart_type): string
     {
         if ($chart_type == "1") {
@@ -944,7 +877,7 @@ class ilChartPluginGUI extends ilPageComponentPluginGUI
         $datasets = [];
         $datasetsValueCategory = [];
         $countCategories = $this->getCountCategories($a_properties);
-        if ($a_properties[self::DATA_FORMAT] === "2") {
+        if ($a_properties[ilChartPluginConstant::DATA_FORMAT] === "2") {
             for($i = 0; $i < $countCategories; $i++) {
                 foreach ($a_properties as $key => $value) {
                     if (strpos($key, "value_dataset") > -1 && strpos($key, "_category_" . ($i + 1)) > -1) {
@@ -995,22 +928,6 @@ class ilChartPluginGUI extends ilPageComponentPluginGUI
             }
         }
         return $percent;
-    }
-
-    /**
-     * @param array $a_properties
-     * @return string
-     */
-    private function checkIfCategoriesDatasetNamesExist(array $a_properties): string
-    {
-        $exist = false;
-        foreach ($a_properties as $key => $value) {
-            if (strpos($key, "title_category") > -1 || strpos($key, "title_dataset") > -1) { // TODO replace it with str_replace
-                $exist = true;
-                break;
-            }
-        }
-        return $exist;
     }
 
     /**
@@ -1100,52 +1017,45 @@ class ilChartPluginGUI extends ilPageComponentPluginGUI
         global $DIC;
 
         self::$id_counter += 1;
-        $divcanid = self::DIV_CANVAS_ID_PREFIX . self::$id_counter;
-        $divid = self::DIV_ID_PREFIX . self::$id_counter;
-        $id = self::CANVAS_ID_PREFIX . self::$id_counter;
+        $divCanvasId = ilChartPluginConstant::DIV_CANVAS_ID_PREFIX . self::$id_counter;
+        $divId = ilChartPluginConstant::DIV_ID_PREFIX . self::$id_counter;
+        $id = ilChartPluginConstant::CANVAS_ID_PREFIX . self::$id_counter;
 
         $template = $DIC->ui()->mainTemplate();
-        $template->addCss(self::PLUGIN_DIRECTORY . "/css/chart.css");
-        $template->addJavaScript(self::PLUGIN_DIRECTORY . "/js/Chart.min.js");
-        $template->addJavaScript(self::PLUGIN_DIRECTORY . "/js/chartjs-plugin-datalabels.min.js");
-        $template->addJavaScript(self::PLUGIN_DIRECTORY . "/js/script.js");
+        $template->addCss(ilChartPluginConstant::PLUGIN_DIRECTORY . "/css/chart.css");
+        $template->addJavaScript(ilChartPluginConstant::PLUGIN_DIRECTORY . "/js/Chart.min.js");
+        $template->addJavaScript(ilChartPluginConstant::PLUGIN_DIRECTORY . "/js/chartjs-plugin-datalabels.min.js");
+        $template->addJavaScript(ilChartPluginConstant::PLUGIN_DIRECTORY . "/js/script.js");
 
         $properties = $a_properties;
-        $categoriesDatasetNamesExist = $this->checkIfCategoriesDatasetNamesExist($properties);
-        $tplName = "tpl.content.html";
-        if (!$categoriesDatasetNamesExist) {
-            $tplName = "tpl.content_data_not_exist.html";
-        }
 
         $tpl = new ilTemplate(
-            $tplName,
+            "tpl.content.html",
             true,
             true,
-            "public/" . self::PLUGIN_DIRECTORY,
+            "public/" . ilChartPluginConstant::PLUGIN_DIRECTORY,
             ilGlobalTemplateInterface::DEFAULT_BLOCK,
             true
         );
-        $tpl->setVariable("DIV", $divid);
+        $tpl->setVariable("DIV", $divId);
 
-        if ($categoriesDatasetNamesExist) {
-            $tpl->setVariable("DIV_CANVAS_ID", $divcanid);
-            $tpl->setVariable("CHART_ID", $id);
-            $tpl->setVariable("CHART_TITLE", $properties[self::CHART_TITLE]);
-            $tpl->setVariable("CHART_TYPE", $this->getChartType($properties[self::CHART_TYPE]));
-            $tpl->setVariable("CHART_MAX_VALUE", $properties[self::CHART_MAX_VALUE]);
-            $tpl->setVariable("CHART_DATA_FORMAT", $properties[self::DATA_FORMAT]);
+        $tpl->setVariable("DIV_CANVAS_ID", $divCanvasId);
+        $tpl->setVariable("CHART_ID", $id);
+        $tpl->setVariable("CHART_TITLE", $properties[ilChartPluginConstant::CHART_TITLE]);
+        $tpl->setVariable("CHART_TYPE", $this->getChartType($properties[ilChartPluginConstant::CHART_TYPE]));
+        $tpl->setVariable("CHART_MAX_VALUE", $properties[ilChartPluginConstant::CHART_MAX_VALUE]);
+        $tpl->setVariable("CHART_DATA_FORMAT", $properties[ilChartPluginConstant::DATA_FORMAT]);
 
-            if (!empty($properties[self::CURRENCY_SYMBOL])) {
-                $tpl->setVariable("CHART_CURR_SYMBOL", $properties[self::CURRENCY_SYMBOL]);
-            }
-
-            $tpl->setVariable("TITLE_CATEGORIES", $this->titleCategoryInputFields($properties));
-            $tpl->setVariable("TITLE_DATASETS", $this->titleDatasetInputFields($properties));
-            $tpl->setVariable("VALUE_DATASETS", $this->valueDatasetInputFields($properties));
-            $tpl->setVariable("COLOR_CATEGORY", $this->colorCategoryInputField($properties));
-            $tpl->setVariable("COLOR_DATASET", $this->colorDatasetInputField($properties));
-            $tpl->setVariable("PERC", $this->percentDataFormat($properties));
+        if (!empty($properties[ilChartPluginConstant::CURRENCY_SYMBOL])) {
+            $tpl->setVariable("CHART_CURR_SYMBOL", $properties[ilChartPluginConstant::CURRENCY_SYMBOL]);
         }
+
+        $tpl->setVariable("TITLE_CATEGORIES", $this->titleCategoryInputFields($properties));
+        $tpl->setVariable("TITLE_DATASETS", $this->titleDatasetInputFields($properties));
+        $tpl->setVariable("VALUE_DATASETS", $this->valueDatasetInputFields($properties));
+        $tpl->setVariable("COLOR_CATEGORY", $this->colorCategoryInputField($properties));
+        $tpl->setVariable("COLOR_DATASET", $this->colorDatasetInputField($properties));
+        $tpl->setVariable("PERC", $this->percentDataFormat($properties));
 
         $tpl->parseCurrentBlock();
 
@@ -1155,88 +1065,48 @@ class ilChartPluginGUI extends ilPageComponentPluginGUI
     /**
      * @throws ilCtrlException
      */
-    private function setTabs(string $a_active, bool $tabStyleVisible, bool $tabCategoriesDatasetnamesIsVisible = false): void
-    {
+    private function setTabs(
+        string $activeTab,
+        bool $tabStyleVisible,
+        bool $tabCategoriesDatasetNamesIsVisible = false
+    ): void {
         $pl = $this->getPlugin();
         $this->dic->tabs()->addTab(
-            self::LANG_CHART,
-            $pl->txt(self::LANG_CHART),
-            $this->dic->ctrl()->getLinkTarget($this, self::CMD_EDIT)
+            ilChartPluginConstant::TAB_CHART,
+            $pl->txt(ilChartPluginConstant::LANG_CHART),
+            $this->dic->ctrl()->getLinkTarget($this, ilChartPluginConstant::CMD_EDIT)
         );
 
-        if ($tabCategoriesDatasetnamesIsVisible) {
+        if ($tabCategoriesDatasetNamesIsVisible) {
             $this->dic->tabs()->addTab(
-                "categories-datasets",
-                $pl->txt(self::LANG_CATEGORIES_DATASETNAMES),
-                $this->dic->ctrl()->getLinkTarget($this, self::CMD_EDIT_CATEGORIES_DATASET_NAMES)
+                ilChartPluginConstant::TAB_CATEGORIES_DATASETNAMES,
+                $pl->txt(ilChartPluginConstant::LANG_CATEGORIES_DATASETNAMES),
+                $this->dic->ctrl()->getLinkTarget($this, ilChartPluginConstant::CMD_EDIT_CATEGORIES_DATASET_NAMES)
             );
         }
-
 
         if ($tabStyleVisible) {
             $this->dic->tabs()->addTab(
-                self::DATASETS,
-                $pl->txt(self::LANG_CHART_DATASETS),
-                $this->dic->ctrl()->getLinkTarget($this, self::CMD_EDIT_DATASETS)
+                ilChartPluginConstant::TAB_DATASETS,
+                $pl->txt(ilChartPluginConstant::LANG_CHART_DATASETS),
+                $this->dic->ctrl()->getLinkTarget($this, ilChartPluginConstant::CMD_EDIT_DATASETS)
             );
             $this->dic->tabs()->addTab(
-                self::TAB_STYLE,
-                $pl->txt(self::LANG_CHART_STYLE),
-                $this->dic->ctrl()->getLinkTarget($this, self::CMD_EDIT_STYLE)
+                ilChartPluginConstant::TAB_STYLE,
+                $pl->txt(ilChartPluginConstant::LANG_CHART_STYLE),
+                $this->dic->ctrl()->getLinkTarget($this, ilChartPluginConstant::CMD_EDIT_STYLE)
             );
         }
-        if ($a_active === "chart") {
-            $this->dic->tabs()->activateTab(self::LANG_CHART);
-        } elseif ($a_active === "style") {
-            $this->dic->tabs()->activateTab(self::TAB_STYLE);
-        } elseif ($a_active === self::DATASETS) {
-            $this->dic->tabs()->activateTab(self::DATASETS);
+
+        if ($activeTab === "chart") {
+            $this->dic->tabs()->activateTab(ilChartPluginConstant::TAB_CHART);
+        } elseif ($activeTab === "style") {
+            $this->dic->tabs()->activateTab(ilChartPluginConstant::TAB_STYLE);
+        } elseif ($activeTab === "datasets") {
+            $this->dic->tabs()->activateTab(ilChartPluginConstant::TAB_DATASETS);
+        } elseif($activeTab === "categories_datasetnames") {
+            $this->dic->tabs()->activateTab(ilChartPluginConstant::TAB_CATEGORIES_DATASETNAMES);
         }
-    }
-
-    /**
-     * @param array $a_properties
-     * @return array
-     */
-    private function getTranformedProperties(array $a_properties): array
-    {
-        $tranformedProperties = [];
-        $unchangeableKeys = [self::CHART_TITLE, self::CHART_TYPE, self::DATA_FORMAT, self::CURRENCY_SYMBOL];
-        foreach($a_properties as $key => $value) {
-            if (in_array($key, $unchangeableKeys)) {
-                $tranformedProperties[$key] = $value;
-            } elseif (strpos($key, "key") > -1) {
-                $indexCategory = substr($key, 3);
-                $tranformedProperties["title_category_" . $indexCategory] = $value;
-                $tranformedProperties["value_dataset_1_category_" . $indexCategory] = $a_properties["value" . $indexCategory];
-            } elseif (strpos($key, "color") > -1) {
-                $indexCategory = substr($key, 5);
-                $tranformedProperties["color_category_" . $indexCategory] = $a_properties["color" . $indexCategory];
-            }
-        }
-
-        $tranformedProperties["title_dataset_1"] = "Dataset";
-        $tranformedProperties["color_dataset_1"] = $tranformedProperties["color_category_1"];
-        $tranformedProperties[self::CHART_MAX_VALUE] = "";
-
-        unset($a_properties["color1"]);
-        unset($a_properties["color2"]);
-        unset($a_properties["key1"]);
-        unset($a_properties["key2"]);
-        unset($a_properties["value1"]);
-        unset($a_properties["value2"]);
-
-        return $tranformedProperties;
-    }
-
-    private function checkIfChartFromLastVersion(array $properties): bool
-    {
-        foreach($properties as $key => $value) {
-            if(strpos($key, "key") > -1) {
-                return true;
-            }
-        }
-        return false;
     }
 
     /**
