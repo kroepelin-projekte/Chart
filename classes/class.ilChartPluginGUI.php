@@ -273,11 +273,10 @@ class ilChartPluginGUI extends ilPageComponentPluginGUI
      */
     private function updateChart($data, bool $idUpdate = false): void
     {
-        $properties = [];
+        $properties = $this->getProperties();
         $properties[self::CHART_TITLE] = $data["chart"][self::CHART_TITLE];
         $properties[self::CHART_TYPE] = $data["chart"][self::CHART_TYPE];
         $properties[self::CHART_MAX_VALUE] = $data["chart"][self::CHART_MAX_VALUE];
-
 
         $dataFormat = $data["chart"][self::DATA_FORMAT];
         $format = $dataFormat[0];
@@ -285,6 +284,16 @@ class ilChartPluginGUI extends ilPageComponentPluginGUI
             $properties[self::CURRENCY_SYMBOL] = $dataFormat[1]["symbol"];
         }
         $properties[self::DATA_FORMAT] = $format;
+
+        // Set default values
+        $properties['title_category_1'] = 'Kategorie';
+        $properties['title_dataset_1'] = 'Dataset';
+        $properties['value_dataset_1_category_1'] = 0;
+
+        $colors = $this->getShuffleExtendedColors();
+
+        $properties['color_dataset_1'] = $colors[0];
+        $properties['color_category_1'] = $colors[1];
 
         $success = false;
         if ($idUpdate) {
@@ -375,9 +384,6 @@ class ilChartPluginGUI extends ilPageComponentPluginGUI
             $this->tpl->setContent($form->getHtml());
             return;
         }
-
-
-
 
         $shuffleExtendedColors = $this->getShuffleExtendedColors();
         // Set default colors for categories
