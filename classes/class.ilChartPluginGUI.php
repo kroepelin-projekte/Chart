@@ -583,7 +583,7 @@ class ilChartPluginGUI extends ilPageComponentPluginGUI
         $inputFields[ilChartPluginConstant::CHART_MAX_VALUE] = $ui->input()->field()->text(
             $this->getPlugin()->txt(ilChartPluginConstant::CHART_MAX_VALUE),
             ""
-        )->withValue($prop[ilChartPluginConstant::CHART_MAX_VALUE] ?? "")->withRequired(true);
+        )->withValue($prop[ilChartPluginConstant::CHART_MAX_VALUE] ?? "");
 
         $group1 = $ui->input()->field()->group(
             [
@@ -597,7 +597,6 @@ class ilChartPluginGUI extends ilPageComponentPluginGUI
             [],
             $this->getPlugin()->txt("percent")
         );
-
 
         $inputFields[ilChartPluginConstant::DATA_FORMAT] = $ui->input()->field()->switchableGroup(
             [
