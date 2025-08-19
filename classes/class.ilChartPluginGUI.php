@@ -98,7 +98,6 @@ class ilChartPluginGUI extends ilPageComponentPluginGUI
         $form = $form->withRequest($this->dic->http()->request());
         $result = $form->getData();
 
-        // TODO Test it
         if (!$this->validate($result, ilChartPluginConstant::FORM_CHART)) {
             $this->tpl->setOnScreenMessage("failure", $this->dic->language()->txt(ilChartPluginConstant::MESSAGE_FAILURE));
             $this->dic->ctrl()->redirectByClass(ilChartPluginConstant::PLUGIN_CLASS_NAME_GUI, ilChartPluginConstant::CMD_EDIT);
@@ -252,7 +251,6 @@ class ilChartPluginGUI extends ilPageComponentPluginGUI
         $result = $form->getData();
 
         if ($request->getMethod() == "POST") {
-            // TODO Test it
             if (!$this->validate($result, ilChartPluginConstant::FORM_CHART)) {
                 $this->tpl->setOnScreenMessage("failure", $this->dic->language()->txt(ilChartPluginConstant::MESSAGE_FAILURE));
                 $this->dic->ctrl()->redirectByClass(ilChartPluginConstant::PLUGIN_CLASS_NAME_GUI, ilChartPluginConstant::CMD_EDIT);
@@ -274,7 +272,6 @@ class ilChartPluginGUI extends ilPageComponentPluginGUI
 
         $properties = $this->getProperties();
 
-        // TODO
         if (!$form->checkInput()) {
             $this->tpl->setOnScreenMessage("failure", $this->dic->language()->txt(ilChartPluginConstant::MESSAGE_FAILURE));
             $this->setTabs(ilChartPluginConstant::LANG_CATEGORIES_DATASETNAMES, true, true);
@@ -397,7 +394,6 @@ class ilChartPluginGUI extends ilPageComponentPluginGUI
         $result = $form->getData();
 
         if ($request->getMethod() == "POST") {
-            // TODO Test it
             if (!$this->validate($result, ilChartPluginConstant::DATASETS)) {
                 $this->tpl->setOnScreenMessage("failure", $this->dic->language()->txt(ilChartPluginConstant::MESSAGE_FAILURE));
                 $this->returnToParent();
@@ -412,7 +408,6 @@ class ilChartPluginGUI extends ilPageComponentPluginGUI
                     for ($j = 0; $j < $countDatasets; $j++) {
                         $value = trim($result["hidden_dataset_" . ($j + 1) . "_category_" . ($i + 1)]);
 
-                        // TODO Fix display screen message
                         if (!is_numeric($value) || str_starts_with($value, "0")) {
                             $this->tpl->setOnScreenMessage(
                                 "failure", $this->dic->language()->txt(ilChartPluginConstant::MESSAGE_FAILURE)
@@ -431,7 +426,6 @@ class ilChartPluginGUI extends ilPageComponentPluginGUI
                             $result["group_category_" . ($i + 1)][1]["dataset_" . ($j + 1) . "_category_" . ($i + 1)]
                         );
 
-                        // TODO Fix display screen message
                         if (!is_numeric($value) || str_starts_with($value, "0")) {
                             $this->tpl->setOnScreenMessage(
                                 "failure", $this->dic->language()->txt(ilChartPluginConstant::MESSAGE_FAILURE)
