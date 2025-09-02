@@ -98,7 +98,7 @@ class ilChartPluginGUI extends ilPageComponentPluginGUI
         $form = $form->withRequest($this->dic->http()->request());
         $result = $form->getData();
 
-        if (!$this->validate($result, ilChartPluginConstant::FORM_CHART)) {
+        if (!$this->validate($result)) {
             $this->tpl->setOnScreenMessage("failure", $this->dic->language()->txt(ilChartPluginConstant::MESSAGE_FAILURE));
             $this->dic->ctrl()->redirectByClass(ilChartPluginConstant::PLUGIN_CLASS_NAME_GUI, ilChartPluginConstant::CMD_EDIT);
         }
@@ -251,7 +251,7 @@ class ilChartPluginGUI extends ilPageComponentPluginGUI
         $result = $form->getData();
 
         if ($request->getMethod() == "POST") {
-            if (!$this->validate($result, ilChartPluginConstant::FORM_CHART)) {
+            if (!$this->validate($result)) {
                 $this->tpl->setOnScreenMessage("failure", $this->dic->language()->txt(ilChartPluginConstant::MESSAGE_FAILURE));
                 $this->dic->ctrl()->redirectByClass(ilChartPluginConstant::PLUGIN_CLASS_NAME_GUI, ilChartPluginConstant::CMD_EDIT);
             }
@@ -335,10 +335,19 @@ class ilChartPluginGUI extends ilPageComponentPluginGUI
             }
             $properties["color_dataset_".($i + 1)] = $color;
         }
-
         $properties = array_merge($properties, $datasetValues);
 
-        foreach ($form->getInput(ilChartPluginConstant::CATEGORIES) as $key => $value) {
+        $categories = $form->getInput(ilChartPluginConstant::CATEGORIES);
+
+        foreach ($properties as $key => $value) {
+            if (str_starts_with($key,'title_category_')) {
+                unset($properties[$key]);
+            } else if (str_starts_with($key,'title_dataset_')) {
+                unset($properties[$key]);
+            }
+        }
+
+        foreach ($categories as $key => $value) {
             $properties["title_category_".($key + 1)] = $value;
         }
 
@@ -393,11 +402,6 @@ class ilChartPluginGUI extends ilPageComponentPluginGUI
         $result = $form->getData();
 
         if ($request->getMethod() == "POST") {
-            if (!$this->validate($result, ilChartPluginConstant::DATASETS)) {
-                $this->tpl->setOnScreenMessage("failure", $this->dic->language()->txt(ilChartPluginConstant::MESSAGE_FAILURE));
-                $this->returnToParent();
-            }
-
             $properties = $this->getProperties();
             $countDatasets = $this->getCountPropertiesByType($properties, "title_dataset");
             $countCategories = $this->getCountPropertiesByType($properties, "title_category");
@@ -407,7 +411,7 @@ class ilChartPluginGUI extends ilPageComponentPluginGUI
                     for ($j = 0; $j < $countDatasets; $j++) {
                         $value = trim($result["hidden_dataset_" . ($j + 1) . "_category_" . ($i + 1)]);
 
-                        if (!is_numeric($value) || str_starts_with($value, "0")) {
+                        if (!is_numeric($value) || (str_starts_with($value, "0") && strlen((string) abs($value)) > 1)) {
                             $this->tpl->setOnScreenMessage(
                                 "failure", $this->dic->language()->txt(ilChartPluginConstant::MESSAGE_FAILURE)
                             );
@@ -427,7 +431,9 @@ class ilChartPluginGUI extends ilPageComponentPluginGUI
 
                         if (!is_numeric($value) || (str_starts_with($value, "0") && strlen((string) abs($value)) > 1)) {
                             $this->tpl->setOnScreenMessage(
-                                "failure", $this->dic->language()->txt(ilChartPluginConstant::MESSAGE_FAILURE)
+                                "failure",
+                                $this->dic->language()->txt(ilChartPluginConstant::MESSAGE_FAILURE),
+                                true
                             );
                             $this->dic->ctrl()->redirect($this, ilChartPluginConstant::CMD_EDIT_DATASETS);
                         }
@@ -468,32 +474,21 @@ class ilChartPluginGUI extends ilPageComponentPluginGUI
 
     /**
      * @param        $data
-     * @param string $form
      * @return bool
      */
-    private function validate($data, string $form): bool
+    private function validate($data): bool
     {
-        if ($form === ilChartPluginConstant::FORM_CHART) {
-            if (array_key_exists("chart_type", $data["chart"])
-                && $data["chart"]["chart_type"] === ""
-            ) {
-                return false;
-            }
+        if (array_key_exists("chart_type", $data["chart"])
+            && $data["chart"]["chart_type"] === ""
+        ) {
+            return false;
+        }
 
-            if (array_key_exists("chart_type", $data["chart"])
-                && !is_numeric($data["chart"]["chart_max_value"])
-                && $data["chart"]["chart_max_value"] !== ""
-            ) {
-                return false;
-            }
-        } elseif ($form === ilChartPluginConstant::FORM_DATASETS) {
-            foreach($data as $key => $value) {
-                if (str_starts_with($key, "hidden_dataset_")) {
-                    if(!is_numeric($value) || $value === "") {
-                        return false;
-                    }
-                }
-            }
+        if (array_key_exists("chart_type", $data["chart"])
+            && !is_numeric($data["chart"]["chart_max_value"])
+            && $data["chart"]["chart_max_value"] !== ""
+        ) {
+            return false;
         }
         return true;
     }
