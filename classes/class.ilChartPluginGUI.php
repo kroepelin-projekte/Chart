@@ -388,7 +388,6 @@ class ilChartPluginGUI extends ilPageComponentPluginGUI
     public function updateDatasets(): void
     {
         $request = $this->dic->http()->request();
-
         $form = $this->initFormDatasetsEdit();
         $form = $form->withRequest($request);
         $result = $form->getData();
@@ -426,7 +425,7 @@ class ilChartPluginGUI extends ilPageComponentPluginGUI
                             $result["group_category_" . ($i + 1)][1]["dataset_" . ($j + 1) . "_category_" . ($i + 1)]
                         );
 
-                        if (!is_numeric($value) || str_starts_with($value, "0")) {
+                        if (!is_numeric($value) || (str_starts_with($value, "0") && strlen((string) abs($value)) > 1)) {
                             $this->tpl->setOnScreenMessage(
                                 "failure", $this->dic->language()->txt(ilChartPluginConstant::MESSAGE_FAILURE)
                             );
