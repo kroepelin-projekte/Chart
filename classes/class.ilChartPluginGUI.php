@@ -98,11 +98,12 @@ class ilChartPluginGUI extends ilPageComponentPluginGUI
         $form = $form->withRequest($this->dic->http()->request());
         $result = $form->getData();
 
-        if (!$this->validate($result)) {
+        if (empty($result) || !$this->validate($result)) {
             $this->tpl->setOnScreenMessage("failure", $this->dic->language()->txt(ilChartPluginConstant::MESSAGE_FAILURE));
-            $this->dic->ctrl()->redirectByClass(ilChartPluginConstant::PLUGIN_CLASS_NAME_GUI, ilChartPluginConstant::CMD_EDIT);
+            $this->insert();
+        } else {
+            $this->updateChart($result);
         }
-        $this->updateChart($result);
     }
 
     /**
