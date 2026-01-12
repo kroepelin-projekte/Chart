@@ -1,7 +1,7 @@
 <?php
 
 $id = "chrt";
-$version = "6.0";
+$version = "6.0.1";
 $ilias_min_version = "10";
 $ilias_max_version = "10.999";
 $responsible = "Kröpelin Projekt GmbH";
