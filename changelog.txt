@@ -16,3 +16,5 @@
 -Fix bugs in colors
 6.0
 - Refactor Code ILIAS10
+6.0.1
+-Fix bug on chat creation
