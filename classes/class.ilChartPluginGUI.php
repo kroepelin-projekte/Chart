@@ -17,7 +17,7 @@
  *********************************************************************/
 
 use ILIAS\DI\Container;
-use \ILIAS\UI\Component\Input\Container\Form\Standard;
+use ILIAS\UI\Component\Input\Container\Form\Standard;
 
 /**
  * Class ilChartPluginGUI
@@ -58,7 +58,8 @@ class ilChartPluginGUI extends ilPageComponentPluginGUI
     public function executeCommand(): void
     {
         $cmd = $this->dic->ctrl()->getCmd();
-        if (in_array($cmd, [
+        if (
+            in_array($cmd, [
             ilChartPluginConstant::CMD_CREATE,
             ilChartPluginConstant::CMD_SAVE,
             ilChartPluginConstant::CMD_EDIT,
@@ -70,7 +71,8 @@ class ilChartPluginGUI extends ilPageComponentPluginGUI
             ilChartPluginConstant::CMD_UPDATE_STYLE,
             ilChartPluginConstant::CMD_UPDATE_DATASETS,
             ilChartPluginConstant::CMD_CANCEL
-        ])) {
+            ])
+        ) {
             $this->$cmd();
         }
     }
@@ -216,7 +218,7 @@ class ilChartPluginGUI extends ilPageComponentPluginGUI
         if ($success) {
             $this->tpl->setOnScreenMessage("success", $this->dic->language()->txt(ilChartPluginConstant::MESSAGE_SUCCESS), true);
 
-            if($idUpdate) {
+            if ($idUpdate) {
                 $this->dic->ctrl()->redirectByClass(ilChartPluginConstant::PLUGIN_CLASS_NAME_GUI, ilChartPluginConstant::CMD_EDIT);
             }
             $this->returnToParent();
@@ -284,8 +286,7 @@ class ilChartPluginGUI extends ilPageComponentPluginGUI
         $datasetValues = [];
         foreach ($form->getInput(ilChartPluginConstant::CATEGORIES) as $key => $value) {
             foreach ($form->getInput(ilChartPluginConstant::DATASETS) as $k => $val) {
-
-                if(array_key_exists("value_dataset_" . ($k + 1) . "_category_" . ($key + 1), $properties)) {
+                if (array_key_exists("value_dataset_" . ($k + 1) . "_category_" . ($key + 1), $properties)) {
                     $datasetValues["value_dataset_" . ($k + 1) . "_category_" . ($key + 1)] = $properties["value_dataset_" . ($k + 1) . "_category_" . ($key + 1)];
                 } else {
                     $datasetValues["value_dataset_" . ($k + 1) . "_category_" . ($key + 1)] = "0";
@@ -320,7 +321,10 @@ class ilChartPluginGUI extends ilPageComponentPluginGUI
             } else {
                 $j += 1;
             }
-            $properties["color_category_".($i + 1)] = $color;
+            // Don't set shuffled color if a color is already set
+            if (!array_key_exists("color_category_" . ($i + 1), $properties) || empty($properties["color_category_" . ($i + 1)])) {
+                $properties["color_category_" . ($i + 1)] = $color;
+            }
         }
 
         $shuffleExtendedColors = $this->getShuffleExtendedColors();
@@ -334,27 +338,31 @@ class ilChartPluginGUI extends ilPageComponentPluginGUI
             } else {
                 $j += 1;
             }
-            $properties["color_dataset_".($i + 1)] = $color;
+
+            // Don't set shuffled color if a color is already set
+            if (!array_key_exists("color_dataset_" . ($i + 1), $properties) || empty($properties["color_dataset_" . ($i + 1)])) {
+                $properties["color_dataset_" . ($i + 1)] = $color;
+            }
         }
         $properties = array_merge($properties, $datasetValues);
 
         $categories = $form->getInput(ilChartPluginConstant::CATEGORIES);
 
         foreach ($properties as $key => $value) {
-            if (str_starts_with($key,'title_category_')) {
+            if (str_starts_with($key, 'title_category_')) {
                 unset($properties[$key]);
-            } else if (str_starts_with($key,'title_dataset_')) {
+            } elseif (str_starts_with($key, 'title_dataset_')) {
                 unset($properties[$key]);
             }
         }
 
         foreach ($categories as $key => $value) {
-            $properties["title_category_".($key + 1)] = $value;
+            $properties["title_category_" . ($key + 1)] = $value;
         }
 
         $datasets = $form->getInput(ilChartPluginConstant::DATASETS);
         foreach ($datasets as $key => $value) {
-            $properties["title_dataset_".($key + 1)] = $value;
+            $properties["title_dataset_" . ($key + 1)] = $value;
         }
 
         if ($this->updateElement($properties)) {
@@ -371,10 +379,10 @@ class ilChartPluginGUI extends ilPageComponentPluginGUI
         global $DIC;
 
         $request = $DIC->http()->request();
-        $form  = $this->initFormStyleEdit();
+        $form = $this->initFormStyleEdit();
 
         if ($request->getMethod() == "POST") {
-            $form  = $form->withRequest($request);
+            $form = $form->withRequest($request);
             $formData = $form->getData();
             $properties = $this->getProperties();
 
@@ -414,7 +422,8 @@ class ilChartPluginGUI extends ilPageComponentPluginGUI
 
                         if (!is_numeric($value) || (str_starts_with($value, "0") && strlen((string) abs($value)) > 1)) {
                             $this->tpl->setOnScreenMessage(
-                                "failure", $this->dic->language()->txt(ilChartPluginConstant::MESSAGE_FAILURE)
+                                "failure",
+                                $this->dic->language()->txt(ilChartPluginConstant::MESSAGE_FAILURE)
                             );
                             $this->dic->ctrl()->redirect($this, ilChartPluginConstant::CMD_EDIT_DATASETS);
                         }
@@ -464,8 +473,7 @@ class ilChartPluginGUI extends ilPageComponentPluginGUI
     private function getCountPropertiesByType(array $properties, string $searchString): int
     {
         $count = 0;
-        foreach($properties as $key => $value) {
-
+        foreach ($properties as $key => $value) {
             if (strpos($key, $searchString) > -1) {
                 $count += 1;
             }
@@ -479,13 +487,15 @@ class ilChartPluginGUI extends ilPageComponentPluginGUI
      */
     private function validate($data): bool
     {
-        if (array_key_exists("chart_type", $data["chart"])
+        if (
+            array_key_exists("chart_type", $data["chart"])
             && $data["chart"]["chart_type"] === ""
         ) {
             return false;
         }
 
-        if (array_key_exists("chart_type", $data["chart"])
+        if (
+            array_key_exists("chart_type", $data["chart"])
             && !is_numeric($data["chart"]["chart_max_value"])
             && $data["chart"]["chart_max_value"] !== ""
         ) {
@@ -645,7 +655,6 @@ class ilChartPluginGUI extends ilPageComponentPluginGUI
         $inputFieldsDatasetsColors = [];
         $countColorsDataset = 0;
         foreach ($prop as $k => $val) {
-
             if (strpos($k, "title_dataset") > -1) {
                 $i = substr($k, strpos($k, "title_dataset") + 14, strlen($k));
 
@@ -699,23 +708,23 @@ class ilChartPluginGUI extends ilPageComponentPluginGUI
 
         $countCategories = 0;
         $countDatasets = 0;
-        foreach($prop as $key => $value) {
-            if(strpos($key, "title_category_") > -1) {
+        foreach ($prop as $key => $value) {
+            if (strpos($key, "title_category_") > -1) {
                 $countCategories += 1;
             }
-            if(strpos($key, "title_dataset_") > -1) {
+            if (strpos($key, "title_dataset_") > -1) {
                 $countDatasets += 1;
             }
         }
 
         $hiddenInputs = [];
         $inputs = [];
-        for($i = 0; $i < $countCategories; $i++) {
+        for ($i = 0; $i < $countCategories; $i++) {
             $groupCategories = [];
             $inputDatasets = [];
-            for($j = 0; $j < $countDatasets; $j++) {
-                $inputDatasets["dataset_" . ($j + 1) . "_category_" . ($i + 1)] = $ui->input()->field()->text($prop["title_dataset_" . ($j + 1)])->withValue($prop["value_dataset_" .($j + 1) . "_category_" . ($i + 1)]);
-                $hiddenInputs["dataset_" . ($j + 1) . "_category_" . ($i + 1)] = $ui->input()->field()->hidden()->withValue($prop["value_dataset_" .($j + 1) . "_category_" . ($i + 1)]);
+            for ($j = 0; $j < $countDatasets; $j++) {
+                $inputDatasets["dataset_" . ($j + 1) . "_category_" . ($i + 1)] = $ui->input()->field()->text($prop["title_dataset_" . ($j + 1)])->withValue($prop["value_dataset_" . ($j + 1) . "_category_" . ($i + 1)]);
+                $hiddenInputs["dataset_" . ($j + 1) . "_category_" . ($i + 1)] = $ui->input()->field()->hidden()->withValue($prop["value_dataset_" . ($j + 1) . "_category_" . ($i + 1)]);
             }
 
             $groupCategories["category_" . ($i + 1)] = $ui->input()->field()->group(
@@ -760,8 +769,8 @@ class ilChartPluginGUI extends ilPageComponentPluginGUI
         $countCategory = $this->getCountPropertiesByType($prop, "title_category");
 
         $categoriesTitle = [];
-        for($i = 0; $i < $countCategory; $i++) {
-            $categoriesTitle[] = $prop["title_category_".($i + 1)];
+        for ($i = 0; $i < $countCategory; $i++) {
+            $categoriesTitle[] = $prop["title_category_" . ($i + 1)];
         }
 
         $category = new ilTextInputGUI($this->lng->txt("title"), ilChartPluginConstant::CATEGORIES);
@@ -785,8 +794,8 @@ class ilChartPluginGUI extends ilPageComponentPluginGUI
 
         $countDataset = $this->getCountPropertiesByType($prop, "title_dataset");
         $datasetsTitle = [];
-        for($i = 0; $i < $countDataset; $i++) {
-            $datasetsTitle[] = $prop["title_dataset_".($i + 1)];
+        for ($i = 0; $i < $countDataset; $i++) {
+            $datasetsTitle[] = $prop["title_dataset_" . ($i + 1)];
         }
 
         $dataset = new ilTextInputGUI($this->getPlugin()->txt(ilChartPluginConstant::DATASETS), ilChartPluginConstant::DATASETS);
@@ -829,8 +838,8 @@ class ilChartPluginGUI extends ilPageComponentPluginGUI
     private function getCountCategories(array $properties): int
     {
         $count = 0;
-        foreach($properties as $key => $value) {
-            if(strpos($key, "title_category") > -1) {
+        foreach ($properties as $key => $value) {
+            if (strpos($key, "title_category") > -1) {
                 $count += 1;
             }
         }
@@ -866,24 +875,24 @@ class ilChartPluginGUI extends ilPageComponentPluginGUI
         $datasetsValueCategory = [];
         $countCategories = $this->getCountCategories($a_properties);
         if ($a_properties[ilChartPluginConstant::DATA_FORMAT] === "2") {
-            for($i = 0; $i < $countCategories; $i++) {
+            for ($i = 0; $i < $countCategories; $i++) {
                 foreach ($a_properties as $key => $value) {
                     if (strpos($key, "value_dataset") > -1 && strpos($key, "_category_" . ($i + 1)) > -1) {
                         $indexDataset = substr($key, 14, strpos($key, "_category_") - 14);
                     }
                     if (strpos($key, "_category_" . ($i + 1)) > -1 && ($key !== "title_category_" . ($i + 1)) && ($key !== "color_category_" . ($i + 1))) {
-                        $value = $a_properties["value_dataset_" . $indexDataset ."_category_" .($i + 1)];
+                        $value = $a_properties["value_dataset_" . $indexDataset . "_category_" . ($i + 1)];
                         if (strpos($value, ",") > -1) {
                             $value = str_replace(",", ".", $value);
                         }
-                        $datasetsValueCategory["category_" . ($i + 1)]["dataset_". $indexDataset] = $value;
+                        $datasetsValueCategory["category_" . ($i + 1)]["dataset_" . $indexDataset] = $value;
                     }
                 }
             }
 
-            foreach($datasetsValueCategory as $key => $value) {
+            foreach ($datasetsValueCategory as $key => $value) {
                 $indexCategory = substr($key, strpos($key, "category_") + 9);
-                foreach($value as $k => $val) {
+                foreach ($value as $k => $val) {
                     $indexDataset = substr($k, strpos($k, "dataset_") + 8);
                     $datasets["dataset_" . $indexDataset]["category_" . $indexCategory] = $datasetsValueCategory["category_" . $indexCategory]["dataset_" . $indexDataset];
                 }
@@ -891,25 +900,25 @@ class ilChartPluginGUI extends ilPageComponentPluginGUI
         }
 
         $sumDatasetValues = [];
-        foreach($datasets as $key => $value) {
+        foreach ($datasets as $key => $value) {
             $indexDataset = substr($key, strpos($key, "dataset_") + 8);
             $sumDataset = 0;
-            foreach($value as $k => $val) {
+            foreach ($value as $k => $val) {
                 $indexCategory = substr($k, strpos($k, "category_") + 9);
-                if(strpos($datasets["dataset_" . $indexDataset]["category_". $indexCategory], ",") > -1) {
-                    $datasets["dataset_" . $indexDataset]["category_". $indexCategory] = str_replace(",", ".", $value);
+                if (strpos($datasets["dataset_" . $indexDataset]["category_" . $indexCategory], ",") > -1) {
+                    $datasets["dataset_" . $indexDataset]["category_" . $indexCategory] = str_replace(",", ".", $value);
                 }
-                $tmpVal = (float) $datasets["dataset_" . $indexDataset]["category_". $indexCategory];
+                $tmpVal = (float) $datasets["dataset_" . $indexDataset]["category_" . $indexCategory];
                 $sumDataset += $tmpVal;
             }
             $sumDatasetValues["sum_dataset_" . $indexDataset] = $sumDataset;
         }
-        foreach($datasets as $key => $value) {
+        foreach ($datasets as $key => $value) {
             $indexDataset = substr($key, strpos($key, "dataset_") + 8);
-            if($sumDatasetValues["sum_dataset_" . $indexDataset] > 0) {
+            if ($sumDatasetValues["sum_dataset_" . $indexDataset] > 0) {
                 foreach ($value as $k => $val) {
                     $indexCategory = substr($k, strpos($k, "category_") + 9);
-                    $tmpVal = (float)$datasets["dataset_" . $indexDataset]["category_" . $indexCategory];
+                    $tmpVal = (float) $datasets["dataset_" . $indexDataset]["category_" . $indexCategory];
                     $percentValue = round(($tmpVal * 100 / $sumDatasetValues["sum_dataset_" . $indexDataset]), 2);
                     $percent .= '<input type="hidden" id="' . $key . "_" . $k . '_percent" value="' . $percentValue . '">';
                 }
@@ -927,7 +936,7 @@ class ilChartPluginGUI extends ilPageComponentPluginGUI
         $categoryFields = "";
         foreach ($a_properties as $key => $value) {
             if (strpos($key, "title_category") > -1) {
-                $categoryFields .= '<input type="hidden" id="'.$key.'" value="'.$value.'">';
+                $categoryFields .= '<input type="hidden" id="' . $key . '" value="' . $value . '">';
             }
         }
         return $categoryFields;
@@ -942,7 +951,7 @@ class ilChartPluginGUI extends ilPageComponentPluginGUI
         $datasetFields = "";
         foreach ($a_properties as $key => $value) {
             if (strpos($key, "title_dataset") > -1) {
-                $datasetFields .= '<input type="hidden" id="'.$key.'" value="'.$value.'">';
+                $datasetFields .= '<input type="hidden" id="' . $key . '" value="' . $value . '">';
             }
         }
         return $datasetFields;
@@ -958,7 +967,7 @@ class ilChartPluginGUI extends ilPageComponentPluginGUI
         foreach ($a_properties as $key => $value) {
             if (strpos($key, "value_dataset") > -1) {
                 $value = str_replace(',', '.', $value);
-                $valueFields .= '<input type="hidden" id="'.$key.'" value="' . $value . '">';
+                $valueFields .= '<input type="hidden" id="' . $key . '" value="' . $value . '">';
             }
         }
         return $valueFields;
@@ -973,7 +982,7 @@ class ilChartPluginGUI extends ilPageComponentPluginGUI
         $colorFields = "";
         foreach ($a_properties as $key => $value) {
             if (strpos($key, "color_category") > -1) {
-                $colorFields .= '<input type="hidden" id="'.$key.'" value="'.$value.'">';
+                $colorFields .= '<input type="hidden" id="' . $key . '" value="' . $value . '">';
             }
         }
         return $colorFields;
@@ -990,7 +999,7 @@ class ilChartPluginGUI extends ilPageComponentPluginGUI
         $colorFields = "";
         foreach ($a_properties as $key => $value) {
             if (strpos($key, "color_dataset") > -1) {
-                $colorFields .= '<input type="hidden" id="'.$key.'" value="'.$value.'">';
+                $colorFields .= '<input type="hidden" id="' . $key . '" value="' . $value . '">';
             }
         }
         return $colorFields;
@@ -1092,7 +1101,7 @@ class ilChartPluginGUI extends ilPageComponentPluginGUI
             $this->dic->tabs()->activateTab(ilChartPluginConstant::TAB_STYLE);
         } elseif ($activeTab === "datasets") {
             $this->dic->tabs()->activateTab(ilChartPluginConstant::TAB_DATASETS);
-        } elseif($activeTab === "categories_datasetnames") {
+        } elseif ($activeTab === "categories_datasetnames") {
             $this->dic->tabs()->activateTab(ilChartPluginConstant::TAB_CATEGORIES_DATASETNAMES);
         }
     }

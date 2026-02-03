@@ -18,3 +18,6 @@
 - Refactor Code ILIAS10
 6.0.1
 -Fix bug on chat creation
+6.0.2
+- Fix bug: Styles for all values were reset when adding or removing entries in "Category dataset names" or "Datasets".
+- Fix bug: Prevent JS error after removing a dataset.

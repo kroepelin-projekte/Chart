@@ -130,39 +130,34 @@
             }
             dataDataset[n] = dataDatasetTmp;
 
-            if (type === 'horizontalBar') {
-                datasetForChart[n] = datasetHorizontalBarChart(datasetDiv[n].value, dataDataset[n], colorDatasetDiv[n].value);
-            } else if (type === 'bar') {
-                datasetForChart[n] = datasetVerticalBarChart(datasetDiv[n].value, dataDataset[n], colorDatasetDiv[n].value);
-            } else if (type === 'pie') {
-                datasetForChart[n] = datasetPieChart(datasetDiv[n].value, dataDataset[n], categoriesColors)
-            } else if (type === 'line') {
-                datasetForChart[n] = datasetLineChart(datasetDiv[n].value, dataDataset[n], colorDatasetDiv[n].value);
+            if (dataDataset[n] && datasetDiv[n]) { // Prevent JS Error if dataset was deleted
+              if (type === 'horizontalBar') {
+                  datasetForChart[n] = datasetHorizontalBarChart(datasetDiv[n].value, dataDataset[n], colorDatasetDiv[n].value);
+              } else if (type === 'bar') {
+                  datasetForChart[n] = datasetVerticalBarChart(datasetDiv[n].value, dataDataset[n], colorDatasetDiv[n].value);
+              } else if (type === 'pie') {
+                  datasetForChart[n] = datasetPieChart(datasetDiv[n].value, dataDataset[n], categoriesColors)
+              } else if (type === 'line') {
+                  datasetForChart[n] = datasetLineChart(datasetDiv[n].value, dataDataset[n], colorDatasetDiv[n].value);
+              }
             }
         }
 
         canVas = document.getElementById(chartId).getContext('2d');
 
         if (type === 'pie') {
-
             optionsPie = getOptionsPie(symbol, title);
             dataTable = getDataTable(type, chartLabels.labels, datasetForChart, optionsPie);
             thisChart = new Chart(canVas, dataTable);
-
         } else if (type === 'line') {
-
             optionsLine = getOptionsLine(symbol, title, chartMaxValue);
             dataTable = getDataTable(type, chartLabels.labels, datasetForChart, optionsLine);
             thisChart = new Chart(canVas, dataTable);
-
         } else if (type === 'bar') {
-
             optionsBar = getOptionsVerticalBar(symbol, title, chartMaxValue);
             dataTable = getDataTable(type, chartLabels.labels, datasetForChart, optionsBar);
             thisChart = new Chart(canVas, dataTable);
-
         } else if (type === 'horizontalBar') {
-
             optionsHorizontalBar = getOptionsHorizontalBar(symbol, title, chartMaxValue);
             dataTable = getDataTable(type, chartLabels.labels, datasetForChart, optionsHorizontalBar);
             thisChart = new Chart(canVas, dataTable);
