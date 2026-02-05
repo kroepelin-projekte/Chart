@@ -439,7 +439,7 @@ class ilChartPluginGUI extends ilPageComponentPluginGUI
                             $result["group_category_" . ($i + 1)][1]["dataset_" . ($j + 1) . "_category_" . ($i + 1)]
                         );
 
-                        if (!is_numeric($value) || (str_starts_with($value, "0") && strlen((string) abs($value)) > 1)) {
+                        if (!is_numeric($value)) {
                             $this->tpl->setOnScreenMessage(
                                 "failure",
                                 $this->dic->language()->txt(ilChartPluginConstant::MESSAGE_FAILURE),
