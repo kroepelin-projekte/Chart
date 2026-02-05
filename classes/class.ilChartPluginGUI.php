@@ -419,8 +419,9 @@ class ilChartPluginGUI extends ilPageComponentPluginGUI
                 if (empty($result["group_category_" . ($i + 1)][1])) {
                     for ($j = 0; $j < $countDatasets; $j++) {
                         $value = trim($result["hidden_dataset_" . ($j + 1) . "_category_" . ($i + 1)]);
+                        $value = $this->convertToDotDecimal($value);
 
-                        if (!is_numeric($value) || (str_starts_with($value, "0") && strlen((string) abs($value)) > 1)) {
+                        if (!is_numeric($value)) {
                             $this->tpl->setOnScreenMessage(
                                 "failure",
                                 $this->dic->language()->txt(ilChartPluginConstant::MESSAGE_FAILURE)
@@ -438,6 +439,7 @@ class ilChartPluginGUI extends ilPageComponentPluginGUI
                         $value = trim(
                             $result["group_category_" . ($i + 1)][1]["dataset_" . ($j + 1) . "_category_" . ($i + 1)]
                         );
+                        $value = $this->convertToDotDecimal($value);
 
                         if (!is_numeric($value)) {
                             $this->tpl->setOnScreenMessage(
@@ -1146,5 +1148,14 @@ class ilChartPluginGUI extends ilPageComponentPluginGUI
 
             $properties["color_dataset_" . ($i + 1)] = $hexColor;
         }
+    }
+
+    /**
+     * Convert european decimal format to international decimal format
+     * e.g. 2,3 to 2.3
+     */
+    private function convertToDotDecimal(string $num): string
+    {
+        return str_replace(',', '.', $num);
     }
 }
