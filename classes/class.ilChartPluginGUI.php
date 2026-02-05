@@ -1209,9 +1209,8 @@ class ilChartPluginGUI extends ilPageComponentPluginGUI
             }
 
             if (preg_match('/^value_dataset_(\d+)_category_(\d+)$/', $k, $m)) {
-                $ds = (int) $m[1];
                 $cat = (int) $m[2];
-                if (!isset($valid_datasets[$ds]) || !isset($valid_categories[$cat])) {
+                if (!isset($valid_categories[$cat])) {
                     unset($properties[$k]);
                 }
                 continue;
