@@ -1218,10 +1218,6 @@ class ilChartPluginGUI extends ilPageComponentPluginGUI
             }
         }
 
-        echo '<pre>';
-        var_dump($properties);
-        echo '</pre>';
-        exit;
         return $properties;
     }
 }

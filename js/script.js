@@ -115,16 +115,20 @@
             if (chartDataFormat === "1") {
 
                 for (let m = 0; m < datasetValueDiv.length; m++) {
-                    if (datasetValueDiv[m].getAttribute('id').indexOf('value_dataset_' + (n + 1)) > -1) {
-                        dataDatasetTmp.push(datasetValueDiv[m].value);
+                    const id = datasetValueDiv[m].getAttribute('id');
+
+                    if (id.indexOf('value_dataset_' + (n + 1) + '_') > -1) {
+                        dataDatasetTmp.push(parseFloat(String(datasetValueDiv[m].value).replace(',', '.')));
                     }
                 }
 
             } else {
 
                 for (let m = 0; m < percentDiv.length; m++) {
-                    if (percentDiv[m].getAttribute('id').indexOf('dataset_' + (n + 1) + '_category') > -1) {
-                        dataDatasetTmp.push(percentDiv[m].value);
+                    const id = percentDiv[m].getAttribute('id');
+
+                    if (id.indexOf('dataset_' + (n + 1) + '_category_') > -1) {
+                        dataDatasetTmp.push(parseFloat(String(percentDiv[m].value).replace(',', '.')));
                     }
                 }
             }
