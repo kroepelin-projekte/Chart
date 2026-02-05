@@ -21,3 +21,7 @@
 6.0.2
 - Fix bug: Styles for all values were reset when adding or removing entries in "Category dataset names" or "Datasets".
 - Fix bug: Prevent JS error after removing a dataset.
+6.0.3
+- Fix bug: Handle Numbers between 0 and 1 
+- Fix bug: Transform comma decimals correctly to dot decimals
+- Fix bug: Data of deleted categories were not removed with the category

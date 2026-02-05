@@ -365,6 +365,8 @@ class ilChartPluginGUI extends ilPageComponentPluginGUI
             $properties["title_dataset_" . ($key + 1)] = $value;
         }
 
+        $properties = $this->cleanupProperties($properties);
+
         if ($this->updateElement($properties)) {
             $this->tpl->setOnScreenMessage("success", $this->dic->language()->txt(ilChartPluginConstant::MESSAGE_SUCCESS), true);
             $this->dic->ctrl()->redirectByClass(ilChartPluginConstant::PLUGIN_CLASS_NAME_GUI, ilChartPluginConstant::CMD_EDIT_CATEGORIES_DATASET_NAMES);
@@ -1157,5 +1159,64 @@ class ilChartPluginGUI extends ilPageComponentPluginGUI
     private function convertToDotDecimal(string $num): string
     {
         return str_replace(',', '.', $num);
+    }
+
+    private function cleanupProperties(array $properties): array
+    {
+        /**
+         * Cleanup: remove invalid references (colors/values) to non-existing categories/datasets
+         * Must run after titles have been rebuilt.
+         */
+        $valid_categories = [];
+        $valid_datasets = [];
+
+        // collect valid category indices
+        foreach ($properties as $k => $_) {
+            if (str_starts_with($k, 'title_category_')) {
+                $idx = (int) substr($k, strlen('title_category_'));
+                if ($idx > 0) {
+                    $valid_categories[$idx] = true;
+                }
+            }
+        }
+
+        // collect valid dataset indices
+        foreach ($properties as $k => $_) {
+            if (str_starts_with($k, 'title_dataset_')) {
+                $idx = (int) substr($k, strlen('title_dataset_'));
+                if ($idx > 0) {
+                    $valid_datasets[$idx] = true;
+                }
+            }
+        }
+
+        // remove invalid references
+        foreach (array_keys($properties) as $k) {
+            if (preg_match('/^color_category_(\d+)$/', $k, $m)) {
+                $cat = (int) $m[1];
+                if (!isset($valid_categories[$cat])) {
+                    unset($properties[$k]);
+                }
+                continue;
+            }
+
+            if (preg_match('/^color_dataset_(\d+)$/', $k, $m)) {
+                $ds = (int) $m[1];
+                if (!isset($valid_datasets[$ds])) {
+                    unset($properties[$k]);
+                }
+                continue;
+            }
+
+            if (preg_match('/^value_dataset_(\d+)_category_(\d+)$/', $k, $m)) {
+                $ds = (int) $m[1];
+                $cat = (int) $m[2];
+                if (!isset($valid_datasets[$ds]) || !isset($valid_categories[$cat])) {
+                    unset($properties[$k]);
+                }
+                continue;
+            }
+        }
+        return $properties;
     }
 }
