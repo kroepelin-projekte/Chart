@@ -115,54 +115,53 @@
             if (chartDataFormat === "1") {
 
                 for (let m = 0; m < datasetValueDiv.length; m++) {
-                    if (datasetValueDiv[m].getAttribute('id').indexOf('value_dataset_' + (n + 1)) > -1) {
-                        dataDatasetTmp.push(datasetValueDiv[m].value);
+                    const id = datasetValueDiv[m].getAttribute('id');
+
+                    if (id.indexOf('value_dataset_' + (n + 1) + '_') > -1) {
+                        dataDatasetTmp.push(parseFloat(String(datasetValueDiv[m].value).replace(',', '.')));
                     }
                 }
 
             } else {
 
                 for (let m = 0; m < percentDiv.length; m++) {
-                    if (percentDiv[m].getAttribute('id').indexOf('dataset_' + (n + 1) + '_category') > -1) {
-                        dataDatasetTmp.push(percentDiv[m].value);
+                    const id = percentDiv[m].getAttribute('id');
+
+                    if (id.indexOf('dataset_' + (n + 1) + '_category_') > -1) {
+                        dataDatasetTmp.push(parseFloat(String(percentDiv[m].value).replace(',', '.')));
                     }
                 }
             }
             dataDataset[n] = dataDatasetTmp;
 
-            if (type === 'horizontalBar') {
-                datasetForChart[n] = datasetHorizontalBarChart(datasetDiv[n].value, dataDataset[n], colorDatasetDiv[n].value);
-            } else if (type === 'bar') {
-                datasetForChart[n] = datasetVerticalBarChart(datasetDiv[n].value, dataDataset[n], colorDatasetDiv[n].value);
-            } else if (type === 'pie') {
-                datasetForChart[n] = datasetPieChart(datasetDiv[n].value, dataDataset[n], categoriesColors)
-            } else if (type === 'line') {
-                datasetForChart[n] = datasetLineChart(datasetDiv[n].value, dataDataset[n], colorDatasetDiv[n].value);
+            if (dataDataset[n] && datasetDiv[n]) { // Prevent JS Error if dataset was deleted
+              if (type === 'horizontalBar') {
+                  datasetForChart[n] = datasetHorizontalBarChart(datasetDiv[n].value, dataDataset[n], colorDatasetDiv[n].value);
+              } else if (type === 'bar') {
+                  datasetForChart[n] = datasetVerticalBarChart(datasetDiv[n].value, dataDataset[n], colorDatasetDiv[n].value);
+              } else if (type === 'pie') {
+                  datasetForChart[n] = datasetPieChart(datasetDiv[n].value, dataDataset[n], categoriesColors)
+              } else if (type === 'line') {
+                  datasetForChart[n] = datasetLineChart(datasetDiv[n].value, dataDataset[n], colorDatasetDiv[n].value);
+              }
             }
         }
 
         canVas = document.getElementById(chartId).getContext('2d');
 
         if (type === 'pie') {
-
             optionsPie = getOptionsPie(symbol, title);
             dataTable = getDataTable(type, chartLabels.labels, datasetForChart, optionsPie);
             thisChart = new Chart(canVas, dataTable);
-
         } else if (type === 'line') {
-
             optionsLine = getOptionsLine(symbol, title, chartMaxValue);
             dataTable = getDataTable(type, chartLabels.labels, datasetForChart, optionsLine);
             thisChart = new Chart(canVas, dataTable);
-
         } else if (type === 'bar') {
-
             optionsBar = getOptionsVerticalBar(symbol, title, chartMaxValue);
             dataTable = getDataTable(type, chartLabels.labels, datasetForChart, optionsBar);
             thisChart = new Chart(canVas, dataTable);
-
         } else if (type === 'horizontalBar') {
-
             optionsHorizontalBar = getOptionsHorizontalBar(symbol, title, chartMaxValue);
             dataTable = getDataTable(type, chartLabels.labels, datasetForChart, optionsHorizontalBar);
             thisChart = new Chart(canVas, dataTable);
