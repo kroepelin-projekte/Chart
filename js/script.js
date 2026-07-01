@@ -163,7 +163,7 @@
             thisChart = new Chart(canVas, dataTable);
         } else if (type === 'horizontalBar') {
             optionsHorizontalBar = getOptionsHorizontalBar(symbol, title, chartMaxValue);
-            dataTable = getDataTable(type, chartLabels.labels, datasetForChart, optionsHorizontalBar);
+            dataTable = getDataTable('bar', chartLabels.labels, datasetForChart, optionsHorizontalBar);
             thisChart = new Chart(canVas, dataTable);
 
             // CSS
@@ -252,6 +252,7 @@
     function getOptionsVerticalBar(formatter, title, maxValue)  {
 
         return {
+            indexAxis: 'x',
             plugins: {
                 datalabels: {
                     align: 'start',
@@ -274,20 +275,18 @@
                 }
             },
             scales: {
-                yAxes: [{
+                y: {
+                    beginAtZero: true,
+                    suggestedMax: parseInt(maxValue) ? maxValue : 0,
                     ticks: {
-                        beginAtZero: true,
-                        suggestedMax: parseInt(maxValue) ? maxValue : 0,
-                        callback: function (value, index, values) {
+                        callback: function (value, index, ticks) {
                             return value.toLocaleString();
                         }
-                    },
-                }],
-                xAxes: [{
-                    ticks: {
-                        beginAtZero: true
                     }
-                }]
+                },
+                x: {
+                    beginAtZero: true
+                }
             },
             responsive: true,
             maintainAspectRatio: false,
@@ -321,6 +320,7 @@
     function getOptionsHorizontalBar(formatter, title, maxValue)  {
 
         return {
+            indexAxis: 'y',
             plugins: {
                 datalabels: {
                     align: 'start',
@@ -343,15 +343,15 @@
                 },
             },
             scales: {
-                xAxes: [{
+                x: {
+                    beginAtZero: true,
+                    suggestedMax: parseInt(maxValue) ? maxValue : 0,
                     ticks: {
-                        beginAtZero: true,
-                        suggestedMax: parseInt(maxValue) ? maxValue : 0,
                         callback: function (value) {
                             return value.toLocaleString();
                         }
                     }
-                }]
+                }
             },
             responsive: true,
             maintainAspectRatio: false,
@@ -455,15 +455,15 @@
                 }
             },
             scales: {
-                yAxes: [{
+                y: {
+                    beginAtZero: true,
+                    suggestedMax: parseInt(maxValue) ? maxValue : 0,
                     ticks: {
-                        beginAtZero: true,
-                        suggestedMax: parseInt(maxValue) ? maxValue : 0,
                         callback: function (value) {
                             return value.toLocaleString();
                         }
                     }
-                }]
+                }
             },
             responsive: true,
             maintainAspectRatio: false,

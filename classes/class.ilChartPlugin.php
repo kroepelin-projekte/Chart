@@ -23,7 +23,7 @@
  */
 class ilChartPlugin extends ilPageComponentPlugin
 {
-    private static ?ilPlugin $instance = null;
+    private static ?ilChartPlugin $instance = null;
 
     public function getPluginName(): string
     {
@@ -35,14 +35,11 @@ class ilChartPlugin extends ilPageComponentPlugin
         return true;
     }
 
-    public static function getInstance() : ilPlugin
+    public static function getInstance() : ilChartPlugin
     {
         if (is_null(self::$instance)) {
-            global $DIC;
-            self::$instance = new self($DIC->database(), $DIC['component.repository'], 'chrt');
+            self::$instance = ilObjectPlugin::getPluginObjectByType('chrt');
         }
-
         return self::$instance;
-
     }
 }
