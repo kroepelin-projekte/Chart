@@ -25,3 +25,9 @@
 - Fix bug: Handle Numbers between 0 and 1 
 - Fix bug: Transform comma decimals correctly to dot decimals
 - Fix bug: Data of deleted categories were not removed with the category
+7.0.0
+- Updated to ILIAS 11
+  - colorPicker() has been renamed to colorSelect()
+- Updated chart.js to v4.5.0
+  - Various API changes
+

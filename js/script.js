@@ -252,6 +252,17 @@
         };
     }
 
+    function getLegendOptions()  {
+
+        return {
+            display: true,
+            labels: {
+                usePointStyle: true,
+                pointStyle: 'circle',
+            }
+        };
+    }
+
     function getOptionsVerticalBar(formatter, title, maxValue)  {
 
         return {
@@ -276,14 +287,7 @@
                     display: 'auto',
                     formatter: formatter
                 },
-                legend: {
-                    display: true,
-                    labels: {
-                        boxWidth: 5,
-                        usePointStyle: true,
-                        boxHeight: 1
-                    }
-                },
+                legend: getLegendOptions(),
                 title: {
                     display: true,
                     text: title
@@ -343,14 +347,7 @@
                     display: 'auto',
                     formatter: formatter
                 },
-                legend: {
-                    display: true,
-                    labels: {
-                        boxWidth: 5,
-                        usePointStyle: true,
-                        boxHeight: 1
-                    }
-                },
+                legend: getLegendOptions(),
                 title: {
                     display: true,
                     text: title
@@ -403,14 +400,7 @@
                     display: 'auto',
                     formatter: formatter,
                 },
-                legend: {
-                    display: true,
-                    labels: {
-                        boxWidth: 5,
-                        usePointStyle: true,
-                        boxHeight: 1
-                    },
-                },
+                legend: getLegendOptions(),
                 title: {
                     display: true,
                     text: title
@@ -454,14 +444,7 @@
                     display: 'auto',
                     formatter: formatter
                 },
-                legend: {
-                    display: true,
-                    labels:{
-                        boxWidth: 5,
-                        usePointStyle: true,
-                        boxHeight: 1
-                    }
-                },
+                legend: getLegendOptions(),
                 title: {
                     display: true,
                     text: title
