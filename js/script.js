@@ -275,6 +275,29 @@
                     clip: true,
                     display: 'auto',
                     formatter: formatter
+                },
+                legend: {
+                    display: true,
+                    labels: {
+                        boxWidth: 5,
+                        usePointStyle: true,
+                        boxHeight: 1
+                    }
+                },
+                title: {
+                    display: true,
+                    text: title
+                },
+                tooltip: {
+                    mode: 'point',
+                    callbacks: {
+                        title: function(items) {
+                            return items[0].label;
+                        },
+                        label: function(context) {
+                            return context.dataset.label + ' ' + parseFloat(context.dataset.data[context.dataIndex]).toLocaleString();
+                        }
+                    }
                 }
             },
             scales: {
@@ -292,31 +315,7 @@
                 }
             },
             responsive: true,
-            maintainAspectRatio: false,
-            legend: {
-                display: true,
-                labels: {
-                    boxWidth: 5,
-                    usePointStyle: true,
-                    boxHeight: 1
-                }
-            },
-            title: {
-                display: true,
-                text: title
-            },
-            tooltip: true,
-            tooltips: {
-                mode: 'point',
-                callbacks: {
-                    title: function(tooltipItem, data) {
-                        return tooltipItem[0]['label'];
-                    },
-                    label: function(tooltipItem, data) {
-                        return data['datasets'][tooltipItem['datasetIndex']]['label'] + ' ' + parseFloat(data['datasets'][tooltipItem['datasetIndex']]['data'][tooltipItem['index']]).toLocaleString();
-                    }
-                },
-            }
+            maintainAspectRatio: false
         };
     }
 
@@ -344,6 +343,29 @@
                     display: 'auto',
                     formatter: formatter
                 },
+                legend: {
+                    display: true,
+                    labels: {
+                        boxWidth: 5,
+                        usePointStyle: true,
+                        boxHeight: 1
+                    }
+                },
+                title: {
+                    display: true,
+                    text: title
+                },
+                tooltip: {
+                    mode: 'point',
+                    callbacks: {
+                        title: function(items) {
+                            return items[0].label;
+                        },
+                        label: function(context) {
+                            return context.dataset.label + ' ' + parseFloat(context.dataset.data[context.dataIndex]).toLocaleString();
+                        }
+                    }
+                }
             },
             scales: {
                 x: {
@@ -357,31 +379,7 @@
                 }
             },
             responsive: true,
-            maintainAspectRatio: false,
-            legend: {
-                display: true,
-                labels: {
-                    boxWidth: 5,
-                    usePointStyle: true,
-                    boxHeight: 1
-                }
-            },
-            title: {
-                display: true,
-                text: title
-            },
-            tooltip: true,
-            tooltips: {
-                mode: 'point',
-                callbacks: {
-                    title: function(tooltipItem, data) {
-                        return tooltipItem[0]['label'];
-                    },
-                    label: function(tooltipItem, data) {
-                        return data['datasets'][tooltipItem['datasetIndex']]['label'] + ' ' + parseFloat(data['datasets'][tooltipItem['datasetIndex']]['data'][tooltipItem['index']]).toLocaleString();
-                    }
-                },
-            },
+            maintainAspectRatio: false
         };
     }
 
@@ -405,31 +403,31 @@
                     display: 'auto',
                     formatter: formatter,
                 },
-            },
-            responsive: true,
-            maintainAspectRatio: false,
-            legend: {
-                display: true,
-                labels: {
-                    boxWidth: 5,
-                    usePointStyle: true,
-                    boxHeight: 1
-                },
-            },
-            title: {
-                display: true,
-                text: title
-            },
-            tooltips: {
-                callbacks: {
-                    title: function(tooltipItem, data) {
-                        return data['datasets'][tooltipItem[0]['datasetIndex']]['label'];
+                legend: {
+                    display: true,
+                    labels: {
+                        boxWidth: 5,
+                        usePointStyle: true,
+                        boxHeight: 1
                     },
-                    label: function(tooltipItem, data) {
-                        return data['labels'][tooltipItem['index']] + ' ' + parseFloat(data['datasets'][tooltipItem['datasetIndex']]['data'][tooltipItem['index']]).toLocaleString();
+                },
+                title: {
+                    display: true,
+                    text: title
+                },
+                tooltip: {
+                    callbacks: {
+                        title: function(items) {
+                            return items[0].dataset.label;
+                        },
+                        label: function(context) {
+                            return context.label + ' ' + parseFloat(context.dataset.data[context.dataIndex]).toLocaleString();
+                        }
                     }
                 }
             },
+            responsive: true,
+            maintainAspectRatio: false
         };
     }
 
@@ -455,6 +453,28 @@
                     clip: false,
                     display: 'auto',
                     formatter: formatter
+                },
+                legend: {
+                    display: true,
+                    labels:{
+                        boxWidth: 5,
+                        usePointStyle: true,
+                        boxHeight: 1
+                    }
+                },
+                title: {
+                    display: true,
+                    text: title
+                },
+                tooltip: {
+                    callbacks: {
+                        title: function(items) {
+                            return items[0].label;
+                        },
+                        label: function(context) {
+                            return context.dataset.label + ' ' + parseFloat(context.dataset.data[context.dataIndex]).toLocaleString();
+                        }
+                    }
                 }
             },
             scales: {
@@ -469,30 +489,7 @@
                 }
             },
             responsive: true,
-            maintainAspectRatio: false,
-            legend: {
-                display: true,
-                labels:{
-                    boxWidth: 5,
-                    usePointStyle: true,
-                    boxHeight: 1
-                }
-            },
-            title: {
-                display: true,
-                text: title
-            },
-            tooltip: true,
-            tooltips: {
-                callbacks: {
-                    title: function(tooltipItem, data) {
-                        return tooltipItem[0]['label'];
-                    },
-                    label: function(tooltipItem, data) {
-                        return data['datasets'][tooltipItem['datasetIndex']]['label'] + ' ' + parseFloat(data['datasets'][tooltipItem['datasetIndex']]['data'][tooltipItem['index']]).toLocaleString();
-                    }
-                },
-            },
+            maintainAspectRatio: false
         };
     }
     function getHeightHorizontalChart(countBars)  {
