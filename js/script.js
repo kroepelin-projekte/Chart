@@ -1,4 +1,7 @@
 (function() {
+    // Register DataLabels to make them available globally
+    Chart.register(ChartDataLabels);
+
     let divClass = document.getElementsByClassName('chdiv');
     let div = [];
     let min = "";
@@ -163,7 +166,7 @@
             thisChart = new Chart(canVas, dataTable);
         } else if (type === 'horizontalBar') {
             optionsHorizontalBar = getOptionsHorizontalBar(symbol, title, chartMaxValue);
-            dataTable = getDataTable(type, chartLabels.labels, datasetForChart, optionsHorizontalBar);
+            dataTable = getDataTable('bar', chartLabels.labels, datasetForChart, optionsHorizontalBar);
             thisChart = new Chart(canVas, dataTable);
 
             // CSS
@@ -249,9 +252,21 @@
         };
     }
 
+    function getLegendOptions()  {
+
+        return {
+            display: true,
+            labels: {
+                usePointStyle: true,
+                pointStyle: 'circle',
+            }
+        };
+    }
+
     function getOptionsVerticalBar(formatter, title, maxValue)  {
 
         return {
+            indexAxis: 'x',
             plugins: {
                 datalabels: {
                     align: 'start',
@@ -271,56 +286,47 @@
                     clip: true,
                     display: 'auto',
                     formatter: formatter
+                },
+                legend: getLegendOptions(),
+                title: {
+                    display: true,
+                    text: title
+                },
+                tooltip: {
+                    mode: 'point',
+                    callbacks: {
+                        title: function(items) {
+                            return items[0].label;
+                        },
+                        label: function(context) {
+                            return context.dataset.label + ' ' + parseFloat(context.dataset.data[context.dataIndex]).toLocaleString();
+                        }
+                    }
                 }
             },
             scales: {
-                yAxes: [{
+                y: {
+                    beginAtZero: true,
+                    suggestedMax: parseInt(maxValue) ? maxValue : 0,
                     ticks: {
-                        beginAtZero: true,
-                        suggestedMax: parseInt(maxValue) ? maxValue : 0,
-                        callback: function (value, index, values) {
+                        callback: function (value, index, ticks) {
                             return value.toLocaleString();
                         }
-                    },
-                }],
-                xAxes: [{
-                    ticks: {
-                        beginAtZero: true
-                    }
-                }]
-            },
-            responsive: true,
-            maintainAspectRatio: false,
-            legend: {
-                display: true,
-                labels: {
-                    boxWidth: 5,
-                    usePointStyle: true,
-                    boxHeight: 1
-                }
-            },
-            title: {
-                display: true,
-                text: title
-            },
-            tooltip: true,
-            tooltips: {
-                mode: 'point',
-                callbacks: {
-                    title: function(tooltipItem, data) {
-                        return tooltipItem[0]['label'];
-                    },
-                    label: function(tooltipItem, data) {
-                        return data['datasets'][tooltipItem['datasetIndex']]['label'] + ' ' + parseFloat(data['datasets'][tooltipItem['datasetIndex']]['data'][tooltipItem['index']]).toLocaleString();
                     }
                 },
-            }
+                x: {
+                    beginAtZero: true
+                }
+            },
+            responsive: true,
+            maintainAspectRatio: false
         };
     }
 
     function getOptionsHorizontalBar(formatter, title, maxValue)  {
 
         return {
+            indexAxis: 'y',
             plugins: {
                 datalabels: {
                     align: 'start',
@@ -341,44 +347,36 @@
                     display: 'auto',
                     formatter: formatter
                 },
+                legend: getLegendOptions(),
+                title: {
+                    display: true,
+                    text: title
+                },
+                tooltip: {
+                    mode: 'point',
+                    callbacks: {
+                        title: function(items) {
+                            return items[0].label;
+                        },
+                        label: function(context) {
+                            return context.dataset.label + ' ' + parseFloat(context.dataset.data[context.dataIndex]).toLocaleString();
+                        }
+                    }
+                }
             },
             scales: {
-                xAxes: [{
+                x: {
+                    beginAtZero: true,
+                    suggestedMax: parseInt(maxValue) ? maxValue : 0,
                     ticks: {
-                        beginAtZero: true,
-                        suggestedMax: parseInt(maxValue) ? maxValue : 0,
                         callback: function (value) {
                             return value.toLocaleString();
                         }
                     }
-                }]
-            },
-            responsive: true,
-            maintainAspectRatio: false,
-            legend: {
-                display: true,
-                labels: {
-                    boxWidth: 5,
-                    usePointStyle: true,
-                    boxHeight: 1
                 }
             },
-            title: {
-                display: true,
-                text: title
-            },
-            tooltip: true,
-            tooltips: {
-                mode: 'point',
-                callbacks: {
-                    title: function(tooltipItem, data) {
-                        return tooltipItem[0]['label'];
-                    },
-                    label: function(tooltipItem, data) {
-                        return data['datasets'][tooltipItem['datasetIndex']]['label'] + ' ' + parseFloat(data['datasets'][tooltipItem['datasetIndex']]['data'][tooltipItem['index']]).toLocaleString();
-                    }
-                },
-            },
+            responsive: true,
+            maintainAspectRatio: false
         };
     }
 
@@ -402,31 +400,24 @@
                     display: 'auto',
                     formatter: formatter,
                 },
-            },
-            responsive: true,
-            maintainAspectRatio: false,
-            legend: {
-                display: true,
-                labels: {
-                    boxWidth: 5,
-                    usePointStyle: true,
-                    boxHeight: 1
+                legend: getLegendOptions(),
+                title: {
+                    display: true,
+                    text: title
                 },
-            },
-            title: {
-                display: true,
-                text: title
-            },
-            tooltips: {
-                callbacks: {
-                    title: function(tooltipItem, data) {
-                        return data['datasets'][tooltipItem[0]['datasetIndex']]['label'];
-                    },
-                    label: function(tooltipItem, data) {
-                        return data['labels'][tooltipItem['index']] + ' ' + parseFloat(data['datasets'][tooltipItem['datasetIndex']]['data'][tooltipItem['index']]).toLocaleString();
+                tooltip: {
+                    callbacks: {
+                        title: function(items) {
+                            return items[0].dataset.label;
+                        },
+                        label: function(context) {
+                            return context.label + ' ' + parseFloat(context.dataset.data[context.dataIndex]).toLocaleString();
+                        }
                     }
                 }
             },
+            responsive: true,
+            maintainAspectRatio: false
         };
     }
 
@@ -452,44 +443,36 @@
                     clip: false,
                     display: 'auto',
                     formatter: formatter
+                },
+                legend: getLegendOptions(),
+                title: {
+                    display: true,
+                    text: title
+                },
+                tooltip: {
+                    callbacks: {
+                        title: function(items) {
+                            return items[0].label;
+                        },
+                        label: function(context) {
+                            return context.dataset.label + ' ' + parseFloat(context.dataset.data[context.dataIndex]).toLocaleString();
+                        }
+                    }
                 }
             },
             scales: {
-                yAxes: [{
+                y: {
+                    beginAtZero: true,
+                    suggestedMax: parseInt(maxValue) ? maxValue : 0,
                     ticks: {
-                        beginAtZero: true,
-                        suggestedMax: parseInt(maxValue) ? maxValue : 0,
                         callback: function (value) {
                             return value.toLocaleString();
                         }
                     }
-                }]
-            },
-            responsive: true,
-            maintainAspectRatio: false,
-            legend: {
-                display: true,
-                labels:{
-                    boxWidth: 5,
-                    usePointStyle: true,
-                    boxHeight: 1
                 }
             },
-            title: {
-                display: true,
-                text: title
-            },
-            tooltip: true,
-            tooltips: {
-                callbacks: {
-                    title: function(tooltipItem, data) {
-                        return tooltipItem[0]['label'];
-                    },
-                    label: function(tooltipItem, data) {
-                        return data['datasets'][tooltipItem['datasetIndex']]['label'] + ' ' + parseFloat(data['datasets'][tooltipItem['datasetIndex']]['data'][tooltipItem['index']]).toLocaleString();
-                    }
-                },
-            },
+            responsive: true,
+            maintainAspectRatio: false
         };
     }
     function getHeightHorizontalChart(countBars)  {

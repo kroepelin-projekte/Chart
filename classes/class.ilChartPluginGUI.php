@@ -645,7 +645,7 @@ class ilChartPluginGUI extends ilPageComponentPluginGUI
             if (strpos($k, "title_category") > -1) {
                 $i = substr($k, strpos($k, "title_category") + 15, strlen($k));
 
-                $inputFieldsCategoriesColors["color_category_" . $i] = $ui->input()->field()->colorPicker(
+                $inputFieldsCategoriesColors["color_category_" . $i] = $ui->input()->field()->colorSelect(
                     $val,
                     ""
                 )->withValue("#" . $prop["color_category_" . $i])->withRequired(true);
@@ -662,7 +662,7 @@ class ilChartPluginGUI extends ilPageComponentPluginGUI
             if (strpos($k, "title_dataset") > -1) {
                 $i = substr($k, strpos($k, "title_dataset") + 14, strlen($k));
 
-                $inputFieldsDatasetsColors["color_dataset_" . $i] = $ui->input()->field()->colorPicker(
+                $inputFieldsDatasetsColors["color_dataset_" . $i] = $ui->input()->field()->colorSelect(
                     $val,
                     ""
                 )->withValue("#" . $prop["color_dataset_" . $i])->withRequired(true);

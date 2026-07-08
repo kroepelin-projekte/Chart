@@ -1,8 +1,8 @@
 <?php
 
 $id = "chrt";
-$version = "6.0.3";
-$ilias_min_version = "10";
-$ilias_max_version = "10.999";
+$version = "7.0.0";
+$ilias_min_version = "11";
+$ilias_max_version = "11.999";
 $responsible = "Kröpelin Projekt GmbH";
 $responsible_mail = "support@kroepelin-projekte.de";
