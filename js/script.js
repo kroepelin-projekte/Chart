@@ -1,4 +1,7 @@
 (function() {
+    // Register DataLabels to make them available globally
+    Chart.register(ChartDataLabels);
+
     let divClass = document.getElementsByClassName('chdiv');
     let div = [];
     let min = "";
